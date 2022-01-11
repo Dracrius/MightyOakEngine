@@ -1,0 +1,85 @@
+cmake_minimum_required( VERSION 3.10 )
+
+# Global Settings
+set_property( GLOBAL PROPERTY USE_FOLDERS ON )
+#set_property( GLOBAL PROPERTY CMAKE_SKIP_INSTALL_ALL_DEPENDENCY TRUE )
+#set_property( GLOBAL PROPERTY CMAKE_SKIP_PACKAGE_ALL_DEPENDENCY TRUE )
+
+# Solution
+project( GameSolution )
+
+# Visual Studio Settings
+if( CMAKE_CXX_COMPILER_ID MATCHES "MSVC" )
+	# Program Database for Edit and Continue
+	set( CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /ZI" )
+#	set( CMAKE_SHARED_LINKER_FLAGS "/SAFESEH:NO" )
+#	set( CMAKE_EXE_LINKER_FLAGS "/SAFESEH:NO" )
+endif()
+
+###################
+# Framework Library
+###################
+
+# File Setup
+file( GLOB_RECURSE FrameworkSourceFiles
+	Framework/Source/*.cpp
+	Framework/Source/*.h
+	Framework/Libraries/imgui/*.cpp
+	Framework/Libraries/imgui/*.h
+	Framework/Libraries/stb/*.h
+	Framework/Libraries/rapidjson/**.h
+	Framework/Libraries/pcg-cpp/include/**.hpp
+)
+source_group( TREE ${CMAKE_CURRENT_SOURCE_DIR}/Framework FILES ${FrameworkSourceFiles} )
+
+include_directories(
+	Framework/Source
+)
+
+# Project Creation
+add_library( Framework ${FrameworkSourceFiles} )
+
+# PCH Files
+target_precompile_headers( Framework PRIVATE Framework/Source/CoreHeaders.h )
+file( GLOB_RECURSE FrameworkPCHFiles ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/cmake_pch.* )
+source_group( "CMake PCH Files" FILES ${FrameworkPCHFiles} )
+
+###################
+# Game Project
+###################
+
+# File Setup
+file( GLOB_RECURSE GameSourceFiles
+	Game/Source/*.cpp
+	Game/Source/*.h
+	Game/Data/Shaders/**.vert
+	Game/Data/Shaders/**.frag
+	GenerateProjectFiles.bat
+)
+source_group( TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${GameSourceFiles} )
+
+include_directories(
+	Game/Source
+	Framework/Source
+)
+
+# Project Creation
+add_executable( GameProject WIN32 ${GameSourceFiles} )
+
+# PCH Files
+target_precompile_headers( GameProject PRIVATE Framework/Source/Framework.h )
+file( GLOB_RECURSE GamePCHFiles ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/cmake_pch.* )
+source_group( "CMake PCH Files" FILES ${GamePCHFiles} )
+
+# Libraries to Link
+target_link_libraries( GameProject
+	Framework
+	opengl32.lib
+)
+
+# Visual Studio Settings
+if( CMAKE_CXX_COMPILER_ID MATCHES "MSVC" )
+	# Debug working directory and Startup Project
+	set_property( TARGET GameProject PROPERTY VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/Game" )
+	set_property( DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT GameProject )
+endif()
