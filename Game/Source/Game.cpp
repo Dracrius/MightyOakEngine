@@ -25,6 +25,8 @@ Game::~Game()
 
     delete m_pTilemap;
 
+    delete m_pPhysicsWorld;
+
     for( auto& it : m_Meshes )
     {
         delete it.second;
@@ -62,16 +64,25 @@ void Game::Init()
     m_Textures["Sprites"] = new fw::Texture( "Data/Textures/Sprites.png" );
     m_SpriteSheets["Sprites"] = new fw::SpriteSheet( "Data/Textures/Sprites.json", m_Textures["Sprites"] );
 
+    m_pPhysicsWorld = new b2World(b2Vec2(0.f,-10.f));
+
     m_pTilemap = new Tilemap( this, g_MainMap, ivec2(g_MainMapWidth, g_MainMapHeight), vec2(1.5f, 1.5f) );
 
     m_pCamera = new fw::Camera( this, vec2(1.5f*10,1.5f*10)/2, vec2(1/10.0f, 1/10.0f) );
 
     m_pPlayerController = new PlayerController();
 
-    Player* pPlayer = new Player( this, m_Meshes["Sprite"], m_Shaders["Basic"], m_Textures["Sprites"], vec2(0.0f, 0.0f), m_pPlayerController );
+    Player* pPlayer = new Player( this, m_Meshes["Sprite"], m_Shaders["Basic"], m_Textures["Sprites"], vec2(7.0f, 9.0f), m_pPlayerController );
     pPlayer->SetSpriteSheet( m_SpriteSheets["Sprites"] );
     pPlayer->SetTilemap( m_pTilemap );
+    pPlayer->CreateBody(m_pPhysicsWorld, true, vec2(1.f, 1.f), 1.f);
     m_Objects.push_back( pPlayer );
+
+    Player* pPlatform = new Player(this, m_Meshes["Sprite"], m_Shaders["Basic"], m_Textures["Sprites"], vec2(7.0f, 4.0f), m_pPlayerController);
+    pPlatform->SetSpriteSheet(m_SpriteSheets["Sprites"]);
+    pPlatform->SetTilemap(m_pTilemap);
+    pPlatform->CreateBody(m_pPhysicsWorld, false, vec2(1.f, 1.f), 1.f);
+    m_Objects.push_back(pPlatform);
 }
 
 void Game::StartFrame(float deltaTime)
@@ -99,6 +110,8 @@ void Game::OnEvent(fw::Event* pEvent)
 void Game::Update(float deltaTime)
 {
     ImGui::ShowDemoWindow();
+     
+    m_pPhysicsWorld->Step(deltaTime, 8, 3);
 
     for( auto it = m_Objects.begin(); it != m_Objects.end(); it++ )
     {

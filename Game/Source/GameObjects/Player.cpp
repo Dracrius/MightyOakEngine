@@ -16,6 +16,8 @@ Player::~Player()
 
 void Player::Update(float deltaTime)
 {
+    GameObject::Update(deltaTime);
+
     float speed = 5.0f;
 
     vec2 newPos = m_Position;

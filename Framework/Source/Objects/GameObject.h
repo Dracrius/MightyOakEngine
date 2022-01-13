@@ -1,5 +1,6 @@
 #pragma once
 
+#include "..\Libraries\box2d\include\box2d\box2d.h"
 #include "Math/Vector.h"
 
 namespace fw {
@@ -19,6 +20,8 @@ public:
     virtual void Update(float deltaTime);
     virtual void Draw(Camera* pCamera);
 
+    void CreateBody(b2World* pWorld, bool isDynamic, vec2 size, float density);
+
     // Getters.
     vec2 GetPosition() { return m_Position; }
 
@@ -26,6 +29,8 @@ public:
     void SetTexture(Texture* pTexture) { m_pTexture = pTexture; }
 
 protected:
+    b2Body* m_pPhysicsBody = nullptr;
+
     Mesh* m_pMesh = nullptr;
 
     ShaderProgram* m_pShader = nullptr;    

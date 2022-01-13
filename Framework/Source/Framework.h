@@ -8,6 +8,7 @@
 #include "CoreHeaders.h"
 
 #include "../Libraries/imgui/imgui.h"
+#include "../Libraries/box2d/include/box2d/box2d.h"
 
 #include "FWCore.h"
 #include "GameCore.h"
