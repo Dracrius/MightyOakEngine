@@ -54,28 +54,40 @@ void Mesh::SetupAttribute(ShaderProgram* pShader, char* name, int size, GLenum t
 void Mesh::Draw(Camera* pCamera, ShaderProgram* pShader, Texture* pTexture, vec2 scale, vec2 pos, vec2 uvScale, vec2 uvOffset, float time)
 {
     // Set this VBO to be the currently active one.
-    glBindBuffer( GL_ARRAY_BUFFER, m_VBO );
+    glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
 
     // Get the attribute variable’s location from the shader.
     // Describe the attributes in the VBO to OpenGL.
-    SetupAttribute( pShader, "a_Position", 2, GL_FLOAT, GL_FALSE, 20, 0 );
-    SetupAttribute( pShader, "a_Color", 4, GL_UNSIGNED_BYTE, GL_TRUE, 20, 8 );
-    SetupAttribute( pShader, "a_UVCoord", 2, GL_FLOAT, GL_FALSE, 20, 12 );
+    SetupAttribute(pShader, "a_Position", 2, GL_FLOAT, GL_FALSE, 20, 0);
+    SetupAttribute(pShader, "a_Color", 4, GL_UNSIGNED_BYTE, GL_TRUE, 20, 8);
+    SetupAttribute(pShader, "a_UVCoord", 2, GL_FLOAT, GL_FALSE, 20, 12);
 
     // Setup the uniforms.
-    glUseProgram( pShader->GetProgram() );
-    
+    glUseProgram(pShader->GetProgram());
+
     // Transform uniforms.
-    SetupUniform( pShader, "u_ObjectTranslation", pos );
-    SetupUniform( pShader, "u_ObjectScale", scale );
+    //SetupUniform( pShader, "u_ObjectTranslation", pos );
+    //SetupUniform( pShader, "u_ObjectScale", scale );
+
+    //u_WorldMatrix
+    float worldMat[16] = 
+    {
+        scale.x,0,0,0,
+        0,scale.y,0,0,
+        0,0,1,0,
+        pos.x,pos.y,0,1,
+    };
+
+    GLint location = glGetUniformLocation(pShader->GetProgram(), "u_WorldMatrix");
+    glUniformMatrix4fv(location, 1, false, &worldMat[0]);
+
     SetupUniform( pShader, "u_CameraTranslation", -pCamera->GetPosition() );
     SetupUniform( pShader, "u_ProjectionScale", pCamera->GetProjectionScale() );
     SetupUniform( pShader, "u_UVScale", uvScale );
     SetupUniform( pShader, "u_UVOffset", uvOffset );
-    SetupUniform(pShader, "u_Time", (float)GetSystemTimeSinceGameStart());
     
     // Misc uniforms.
-    //SetupUniform( pShader, "u_Time", time );
+    SetupUniform(pShader, "u_Time", (float)GetSystemTimeSinceGameStart());
 
     // Setup textures.
     glActiveTexture( GL_TEXTURE0 );
