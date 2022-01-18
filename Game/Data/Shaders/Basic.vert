@@ -18,7 +18,7 @@ varying vec4 v_Color;
 void main()
 {
     float objectAngle = 0.0f;
-    float cameraAngle = -90.0/180.0 * PI; //1 * u_Time; //PI/4;
+    float cameraAngle = -45.0/180.0 * PI; //1 * u_Time; //PI/4;
 
     vec2 objectSpacePosition = a_Position;
 

@@ -22,10 +22,10 @@ SpriteSheet::SpriteSheet(const char* filename, Texture* pTexture)
     {
         rapidjson::Value& sprite = spriteArray[i];
 
-        float x = sprite["X"].GetFloat();
-        float y = sprite["Y"].GetFloat();
-        float w = sprite["W"].GetFloat();
-        float h = sprite["H"].GetFloat();
+        float x = sprite["X"].GetFloat() + 0.5f;
+        float y = sprite["Y"].GetFloat() + 0.5f;
+        float w = sprite["W"].GetFloat() - 1.0f;
+        float h = sprite["H"].GetFloat() - 1.0f;
         
         const char* name = sprite["Name"].GetString();
 
