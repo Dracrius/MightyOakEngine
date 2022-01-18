@@ -4,6 +4,7 @@
 #include "Mesh.h"
 #include "ShaderProgram.h"
 #include "Texture.h"
+#include "Utility/Utility.h"
 
 namespace fw {
 
@@ -71,9 +72,10 @@ void Mesh::Draw(Camera* pCamera, ShaderProgram* pShader, Texture* pTexture, vec2
     SetupUniform( pShader, "u_ProjectionScale", pCamera->GetProjectionScale() );
     SetupUniform( pShader, "u_UVScale", uvScale );
     SetupUniform( pShader, "u_UVOffset", uvOffset );
+    SetupUniform(pShader, "u_Time", (float)GetSystemTimeSinceGameStart());
     
     // Misc uniforms.
-    SetupUniform( pShader, "u_Time", time );
+    //SetupUniform( pShader, "u_Time", time );
 
     // Setup textures.
     glActiveTexture( GL_TEXTURE0 );
