@@ -40,7 +40,7 @@ protected:
 
     fw::Camera* m_pCamera = nullptr;
 
-    b2World* m_pPhysicsWorld;
+    fw::PhysicsWorld* m_pPhysicsWorld;
 
     std::vector<fw::GameObject*> m_Objects;
 };

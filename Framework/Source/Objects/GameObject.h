@@ -10,6 +10,8 @@ class GameCore;
 class Mesh;
 class ShaderProgram;
 class Texture;
+class PhysicsWorld;
+class PhysicsBody;
 
 class GameObject
 {
@@ -20,7 +22,7 @@ public:
     virtual void Update(float deltaTime);
     virtual void Draw(Camera* pCamera);
 
-    void CreateBody(b2World* pWorld, bool isDynamic, vec2 size, float density);
+    void CreateBody(PhysicsWorld* pWorld, bool isDynamic, vec2 size, float density);
 
     // Getters.
     vec2 GetPosition() { return m_Position; }
@@ -29,7 +31,7 @@ public:
     void SetTexture(Texture* pTexture) { m_pTexture = pTexture; }
 
 protected:
-    b2Body* m_pPhysicsBody = nullptr;
+    PhysicsBody* m_pPhysicsBody = nullptr;
 
     Mesh* m_pMesh = nullptr;
 
