@@ -65,9 +65,9 @@ void Mesh::Draw(Camera* pCamera, ShaderProgram* pShader, Texture* pTexture, vec2
 
     // Get the attribute variable’s location from the shader.
     // Describe the attributes in the VBO to OpenGL.
-    SetupAttribute(pShader, "a_Position", 2, GL_FLOAT, GL_FALSE, 20, 0);
-    SetupAttribute(pShader, "a_Color", 4, GL_UNSIGNED_BYTE, GL_TRUE, 20, 8);
-    SetupAttribute(pShader, "a_UVCoord", 2, GL_FLOAT, GL_FALSE, 20, 12);
+    SetupAttribute(pShader, "a_Position", 2, GL_FLOAT, GL_FALSE, 24, 0);
+    SetupAttribute(pShader, "a_Color", 4, GL_UNSIGNED_BYTE, GL_TRUE, 24, 12);
+    SetupAttribute(pShader, "a_UVCoord", 2, GL_FLOAT, GL_FALSE, 24, 16);
 
     // Setup the uniforms.
     glUseProgram(pShader->GetProgram());
@@ -75,15 +75,15 @@ void Mesh::Draw(Camera* pCamera, ShaderProgram* pShader, Texture* pTexture, vec2
     // Matrix uniforms.
     matrix worldMat;
     worldMat.CreateSRT(scale, 0.f, pos);
+    SetupUniform(pShader, "u_WorldMatrix", worldMat);
 
     matrix viewMat;
-    viewMat.CreateLookAtView(vec3(pCamera->GetPosition(), -1.f), vec3(0.f, 1.f, 0.f), vec3(pCamera->GetPosition(), 0.f));
+    viewMat.CreateLookAtView(vec3(pCamera->GetPosition(), -20.f), vec3(0.f, 1.f, 0.f), vec3(pCamera->GetPosition(), 0.f));
+    SetupUniform(pShader, "u_ViewMatrix", viewMat);
 
     matrix projecMat;
-    projecMat.CreateOrtho(-5 ,5, -5, 5, -5, 5);
-
-    SetupUniform(pShader, "u_WorldMatrix", worldMat);
-    SetupUniform(pShader, "u_ViewMatrix", viewMat);
+    //projecMat.CreateOrtho(-5 ,5, -5, 5, -5, 5);
+    projecMat.CreatePerspectiveVFoV(45.f, 1.f, 0.01f, 100.f);
     SetupUniform(pShader, "u_ProjecMatrix", projecMat);
 
     // UV uniforms.

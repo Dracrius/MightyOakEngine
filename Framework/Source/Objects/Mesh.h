@@ -11,7 +11,7 @@ class matrix;
 
 struct VertexFormat
 {
-    vec2 pos;
+    vec3 pos;
     unsigned char color[4];
     vec2 uv;
 };
