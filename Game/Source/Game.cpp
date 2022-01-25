@@ -65,7 +65,7 @@ void Game::Init()
     m_SpriteSheets["Sprites"] = new fw::SpriteSheet( "Data/Textures/Sprites.json", m_Textures["Sprites"] );
 
     m_pPhysicsWorld = new fw::PhysicsWorldBox2D();
-    m_pPhysicsWorld->SetGravity(vec2(0.f, -10.f));
+    m_pPhysicsWorld->SetGravity(vec2(0.f, -9.8f));
 
     m_pTilemap = new Tilemap( this, g_MainMap, ivec2(g_MainMapWidth, g_MainMapHeight), vec2(1.5f, 1.5f) );
 

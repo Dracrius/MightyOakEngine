@@ -12,10 +12,10 @@ PhysicsBodyBox2D::~PhysicsBodyBox2D()
 {
 }
 
-vec2 PhysicsBodyBox2D::GetPosition()
+vec3 PhysicsBodyBox2D::GetPosition()
 {
     b2Vec2 pos = m_pBody->GetPosition();
-    return vec2(pos.x, pos.y);
+    return vec3(pos.x, pos.y, 0.f);
 }
 
 } // namespace fw

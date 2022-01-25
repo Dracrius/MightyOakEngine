@@ -19,12 +19,12 @@ void PhysicsWorldBox2D::Update(float deltaTime)
 	m_pWorld->Step(deltaTime, 8, 3);
 }
 
-void PhysicsWorldBox2D::SetGravity(vec2 gravity)
+void PhysicsWorldBox2D::SetGravity(vec3 gravity)
 {
 	m_pWorld->SetGravity(b2Vec2(gravity.x, gravity.y));
 }
 
-PhysicsBody* PhysicsWorldBox2D::CreateBody(bool isDynamic, vec2 size, float density, vec2 pos)
+PhysicsBody* PhysicsWorldBox2D::CreateBody(bool isDynamic, vec2 size, float density, vec3 pos)
 {
     b2BodyDef bodydef;
     bodydef.position = b2Vec2(pos.x, pos.y);

@@ -12,7 +12,7 @@ public:
     PhysicsBodyBox2D(b2Body* pBody);
     virtual ~PhysicsBodyBox2D();
 
-    virtual vec2 GetPosition() override;
+    virtual vec3 GetPosition() override;
 };
 
 } // namespace fw

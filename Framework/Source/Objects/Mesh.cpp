@@ -5,6 +5,7 @@
 #include "ShaderProgram.h"
 #include "Texture.h"
 #include "Utility/Utility.h"
+#include "Math/Matrix.h"
 
 namespace fw {
 
@@ -41,6 +42,12 @@ void Mesh::SetupUniform(ShaderProgram* pShader, char* name, vec2 value)
     glUniform2f( location, value.x, value.y );
 }
 
+void Mesh::SetupUniform(ShaderProgram* pShader, char* name, Matrix matrix)
+{
+    GLint location = glGetUniformLocation(pShader->GetProgram(), name);
+    glUniformMatrix4fv(location, 1, false, &matrix.m11);
+}
+
 void Mesh::SetupAttribute(ShaderProgram* pShader, char* name, int size, GLenum type, GLboolean normalize, int stride, int64_t startIndex)
 {
     GLint location = glGetAttribLocation( pShader->GetProgram(), name );
@@ -69,19 +76,19 @@ void Mesh::Draw(Camera* pCamera, ShaderProgram* pShader, Texture* pTexture, vec2
     //SetupUniform( pShader, "u_ObjectTranslation", pos );
     //SetupUniform( pShader, "u_ObjectScale", scale );
 
-    //u_WorldMatrix
-    float worldMat[16] = 
-    {
-        scale.x,0,0,0,
-        0,scale.y,0,0,
-        0,0,1,0,
-        pos.x,pos.y,0,1,
-    };
+    //Matrix uniforms.
+    Matrix worldMat;
+    worldMat.CreateSRT(scale, 0.f, pos);
+    /*GLint location = glGetUniformLocation(pShader->GetProgram(), "u_WorldMatrix");
+    glUniformMatrix4fv(location, 1, false, &worldMat.m11);*/
 
-    GLint location = glGetUniformLocation(pShader->GetProgram(), "u_WorldMatrix");
-    glUniformMatrix4fv(location, 1, false, &worldMat[0]);
+    Matrix viewMat;
+    viewMat.CreateSRT(1.f, 0.f, -pCamera->GetPosition());;
+    /*location = glGetUniformLocation(pShader->GetProgram(), "u_ViewMatrix");
+    glUniformMatrix4fv(location, 1, false, &viewMat.m11);*/
+    SetupUniform(pShader, "u_WorldMatrix", worldMat);
+    SetupUniform(pShader, "u_ViewMatrix", viewMat);
 
-    SetupUniform( pShader, "u_CameraTranslation", -pCamera->GetPosition() );
     SetupUniform( pShader, "u_ProjectionScale", pCamera->GetProjectionScale() );
     SetupUniform( pShader, "u_UVScale", uvScale );
     SetupUniform( pShader, "u_UVOffset", uvOffset );

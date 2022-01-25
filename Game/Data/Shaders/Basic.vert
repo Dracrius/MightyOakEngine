@@ -3,7 +3,7 @@ attribute vec4 a_Color;
 attribute vec2 a_UVCoord;
 
 uniform mat4 u_WorldMatrix;
-uniform vec2 u_CameraTranslation;
+uniform mat4 u_ViewMatrix;
 uniform vec2 u_ProjectionScale;
 uniform vec2 u_UVScale;
 uniform vec2 u_UVOffset;
@@ -16,15 +16,12 @@ varying vec4 v_Color;
 
 void main()
 {
-    float cameraAngle = -0.0/180.0 * PI;
+    //float cameraAngle = -0.0/180.0 * PI;
 
     vec4 objectSpacePosition = vec4(a_Position, 0, 1);
     vec4 worldSpacePosition = u_WorldMatrix * objectSpacePosition;
 
-    vec2 viewSpacePosition = worldSpacePosition.xy + u_CameraTranslation;
-    float newX = viewSpacePosition.x * cos(cameraAngle) - viewSpacePosition.y * sin(cameraAngle);
-    float newY = viewSpacePosition.x * sin(cameraAngle) + viewSpacePosition.y * cos(cameraAngle);
-    viewSpacePosition = vec2(newX, newY);
+    vec4 viewSpacePosition = u_ViewMatrix * worldSpacePosition;
 
     vec2 clipSpacePosition = viewSpacePosition * u_ProjectionScale;
     gl_Position = vec4( clipSpacePosition, 0.0, 1.0 );

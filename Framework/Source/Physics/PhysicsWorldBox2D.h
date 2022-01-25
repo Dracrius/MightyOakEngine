@@ -18,9 +18,9 @@ public:
 
     virtual void Update(float deltaTime) override;
 
-    virtual void SetGravity(vec2 gravity) override;
+    virtual void SetGravity(vec3 gravity) override;
     
-    virtual PhysicsBody* CreateBody(bool isDynamic, vec2 size, float density, vec2 pos) override;
+    virtual PhysicsBody* CreateBody(bool isDynamic, vec2 size, float density, vec3 pos) override;
 
     b2World* Getb2World() { return m_pWorld; }
 };
