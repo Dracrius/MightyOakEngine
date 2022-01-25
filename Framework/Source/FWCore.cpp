@@ -32,8 +32,6 @@ FWCore::FWCore(int width, int height)
 {
     m_pEventManager = new EventManager();
 
-    vec2::Test();
-
     Init( width, height );
 }
 
