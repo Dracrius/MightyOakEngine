@@ -7,7 +7,7 @@ namespace fw {
 class Camera;
 class ShaderProgram;
 class Texture;
-class Matrix;
+class matrix;
 
 struct VertexFormat
 {
@@ -24,7 +24,7 @@ public:
 
     void SetupUniform(ShaderProgram* pShader, char* name, float value);
     void SetupUniform(ShaderProgram* pShader, char* name, vec2 value);
-    void SetupUniform(ShaderProgram* pShader, char* name, Matrix matrix);
+    void SetupUniform(ShaderProgram* pShader, char* name, matrix matrix);
     void SetupAttribute(ShaderProgram* pShader, char* name, int size, GLenum type, GLboolean normalize, int stride, int64_t startIndex);
     void Draw(Camera* pCamera, ShaderProgram* pShader, Texture* pTexture, vec2 scale, vec2 pos, vec2 uvScale, vec2 uvOffset, float time);
 

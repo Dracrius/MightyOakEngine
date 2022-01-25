@@ -18,19 +18,19 @@ namespace fw {
 // m12 m22 m32 m42  --\   0 Sy  0 Ty
 // m13 m23 m33 m43  --/   0  0 Sz Tz
 // m14 m24 m34 m44        0  0  0  1
-class Matrix
+class matrix
 {
 public:
     float m11, m12, m13, m14, m21, m22, m23, m24, m31, m32, m33, m34, m41, m42, m43, m44;
 
 public:
-    Matrix() {}
-    //Matrix(const vec3& right, const vec3& up, const vec3& at, const vec3& pos) // view axes(inverse)
+    matrix() {}
+    //matrix(const vec3& right, const vec3& up, const vec3& at, const vec3& pos) // view axes(inverse)
     //    : m11(right.x), m21(right.y), m31(right.z), m41(pos.x),
     //    , m12(up.x),    m22(up.y),    m32(up.z),    m42(pos.y),
     //    , m13(at.x),    m23(at.y),    m33(at.z),    m43(pos.z),
     //    , m14(0),       m24(0),       m34(0),       m44(1)      {}
-    Matrix(float v11, float v12, float v13, float v14,
+    matrix(float v11, float v12, float v13, float v14,
         float v21, float v22, float v23, float v24,
         float v31, float v32, float v33, float v34,
         float v41, float v42, float v43, float v44)
@@ -42,7 +42,7 @@ public:
     }
 
     // Added this copy constuctor when I was having issue with Android(gcc), didn't end up using it and it shouldn't be needed.
-    //Matrix(const Matrix& o)
+    //matrix(const matrix& o)
     //    : m11(o.m11), m21(o.m21), m31(o.m31), m41(o.m41)
     //    , m12(o.m12), m22(o.m22), m32(o.m32), m42(o.m42)
     //    , m13(o.m13), m23(o.m23), m33(o.m33), m43(o.m43)
@@ -99,9 +99,9 @@ public:
         temp = m34; m34 = m43; m43 = temp;
     }
 
-    inline Matrix operator *(const float o) const
+    inline matrix operator *(const float o) const
     {
-        Matrix newmat;
+        matrix newmat;
 
         newmat.m11 = this->m11 * o; newmat.m21 = this->m21 * o; newmat.m31 = this->m31 * o; newmat.m41 = this->m41 * o;
         newmat.m12 = this->m12 * o; newmat.m22 = this->m22 * o; newmat.m32 = this->m32 * o; newmat.m42 = this->m42 * o;
@@ -143,9 +143,9 @@ public:
             m14 * o.x + m24 * o.y + m34 * o.z + m44 * o.w);
     }
 
-    inline Matrix operator *(const Matrix o) const
+    inline matrix operator *(const matrix o) const
     {
-        Matrix newmat;
+        matrix newmat;
 
         newmat.m11 = this->m11 * o.m11 + this->m21 * o.m12 + this->m31 * o.m13 + this->m41 * o.m14;
         newmat.m12 = this->m12 * o.m11 + this->m22 * o.m12 + this->m32 * o.m13 + this->m42 * o.m14;
@@ -190,7 +190,7 @@ public:
             return false;
 
         // Compute adjugate matrix.
-        *this = Matrix(
+        *this = matrix(
             m22 * C5 - m23 * C4 + m24 * C3, -m12 * C5 + m13 * C4 - m14 * C3,
             m42 * S5 - m43 * S4 + m44 * S3, -m32 * S5 + m33 * S4 - m34 * S3,
 
@@ -206,9 +206,9 @@ public:
         return true;
     }
 
-    Matrix GetInverse(float tolerance = 0.0001f)
+    matrix GetInverse(float tolerance = 0.0001f)
     {
-        Matrix invmat = *this;
+        matrix invmat = *this;
         invmat.Inverse(tolerance);
         return invmat;
     }

@@ -42,7 +42,7 @@ void Mesh::SetupUniform(ShaderProgram* pShader, char* name, vec2 value)
     glUniform2f( location, value.x, value.y );
 }
 
-void Mesh::SetupUniform(ShaderProgram* pShader, char* name, Matrix matrix)
+void Mesh::SetupUniform(ShaderProgram* pShader, char* name, matrix matrix)
 {
     GLint location = glGetUniformLocation(pShader->GetProgram(), name);
     glUniformMatrix4fv(location, 1, false, &matrix.m11);
@@ -72,24 +72,18 @@ void Mesh::Draw(Camera* pCamera, ShaderProgram* pShader, Texture* pTexture, vec2
     // Setup the uniforms.
     glUseProgram(pShader->GetProgram());
 
-    // Transform uniforms.
-    //SetupUniform( pShader, "u_ObjectTranslation", pos );
-    //SetupUniform( pShader, "u_ObjectScale", scale );
-
-    //Matrix uniforms.
-    Matrix worldMat;
+    // Matrix uniforms.
+    matrix worldMat;
     worldMat.CreateSRT(scale, 0.f, pos);
-    /*GLint location = glGetUniformLocation(pShader->GetProgram(), "u_WorldMatrix");
-    glUniformMatrix4fv(location, 1, false, &worldMat.m11);*/
 
-    Matrix viewMat;
-    viewMat.CreateSRT(1.f, 0.f, -pCamera->GetPosition());;
-    /*location = glGetUniformLocation(pShader->GetProgram(), "u_ViewMatrix");
-    glUniformMatrix4fv(location, 1, false, &viewMat.m11);*/
+    matrix viewMat;
+    viewMat.CreateLookAtView(vec3(pCamera->GetPosition(), -1.f), vec3(0.f, 1.f, 0.f), vec3(pCamera->GetPosition(), 0.f));
+
     SetupUniform(pShader, "u_WorldMatrix", worldMat);
     SetupUniform(pShader, "u_ViewMatrix", viewMat);
-
     SetupUniform( pShader, "u_ProjectionScale", pCamera->GetProjectionScale() );
+
+    // UV uniforms.
     SetupUniform( pShader, "u_UVScale", uvScale );
     SetupUniform( pShader, "u_UVOffset", uvOffset );
     
