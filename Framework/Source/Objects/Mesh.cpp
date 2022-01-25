@@ -65,9 +65,9 @@ void Mesh::Draw(Camera* pCamera, ShaderProgram* pShader, Texture* pTexture, vec2
 
     // Get the attribute variable’s location from the shader.
     // Describe the attributes in the VBO to OpenGL.
-    SetupAttribute(pShader, "a_Position", 2, GL_FLOAT, GL_FALSE, 24, 0);
-    SetupAttribute(pShader, "a_Color", 4, GL_UNSIGNED_BYTE, GL_TRUE, 24, 12);
-    SetupAttribute(pShader, "a_UVCoord", 2, GL_FLOAT, GL_FALSE, 24, 16);
+    SetupAttribute(pShader, "a_Position", 2, GL_FLOAT, GL_FALSE, sizeof(VertexFormat), offsetof(VertexFormat, pos));
+    SetupAttribute(pShader, "a_Color", 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(VertexFormat), offsetof(VertexFormat, color));
+    SetupAttribute(pShader, "a_UVCoord", 2, GL_FLOAT, GL_FALSE, sizeof(VertexFormat), offsetof(VertexFormat, uv));
 
     // Setup the uniforms.
     glUseProgram(pShader->GetProgram());
