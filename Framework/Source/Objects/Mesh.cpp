@@ -79,9 +79,12 @@ void Mesh::Draw(Camera* pCamera, ShaderProgram* pShader, Texture* pTexture, vec2
     matrix viewMat;
     viewMat.CreateLookAtView(vec3(pCamera->GetPosition(), -1.f), vec3(0.f, 1.f, 0.f), vec3(pCamera->GetPosition(), 0.f));
 
+    matrix projecMat;
+    projecMat.CreateOrtho(-5 ,5, -5, 5, -5, 5);
+
     SetupUniform(pShader, "u_WorldMatrix", worldMat);
     SetupUniform(pShader, "u_ViewMatrix", viewMat);
-    SetupUniform( pShader, "u_ProjectionScale", pCamera->GetProjectionScale() );
+    SetupUniform(pShader, "u_ProjecMatrix", projecMat);
 
     // UV uniforms.
     SetupUniform( pShader, "u_UVScale", uvScale );
