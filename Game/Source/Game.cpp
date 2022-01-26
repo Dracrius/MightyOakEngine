@@ -58,7 +58,11 @@ void Game::Init()
     // OpenGL settings.
     glPointSize( 10 );
     glEnable(GL_DEPTH_TEST);
-    glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
+    glEnable(GL_ALPHA_TEST);
+    glAlphaFunc(GL_GREATER, 0.99f);
+
+    /*glEnable(GL_BLEND);
+    glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );*/
 
     m_Meshes["Sprite"] = new fw::Mesh( GL_TRIANGLE_STRIP, g_SpriteVerts );
     m_Meshes["Cube"] = new fw::Mesh(GL_TRIANGLES, g_CubeVerts);
@@ -127,7 +131,7 @@ void Game::Draw()
     glClearColor( 0.0f, 0.0f, 0.2f, 1.0f );
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
-    //m_pTilemap->Draw( m_pCamera );
+    m_pTilemap->Draw( m_pCamera );
 
     for( auto it = m_Objects.begin(); it != m_Objects.end(); it++ )
     {
