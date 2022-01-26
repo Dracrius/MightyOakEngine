@@ -20,7 +20,7 @@ public:
 
     virtual void SetGravity(vec3 gravity) override;
     
-    virtual PhysicsBody* CreateBody(bool isDynamic, vec2 size, float density, vec3 pos) override;
+    virtual PhysicsBody* CreateBody(bool isDynamic, vec3 size, float density, vec3 pos) override;
 
     b2World* Getb2World() { return m_pWorld; }
 };

@@ -16,16 +16,16 @@ class PhysicsBody;
 class GameObject
 {
 public:
-    GameObject(GameCore* pGame, Mesh* pMesh, ShaderProgram* pShader, Texture* pTexture, vec2 pos);
+    GameObject(GameCore* pGame, Mesh* pMesh, ShaderProgram* pShader, Texture* pTexture, vec3 pos);
     virtual ~GameObject();
 
     virtual void Update(float deltaTime);
     virtual void Draw(Camera* pCamera);
 
-    void CreateBody(PhysicsWorld* pWorld, bool isDynamic, vec2 size, float density);
+    void CreateBody(PhysicsWorld* pWorld, bool isDynamic, vec3 size, float density);
 
     // Getters.
-    vec2 GetPosition() { return m_Position; }
+    vec3 GetPosition() { return m_Position; }
 
     // Setters.
     void SetTexture(Texture* pTexture) { m_pTexture = pTexture; }
@@ -40,7 +40,7 @@ protected:
     vec2 m_UVScale = vec2( 1, 1 );
     vec2 m_UVOffset = vec2( 0, 0 );
 
-    vec2 m_Position = vec2( 0, 0 );
+    vec3 m_Position = vec3( 0, 0, 0 );
 };
 
 } // namespace fw

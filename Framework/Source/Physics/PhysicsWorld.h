@@ -18,7 +18,7 @@ public:
 
     virtual void SetGravity(vec3 gravity) = 0;
 
-    virtual PhysicsBody* CreateBody(bool isDynamic, vec2 size, float density, vec3 pos) = 0;
+    virtual PhysicsBody* CreateBody(bool isDynamic, vec3 size, float density, vec3 pos) = 0;
 };
 
 } // namespace fw

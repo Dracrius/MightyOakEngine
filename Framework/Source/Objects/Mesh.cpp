@@ -58,14 +58,14 @@ void Mesh::SetupAttribute(ShaderProgram* pShader, char* name, int size, GLenum t
     }
 }
 
-void Mesh::Draw(Camera* pCamera, ShaderProgram* pShader, Texture* pTexture, vec2 scale, vec2 pos, vec2 uvScale, vec2 uvOffset, float time)
+void Mesh::Draw(Camera* pCamera, ShaderProgram* pShader, Texture* pTexture, vec3 scale, vec3 pos, vec2 uvScale, vec2 uvOffset, float time)
 {
     // Set this VBO to be the currently active one.
     glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
 
     // Get the attribute variable’s location from the shader.
     // Describe the attributes in the VBO to OpenGL.
-    SetupAttribute(pShader, "a_Position", 2, GL_FLOAT, GL_FALSE, sizeof(VertexFormat), offsetof(VertexFormat, pos));
+    SetupAttribute(pShader, "a_Position", 3, GL_FLOAT, GL_FALSE, sizeof(VertexFormat), offsetof(VertexFormat, pos));
     SetupAttribute(pShader, "a_Color", 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(VertexFormat), offsetof(VertexFormat, color));
     SetupAttribute(pShader, "a_UVCoord", 2, GL_FLOAT, GL_FALSE, sizeof(VertexFormat), offsetof(VertexFormat, uv));
 
@@ -73,12 +73,13 @@ void Mesh::Draw(Camera* pCamera, ShaderProgram* pShader, Texture* pTexture, vec2
     glUseProgram(pShader->GetProgram());
 
     // Matrix uniforms.
+    float rotTime = (float)GetSystemTimeSinceGameStart();
     matrix worldMat;
-    worldMat.CreateSRT(scale, 0.f, pos);
+    worldMat.CreateSRT(scale, vec3(0.f, rotTime*90, 0.f), pos);
     SetupUniform(pShader, "u_WorldMatrix", worldMat);
 
     matrix viewMat;
-    viewMat.CreateLookAtView(vec3(pCamera->GetPosition(), -20.f), vec3(0.f, 1.f, 0.f), vec3(pCamera->GetPosition(), 0.f));
+    viewMat.CreateLookAtView(vec3(pCamera->GetPosition().x, pCamera->GetPosition().y, -20.f), vec3(0.f, 1.f, 0.f), vec3(pCamera->GetPosition().x, pCamera->GetPosition().y, 0.f));
     SetupUniform(pShader, "u_ViewMatrix", viewMat);
 
     matrix projecMat;

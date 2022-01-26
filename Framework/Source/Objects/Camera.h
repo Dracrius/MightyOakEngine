@@ -7,7 +7,7 @@ namespace fw {
 class Camera : public GameObject
 {
 public:
-    Camera(GameCore* pGameCore, vec2 pos, vec2 projScale);
+    Camera(GameCore* pGameCore, vec3 pos, vec2 projScale);
     virtual ~Camera();
 
     virtual void Update(float deltaTime) override;

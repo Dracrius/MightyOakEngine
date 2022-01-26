@@ -1,6 +1,7 @@
 #include "Framework.h"
 
 #include "Game.h"
+#include "GameObjects/Cube.h"
 #include "GameObjects/Player.h"
 #include "GameObjects/PlayerController.h"
 #include "Meshes/Shapes.h"
@@ -60,8 +61,10 @@ void Game::Init()
     glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
 
     m_Meshes["Sprite"] = new fw::Mesh( GL_TRIANGLE_STRIP, g_SpriteVerts );
+    m_Meshes["Cube"] = new fw::Mesh(GL_TRIANGLES, g_CubeVerts);
     m_Shaders["Basic"] = new fw::ShaderProgram( "Data/Shaders/Basic.vert", "Data/Shaders/Basic.frag" );
     m_Textures["Sprites"] = new fw::Texture( "Data/Textures/Sprites.png" );
+    m_Textures["Cube"] = new fw::Texture("Data/Textures/CubeTexture.png");
     m_SpriteSheets["Sprites"] = new fw::SpriteSheet( "Data/Textures/Sprites.json", m_Textures["Sprites"] );
 
     m_pPhysicsWorld = new fw::PhysicsWorldBox2D();
@@ -79,10 +82,8 @@ void Game::Init()
     pPlayer->CreateBody(m_pPhysicsWorld, true, vec2(1.f, 1.f), 1.f);
     m_Objects.push_back( pPlayer );
 
-    Player* pPlatform = new Player(this, m_Meshes["Sprite"], m_Shaders["Basic"], m_Textures["Sprites"], vec2(7.0f, 4.0f), m_pPlayerController);
-    pPlatform->SetSpriteSheet(m_SpriteSheets["Sprites"]);
-    pPlatform->SetTilemap(m_pTilemap);
-    pPlatform->CreateBody(m_pPhysicsWorld, false, vec2(1.f, 1.f), 1.f);
+    Cube* pPlatform = new Cube(this, m_Meshes["Cube"], m_Shaders["Basic"], m_Textures["Cube"], vec2(7.0f, 4.0f));
+    pPlatform->CreateBody(m_pPhysicsWorld, false, vec3(1.f, 1.f, 1.f), 1.f);
     m_Objects.push_back(pPlatform);
 }
 

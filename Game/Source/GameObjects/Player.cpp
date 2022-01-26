@@ -20,7 +20,7 @@ void Player::Update(float deltaTime)
 
     float speed = 5.0f;
 
-    vec2 newPos = m_Position;
+    vec2 newPos = vec2(m_Position.x, m_Position.y);
 
     // Try moving up/down.
     {
@@ -44,7 +44,7 @@ void Player::Update(float deltaTime)
 
     // Try moving left/right.
     {
-        newPos = m_Position;
+        newPos = vec2(m_Position.x, m_Position.y);
         if( m_pPlayerController->IsHeld( PlayerController::Action::Left ) )
         {
             newPos.x -= speed * deltaTime;
