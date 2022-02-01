@@ -1,14 +1,17 @@
 #include "Framework.h"
 
 #include "GameObject.h"
+#include "Math/Matrix.h"
+#include "Material.h"
 
 namespace fw {
 
-GameObject::GameObject(GameCore* pGame, Mesh* pMesh, ShaderProgram* pShader, Texture* pTexture, vec3 pos)
-    : m_pMesh( pMesh )
-    , m_pShader( pShader )
-    , m_pTexture( pTexture )
+GameObject::GameObject(Scene* pScene, Mesh* pMesh, Material* pMaterial, vec3 pos, vec3 rot)
+    : m_pScene(pScene)
+    , m_pMesh( pMesh )
+    , m_pMaterial(pMaterial)
     , m_Position( pos )
+    , m_Rotation( rot )
 {
 }
 
@@ -30,9 +33,11 @@ void GameObject::Update(float deltaTime)
 
 void GameObject::Draw(Camera* pCamera)
 {
-    vec3 m_Scale = vec3( 1, 1, 1 );
+    float rotTime = (float)GetSystemTimeSinceGameStart();
+    matrix worldMat;
+    worldMat.CreateSRT(m_Scale, vec3(0.f, rotTime * 90, 0.f), m_Position);
 
-    m_pMesh->Draw( pCamera, m_pShader, m_pTexture, m_Scale, m_Position, m_UVScale, m_UVOffset, 0.0f );
+    m_pMesh->Draw( pCamera, m_pMaterial, worldMat, m_UVScale, m_UVOffset, 0.0f );
 }
 
 void GameObject::CreateBody(PhysicsWorld* pWorld, bool isDynamic, vec3 size, float density)

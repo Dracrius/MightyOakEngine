@@ -10,7 +10,7 @@ class Tilemap;
 class Player : public fw::GameObject
 {
 public:
-    Player(fw::GameCore* pGame, fw::Mesh* pMesh, fw::ShaderProgram* pShader, fw::Texture* pTexture, vec2 pos, PlayerController* pController);
+    Player(fw::Scene* pScene, fw::Mesh* pMesh, fw::Material* pMaterial, vec2 pos, PlayerController* pController);
     virtual ~Player();
 
     virtual void Update(float deltaTime) override;

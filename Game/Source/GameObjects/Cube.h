@@ -7,7 +7,7 @@
 class Cube : public fw::GameObject
 {
 public:
-    Cube(fw::GameCore* pGame, fw::Mesh* pMesh, fw::ShaderProgram* pShader, fw::Texture* pTexture, vec3 pos);
+    Cube(fw::Scene* pScene, fw::Mesh* pMesh, fw::Material* pMaterial, vec3 pos, vec3 rot);
     virtual ~Cube();
 
     virtual void Update(float deltaTime) override;

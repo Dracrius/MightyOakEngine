@@ -4,6 +4,7 @@
 #include "Mesh.h"
 #include "ShaderProgram.h"
 #include "Texture.h"
+#include "Material.h"
 #include "Utility/Utility.h"
 #include "Math/Matrix.h"
 
@@ -58,8 +59,11 @@ void Mesh::SetupAttribute(ShaderProgram* pShader, char* name, int size, GLenum t
     }
 }
 
-void Mesh::Draw(Camera* pCamera, ShaderProgram* pShader, Texture* pTexture, vec3 scale, vec3 pos, vec2 uvScale, vec2 uvOffset, float time)
+void Mesh::Draw(Camera* pCamera, Material* pMaterial, matrix worldMat, vec2 uvScale, vec2 uvOffset, float time)
 {
+    ShaderProgram* pShader = pMaterial->GetShader();
+    Texture* pTexture = pMaterial->GetTexture();
+
     // Set this VBO to be the currently active one.
     glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
 
@@ -73,19 +77,9 @@ void Mesh::Draw(Camera* pCamera, ShaderProgram* pShader, Texture* pTexture, vec3
     glUseProgram(pShader->GetProgram());
 
     // Matrix uniforms.
-    float rotTime = (float)GetSystemTimeSinceGameStart();
-    matrix worldMat;
-    worldMat.CreateSRT(scale, vec3(0.f, rotTime*90, 0.f), pos);
     SetupUniform(pShader, "u_WorldMatrix", worldMat);
-
-    matrix viewMat;
-    viewMat.CreateLookAtView(vec3(pCamera->GetPosition().x, pCamera->GetPosition().y, -20.f), vec3(0.f, 1.f, 0.f), vec3(pCamera->GetPosition().x, pCamera->GetPosition().y, 0.f));
-    SetupUniform(pShader, "u_ViewMatrix", viewMat);
-
-    matrix projecMat;
-    //projecMat.CreateOrtho(-5 ,5, -5, 5, -5, 5);
-    projecMat.CreatePerspectiveVFoV(45.f, 1.f, 0.01f, 100.f);
-    SetupUniform(pShader, "u_ProjecMatrix", projecMat);
+    SetupUniform(pShader, "u_ViewMatrix", pCamera->GetViewMatrix());
+    SetupUniform(pShader, "u_ProjecMatrix", pCamera->GetProjecMatrix());
 
     // UV uniforms.
     SetupUniform( pShader, "u_UVScale", uvScale );

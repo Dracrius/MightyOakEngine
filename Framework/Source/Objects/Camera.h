@@ -1,25 +1,29 @@
 #pragma once
 
 #include "GameObject.h"
+#include "Math/Matrix.h"
 
 namespace fw {
 
 class Camera : public GameObject
 {
 public:
-    Camera(GameCore* pGameCore, vec3 pos, vec2 projScale);
+    Camera(Scene* pScene, vec3 pos);
     virtual ~Camera();
 
     virtual void Update(float deltaTime) override;
 
     // Getters.
-    vec2 GetProjectionScale() { return m_ProjectionScale; }
+    matrix GetViewMatrix();
+    matrix GetProjecMatrix();
 
     // Setters.
     void SetObjectWeAreFollowing(GameObject* pObj) { m_pObjectWeAreFollowing = pObj; }
 
 protected:
-    vec2 m_ProjectionScale;
+    matrix m_ViewMatrix;
+    matrix m_ProjecMatrix;
+
     GameObject* m_pObjectWeAreFollowing = nullptr;
 };
 
