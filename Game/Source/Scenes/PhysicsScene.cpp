@@ -42,3 +42,11 @@ void PhysicsScene::OnEvent(fw::Event* pEvent)
 
     fw::Scene::OnEvent(pEvent);
 }
+
+void PhysicsScene::Update(float deltaTime)
+{
+    Scene::Update(deltaTime);
+
+    float time = (float)fw::GetSystemTimeSinceGameStart() * 10;
+    m_Objects[1]->SetRotation(vec3(0, time, 0));
+}

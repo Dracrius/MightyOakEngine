@@ -55,9 +55,14 @@ void Game::Init()
 
     // OpenGL settings.
     glPointSize( 10 );
-    glEnable(GL_DEPTH_TEST);
+    glClearColor(0.0f, 0.0f, 0.2f, 1.0f);
+
     glEnable(GL_BLEND);
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_CULL_FACE);
+
     glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
+    glFrontFace(GL_CW);
 
     m_Meshes["Sprite"] = new fw::Mesh( GL_TRIANGLE_STRIP, g_SpriteVerts );
     m_Meshes["Cube"] = new fw::Mesh(GL_TRIANGLES, g_CubeVerts);
@@ -100,7 +105,6 @@ void Game::Update(float deltaTime)
 
 void Game::Draw()
 {
-    glClearColor( 0.0f, 0.0f, 0.2f, 1.0f );
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
     m_pCurrentScene->Draw();
