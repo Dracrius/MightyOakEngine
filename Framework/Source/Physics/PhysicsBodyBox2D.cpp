@@ -18,4 +18,10 @@ vec3 PhysicsBodyBox2D::GetPosition()
     return vec3(pos.x, pos.y, 0.f);
 }
 
+vec3 PhysicsBodyBox2D::GetRotation()
+{
+    float rot = m_pBody->GetAngle();
+    return vec3(rot, 0.f, 0.f);
+}
+
 } // namespace fw

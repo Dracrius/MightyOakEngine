@@ -29,6 +29,8 @@ public:
 
     void SwapBuffers();
 
+    EventManager* GetEventManager() { return m_pEventManager; }
+
 protected:
     void ResizeWindow(int width, int height);
     bool CreateGLWindow(char* title, int width, int height, unsigned char colorBits, unsigned char alphaBits, unsigned char zBits, unsigned char stencilBits, unsigned char multisampleSize, bool fullscreenflag);

@@ -25,9 +25,11 @@ void GameObject::Update(float deltaTime)
     if (m_pPhysicsBody)
     {
         vec3 physicsPos = m_pPhysicsBody->GetPosition();
-        ImGui::Text("%0.2f, %0.2f", physicsPos.x, physicsPos.y, physicsPos.z);
+        //vec3 physicsRot = m_pPhysicsBody->GetRotation();
+        //ImGui::Text("%0.2f, %0.2f", physicsPos.x, physicsPos.y, physicsPos.z);
 
         m_Position.Set(physicsPos.x, physicsPos.y, physicsPos.z);
+        //m_Rotation.Set(physicsRot.x, physicsRot.y, physicsRot.z);
     }
 }
 

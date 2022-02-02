@@ -7,6 +7,8 @@
 #include "Meshes/Shapes.h"
 #include "GameEvents/GameEvents.h"
 #include "Scenes/PhysicsScene.h"
+#include "Scenes/CubeScene.h"
+#include "Scenes/WaterScene.h"
 
 Game::Game(fw::FWCore& fwCore)
     : m_FWCore( fwCore )
@@ -64,22 +66,29 @@ void Game::Init()
     glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
     glFrontFace(GL_CW);
 
-    m_Meshes["Sprite"] = new fw::Mesh( GL_TRIANGLE_STRIP, g_SpriteVerts );
+    // Setup Meshes
+    m_Meshes["Sprite"] = new fw::Mesh(GL_TRIANGLES, g_SpriteVerts, g_SpriteIndices);
     m_Meshes["Cube"] = new fw::Mesh(GL_TRIANGLES, g_CubeVerts);
+    m_Meshes["Plane"] = CreatePlane(vec2(10.f,10.f), vec2(10.f, 10.f));
 
+    // Setup Shaders
     m_Shaders["Basic"] = new fw::ShaderProgram( "Data/Shaders/Basic.vert", "Data/Shaders/Basic.frag" );
 
+    // Setup Textures
     m_Textures["Sprites"] = new fw::Texture( "Data/Textures/Sprites.png" );
     m_Textures["Cube"] = new fw::Texture("Data/Textures/CubeTexture.png");
 
+    // Setup Sprite Sheets
     m_SpriteSheets["Sprites"] = new fw::SpriteSheet( "Data/Textures/Sprites.json", m_Textures["Sprites"] );
 
+    // Setup Materials
     m_Materials["Sokoban"] = new fw::Material(m_Shaders["Basic"], m_Textures["Sprites"], fw::Color4f::Red());
     m_Materials["Cube"] = new fw::Material(m_Shaders["Basic"], m_Textures["Cube"], fw::Color4f::Blue());
 
-
-    //m_Scenes["Cube"] = new CubeScene();
+    // Setup Scenes
     m_Scenes["Physics"] = new PhysicsScene(this);
+    m_Scenes["Cube"] = new CubeScene(this);
+    m_Scenes["Water"] = new WaterScene(this);
 
     m_pCurrentScene = m_Scenes["Physics"];
 }
@@ -93,12 +102,42 @@ void Game::StartFrame(float deltaTime)
 
 void Game::OnEvent(fw::Event* pEvent)
 {
-    m_pCurrentScene->OnEvent(pEvent);
+    if (pEvent->GetEventType() == "SceneChangeEvent")
+    {
+        SceneChangeEvent* pSceneChange = static_cast<SceneChangeEvent*>(pEvent);
+        m_pCurrentScene = m_Scenes[pSceneChange->GetSceneName()];
+    }
+    else
+    {
+        m_pCurrentScene->OnEvent(pEvent);
+    }
 }
 
 void Game::Update(float deltaTime)
 {
-    ImGui::ShowDemoWindow();
+    //ImGui::ShowDemoWindow();
+
+    ImGui::Begin("Scenes");
+
+    if (ImGui::Button("Physics"))
+    {
+        SceneChangeEvent* pSceneChange = new SceneChangeEvent("Physics");
+        m_FWCore.GetEventManager()->AddEvent(pSceneChange);
+    }
+
+    if (ImGui::Button("Cube"))
+    {
+        SceneChangeEvent* pSceneChange = new SceneChangeEvent("Cube");
+        m_FWCore.GetEventManager()->AddEvent(pSceneChange);
+    }
+
+    if (ImGui::Button("Water"))
+    {
+        SceneChangeEvent* pSceneChange = new SceneChangeEvent("Water");
+        m_FWCore.GetEventManager()->AddEvent(pSceneChange);
+    }
+
+    ImGui::End();
  
     m_pCurrentScene->Update(deltaTime);
 }

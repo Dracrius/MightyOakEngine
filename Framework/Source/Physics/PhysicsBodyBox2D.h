@@ -13,6 +13,7 @@ public:
     virtual ~PhysicsBodyBox2D();
 
     virtual vec3 GetPosition() override;
+    virtual vec3 GetRotation() override;
 };
 
 } // namespace fw

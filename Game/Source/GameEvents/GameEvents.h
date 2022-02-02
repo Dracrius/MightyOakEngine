@@ -22,3 +22,17 @@ public:
 protected:
     fw::GameObject* m_pObject = nullptr;
 };
+
+class SceneChangeEvent : public fw::Event
+{
+protected:
+    std::string m_sceneName;
+public:
+    SceneChangeEvent(std::string sceneName) : m_sceneName(sceneName) {}
+
+    static const char* GetStaticEventType() { return "SceneChangeEvent"; }
+    virtual const char* GetEventType() override { return GetStaticEventType(); }
+
+    std::string GetSceneName() { return m_sceneName; }
+
+};
