@@ -37,14 +37,14 @@ SpriteSheet::~SpriteSheet()
 {
 }
 
-SpriteSheet::SpriteInfo SpriteSheet::GetSpriteByName(std::string name)
+SpriteSheet::SpriteInfo* SpriteSheet::GetSpriteByName(std::string name)
 {
 	if( m_Sprites.find( name ) != m_Sprites.end() )
 	{
-		return m_Sprites.at( name );
+		return &m_Sprites.at( name );
 	}
 
-	return { vec2(1,1), vec2(0,0) };
+	return nullptr;
 }
 
 } // namespace fw

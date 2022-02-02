@@ -13,8 +13,7 @@ WaterScene::WaterScene(Game* pGame) : fw::Scene(pGame)
 
     m_pCamera = new fw::Camera(this, vec3(vec2(1.5f * 10, 1.5f * 10) / 2) + vec3(0.f, 0.f, -20.f));
 
-    Cube* pPlane = new Cube(this, pGame->GetMesh("Plane"), pGame->GetMaterial("Cube"), vec2(1.5f * 10, 1.5f * 10) / 2, vec3());
-    pPlane->CreateBody(m_pPhysicsWorld, false, vec2(1.f, 1.f), 1.f);
+    Cube* pPlane = new Cube(this, pGame->GetMesh("Plane"), pGame->GetMaterial("Water"), vec3((1.5f * 10) / 2, (1.5f * 10) / 2, -5.f), vec3(-80.f, 0.f, 0.f));
     m_Objects.push_back(pPlane);
 }
 
@@ -34,7 +33,5 @@ void WaterScene::Update(float deltaTime)
 {
     Scene::Update(deltaTime);
 
-    float time = (float)fw::GetSystemTimeSinceGameStart() * 10;
-    //m_Objects[0]->SetRotation(vec3(0, time, 0));
-    //m_Objects[2]->SetRotation(vec3(0, time, 0));
+    //float time = (float)fw::GetSystemTimeSinceGameStart() * 10;
 }

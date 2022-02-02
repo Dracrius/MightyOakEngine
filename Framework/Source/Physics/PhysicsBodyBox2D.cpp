@@ -21,7 +21,52 @@ vec3 PhysicsBodyBox2D::GetPosition()
 vec3 PhysicsBodyBox2D::GetRotation()
 {
     float rot = m_pBody->GetAngle();
-    return vec3(rot, 0.f, 0.f);
+
+    rot = -(rot / PI) * 180.f;
+
+    return vec3(0.f, 0.f, rot);
+}
+
+vec3 PhysicsBodyBox2D::GetVelocity()
+{
+    b2Vec2 vel = m_pBody->GetLinearVelocity();
+
+    return vec3(vel.x, vel.y, 0.f);
+}
+
+void PhysicsBodyBox2D::ApplyForce(const vec3& force, bool wake)
+{
+    b2Vec2 twoDForce = b2Vec2(force.x, force.y);
+
+    m_pBody->ApplyForceToCenter(twoDForce, wake);
+}
+
+void PhysicsBodyBox2D::ApplyForce(const vec3& force, const vec3 point, bool wake)
+{
+    b2Vec2 twoDForce = b2Vec2(force.x, force.y);
+    b2Vec2 twoDPoint = b2Vec2(point.x, point.y);
+
+    m_pBody->ApplyForce(twoDForce, twoDPoint, wake);
+}
+
+void PhysicsBodyBox2D::ApplyLinearImpulse(const vec3& impulse, bool wake)
+{
+    b2Vec2 twoDImpulse = b2Vec2(impulse.x, impulse.y);
+
+    m_pBody->ApplyLinearImpulseToCenter(twoDImpulse, wake);
+}
+
+void PhysicsBodyBox2D::ApplyLinearImpulse(const vec3& impulse, const vec3 point, bool wake)
+{
+    b2Vec2 twoDImpulse = b2Vec2(impulse.x, impulse.y);
+    b2Vec2 twoDPoint = b2Vec2(point.x, point.y);
+
+    m_pBody->ApplyLinearImpulse(twoDImpulse, twoDPoint, wake);
+}
+
+void PhysicsBodyBox2D::ApplyTorque(const vec3& torque, bool wake)
+{
+    m_pBody->ApplyTorque(torque.z, wake);
 }
 
 } // namespace fw

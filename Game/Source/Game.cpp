@@ -77,13 +77,15 @@ void Game::Init()
     // Setup Textures
     m_Textures["Sprites"] = new fw::Texture( "Data/Textures/Sprites.png" );
     m_Textures["Cube"] = new fw::Texture("Data/Textures/CubeTexture.png");
+    m_Textures["Water"] = new fw::Texture("Data/Textures/Water.png");
 
     // Setup Sprite Sheets
     m_SpriteSheets["Sprites"] = new fw::SpriteSheet( "Data/Textures/Sprites.json", m_Textures["Sprites"] );
 
     // Setup Materials
     m_Materials["Sokoban"] = new fw::Material(m_Shaders["Basic"], m_Textures["Sprites"], fw::Color4f::Red());
-    m_Materials["Cube"] = new fw::Material(m_Shaders["Basic"], m_Textures["Cube"], fw::Color4f::Blue());
+    m_Materials["Cube"] = new fw::Material(m_Shaders["Basic"], m_Textures["Cube"], fw::Color4f::Green());
+    m_Materials["Water"] = new fw::Material(m_Shaders["Basic"], m_Textures["Water"], fw::Color4f::Blue());
 
     // Setup Scenes
     m_Scenes["Physics"] = new PhysicsScene(this);

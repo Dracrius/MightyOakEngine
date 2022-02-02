@@ -21,7 +21,7 @@ void PlayerController::OnEvent(fw::Event* pEvent)
         {
             if( pInputEvent->GetInputState() == fw::InputState::Pressed )
             {
-                if( pInputEvent->GetID() == 'W' || pInputEvent->GetID() == VK_UP )      { m_Flags |= Action::Up; }
+                if( pInputEvent->GetID() == 'W' || pInputEvent->GetID() == VK_UP || pInputEvent->GetID() == VK_SPACE )      { m_Flags |= Action::Up; }
                 if( pInputEvent->GetID() == 'S' || pInputEvent->GetID() == VK_DOWN )    { m_Flags |= Action::Down; }
                 if( pInputEvent->GetID() == 'A' || pInputEvent->GetID() == VK_LEFT )    { m_Flags |= Action::Left; }
                 if( pInputEvent->GetID() == 'D' || pInputEvent->GetID() == VK_RIGHT )   { m_Flags |= Action::Right; }
@@ -30,7 +30,7 @@ void PlayerController::OnEvent(fw::Event* pEvent)
 
             if( pInputEvent->GetInputState() == fw::InputState::Released )
             {
-                if( pInputEvent->GetID() == 'W' || pInputEvent->GetID() == VK_UP )      { m_Flags &= ~Action::Up; }
+                if( pInputEvent->GetID() == 'W' || pInputEvent->GetID() == VK_UP || pInputEvent->GetID() == VK_SPACE )      { m_Flags &= ~Action::Up; }
                 if( pInputEvent->GetID() == 'S' || pInputEvent->GetID() == VK_DOWN )    { m_Flags &= ~Action::Down; }
                 if( pInputEvent->GetID() == 'A' || pInputEvent->GetID() == VK_LEFT )    { m_Flags &= ~Action::Left; }
                 if( pInputEvent->GetID() == 'D' || pInputEvent->GetID() == VK_RIGHT )   { m_Flags &= ~Action::Right; }

@@ -25,11 +25,11 @@ void GameObject::Update(float deltaTime)
     if (m_pPhysicsBody)
     {
         vec3 physicsPos = m_pPhysicsBody->GetPosition();
-        //vec3 physicsRot = m_pPhysicsBody->GetRotation();
+        vec3 physicsRot = m_pPhysicsBody->GetRotation();
         //ImGui::Text("%0.2f, %0.2f", physicsPos.x, physicsPos.y, physicsPos.z);
 
         m_Position.Set(physicsPos.x, physicsPos.y, physicsPos.z);
-        //m_Rotation.Set(physicsRot.x, physicsRot.y, physicsRot.z);
+        m_Rotation.Set(physicsRot.x, physicsRot.y, physicsRot.z);
     }
 }
 
@@ -44,7 +44,7 @@ void GameObject::Draw(Camera* pCamera)
 
 void GameObject::CreateBody(PhysicsWorld* pWorld, bool isDynamic, vec3 size, float density)
 {
-    m_pPhysicsBody = pWorld->CreateBody(isDynamic, size, density, m_Position);
+    m_pPhysicsBody = pWorld->CreateBody(isDynamic, size, density, vec3(m_Position.x - (m_Scale.x / 2), m_Position.y - (m_Scale.y / 2), m_Position.z - (m_Scale.z / 2)));
 }
 
 } // namespace fw

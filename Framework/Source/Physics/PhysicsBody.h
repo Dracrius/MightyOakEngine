@@ -10,6 +10,15 @@ public:
     virtual ~PhysicsBody() = 0 {}
     virtual vec3 GetPosition() = 0;
     virtual vec3 GetRotation() = 0;
+    virtual vec3 GetVelocity() = 0;
+
+    virtual void ApplyForce(const vec3 &force, bool wake) = 0;
+    virtual void ApplyForce(const vec3 &force, const vec3 point, bool wake) = 0;
+
+    virtual void ApplyLinearImpulse(const vec3& impulse, bool wake) = 0;
+    virtual void ApplyLinearImpulse(const vec3 &impulse, const vec3 point, bool wake) = 0;
+
+    virtual void ApplyTorque(const vec3 &torque, bool wake) = 0;
 };
 
 } // namespace fw

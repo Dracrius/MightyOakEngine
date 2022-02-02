@@ -21,7 +21,7 @@ public:
 
     // Getters.
     Texture* GetTexture() { return m_pTexture; }
-    SpriteInfo GetSpriteByName(std::string name);    
+    SpriteInfo* GetSpriteByName(std::string name);    
 
 protected:
     fw::Texture* m_pTexture = nullptr;
