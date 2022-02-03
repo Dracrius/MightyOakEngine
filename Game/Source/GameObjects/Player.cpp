@@ -56,6 +56,8 @@ void Player::Update(float deltaTime)
     if( m_pPlayerController->WasPressed( PlayerController::Action::Teleport ) )
     {
         m_Position = vec2( rand()/(float)RAND_MAX * 15, rand()/(float)RAND_MAX * 15 );
+
+        m_pPhysicsBody->SetTransform(m_Position, vec3());
     }
 
     m_velocity = m_pPhysicsBody->GetVelocity();
@@ -67,18 +69,18 @@ void Player::Update(float deltaTime)
 
         if (m_velocity.x < 0.1f && m_velocity.x > -0.1f)
         {
-            m_UVScale = m_playerDirections.down[m_animFrame]->uvScale;
-            m_UVOffset = m_playerDirections.down[m_animFrame]->uvOffset;
+            m_pMeshComponent->SetUVScale(m_playerDirections.down[m_animFrame]->uvScale);
+            m_pMeshComponent->SetUVOffset(m_playerDirections.down[m_animFrame]->uvOffset);
         }
         else if (m_velocity.x > 0.1f)
         {
-            m_UVScale = m_playerDirections.right[m_animFrame]->uvScale;
-            m_UVOffset = m_playerDirections.right[m_animFrame]->uvOffset;
+            m_pMeshComponent->SetUVScale(m_playerDirections.right[m_animFrame]->uvScale);
+            m_pMeshComponent->SetUVOffset(m_playerDirections.right[m_animFrame]->uvOffset);
         }
         else if (m_velocity.x < -0.1f)
         {
-            m_UVScale = m_playerDirections.left[m_animFrame]->uvScale;
-            m_UVOffset = m_playerDirections.left[m_animFrame]->uvOffset;
+            m_pMeshComponent->SetUVScale(m_playerDirections.left[m_animFrame]->uvScale);
+            m_pMeshComponent->SetUVOffset(m_playerDirections.left[m_animFrame]->uvOffset);
         }
     }
 }
@@ -104,8 +106,8 @@ void Player::SetAnimations()
 
     m_playerDirections = spriteDirections(playerUp, playerDown, playerLeft, playerRight);
 
-    m_UVScale = m_playerDirections.down[m_animFrame]->uvScale;
-    m_UVOffset = m_playerDirections.down[m_animFrame]->uvOffset;
+    m_pMeshComponent->SetUVScale(m_playerDirections.down[m_animFrame]->uvScale);
+    m_pMeshComponent->SetUVOffset(m_playerDirections.down[m_animFrame]->uvOffset);
 }
 
 void Player::CycleAnimFrames(int numFrames)

@@ -24,10 +24,11 @@ void PhysicsWorldBox2D::SetGravity(vec3 gravity)
 	m_pWorld->SetGravity(b2Vec2(gravity.x, gravity.y));
 }
 
-PhysicsBody* PhysicsWorldBox2D::CreateBody(bool isDynamic, vec3 size, float density, vec3 pos)
+PhysicsBody* PhysicsWorldBox2D::CreateBody(bool isDynamic, vec3 size, float density, vec3 pos, vec3 rot)
 {
     b2BodyDef bodydef;
     bodydef.position = b2Vec2(pos.x, pos.y);
+    bodydef.angle = rot.z;
 
     if (isDynamic)
     {

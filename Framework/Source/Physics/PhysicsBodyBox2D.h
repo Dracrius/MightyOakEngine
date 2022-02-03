@@ -16,6 +16,10 @@ public:
     virtual vec3 GetRotation() override;
     virtual vec3 GetVelocity() override;
 
+    virtual void SetPosition(vec3 pos) override;
+    virtual void SetTransform(vec3 pos, vec3 rot) override;
+    virtual void SetVelocity(vec3 vel) override;
+
     virtual void ApplyForce(const vec3& force, bool wake) override;
     virtual void ApplyForce(const vec3& force, const vec3 point, bool wake) override;
 

@@ -6,6 +6,7 @@
 namespace fw {
 
 class Camera;
+class MeshComponent;
 class GameCore;
 class Mesh;
 class Material;
@@ -22,6 +23,7 @@ public:
     virtual void Update(float deltaTime);
     virtual void Draw(Camera* pCamera);
 
+    void CreateBody(PhysicsWorld* pWorld, bool isDynamic, float density);
     void CreateBody(PhysicsWorld* pWorld, bool isDynamic, vec3 size, float density);
 
     // Getters.
@@ -30,7 +32,7 @@ public:
     vec3 GetScale() { return m_Scale; }
 
     // Setters.
-    void SetMaterial(Material* pMaterial) { m_pMaterial = pMaterial; }
+    //void SetMaterial(Material* pMaterial) { m_pMaterial = pMaterial; }
 
     void SetPosition(vec3 pos) { m_Position = pos; }
     void SetRotation(vec3 rot) { m_Rotation = rot; }
@@ -38,14 +40,13 @@ public:
 
 protected:
     Scene* m_pScene = nullptr;
+
+    //Physics Comp
     PhysicsBody* m_pPhysicsBody = nullptr;
 
-    Mesh* m_pMesh = nullptr;
+    MeshComponent* m_pMeshComponent = nullptr;
 
-    Material* m_pMaterial = nullptr;
-    vec2 m_UVScale = vec2( 1, 1 );
-    vec2 m_UVOffset = vec2( 0, 0 );
-
+    //Transform Comp
     vec3 m_Position = vec3( 0, 0, 0 );
     vec3 m_Rotation = vec3(0, 0, 0);
     vec3 m_Scale = vec3(1, 1, 1);

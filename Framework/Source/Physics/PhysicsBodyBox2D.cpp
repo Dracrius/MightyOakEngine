@@ -34,6 +34,31 @@ vec3 PhysicsBodyBox2D::GetVelocity()
     return vec3(vel.x, vel.y, 0.f);
 }
 
+void PhysicsBodyBox2D::SetPosition(vec3 pos)
+{
+    float rot = m_pBody->GetAngle();
+    m_pBody->SetTransform(b2Vec2(pos.x, pos.y), rot);
+    m_pBody->SetAwake(true);
+    m_pBody->SetLinearVelocity(b2Vec2());
+    m_pBody->SetAngularVelocity(0.f);
+}
+
+void PhysicsBodyBox2D::SetTransform(vec3 pos, vec3 rot)
+{
+    rot = -(rot / PI) * 180.f;
+
+    m_pBody->SetTransform(b2Vec2(pos.x, pos.y), rot.z);
+    m_pBody->SetAwake(true);
+    m_pBody->SetLinearVelocity(b2Vec2());
+    m_pBody->SetAngularVelocity(0.f);
+}
+
+
+void PhysicsBodyBox2D::SetVelocity(vec3 vel)
+{
+    m_pBody->SetLinearVelocity(b2Vec2(vel.x, vel.y));
+}
+
 void PhysicsBodyBox2D::ApplyForce(const vec3& force, bool wake)
 {
     b2Vec2 twoDForce = b2Vec2(force.x, force.y);

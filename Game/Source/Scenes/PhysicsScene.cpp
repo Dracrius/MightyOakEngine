@@ -18,11 +18,11 @@ PhysicsScene::PhysicsScene(Game* pGame) : fw::Scene(pGame)
 
     Player* pPlayer = new Player(this, pGame->GetMesh("Sprite"), pGame->GetMaterial("Sokoban"), vec2(7.5f, 12.0f), m_pPlayerController);
     pPlayer->SetSpriteSheet(pGame->GetSpriteSheet("Sprites"));
-    pPlayer->CreateBody(m_pPhysicsWorld, true, vec2(1.f, 1.f), 1.f);
+    pPlayer->CreateBody(m_pPhysicsWorld, true, 1.f);
     m_Objects.push_back(pPlayer);
 
     Cube* pBox = new Cube(this, pGame->GetMesh("Cube"), pGame->GetMaterial("Cube"), vec2(1.5f * 10, 1.5f * 10) / 2, vec3());
-    pBox->CreateBody(m_pPhysicsWorld, false, vec3(2.f, 2.f, 2.f), 1.f);
+    pBox->CreateBody(m_pPhysicsWorld, false, vec3(2.0f, 2.0f, 2.0f), 1.f);
     m_Objects.push_back(pBox);
 }
 
@@ -47,7 +47,5 @@ void PhysicsScene::Update(float deltaTime)
 {
     Scene::Update(deltaTime);
 
-    float time = (float)fw::GetSystemTimeSinceGameStart() * 10;
-    //m_Objects[0]->SetRotation(vec3(0, time, 0));
-    //m_Objects[2]->SetRotation(vec3(0, time, 0));
+    //float time = (float)fw::GetSystemTimeSinceGameStart() * 10;
 }
