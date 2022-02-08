@@ -21,6 +21,9 @@ PhysicsScene::PhysicsScene(Game* pGame) : fw::Scene(pGame)
     pPlayer->CreateBody(m_pPhysicsWorld, true, 1.f);
     m_Objects.push_back(pPlayer);
 
+    m_pCamera->AttachTo(m_Objects.front());
+    m_pCamera->SetThirdPerson(vec3(0.f,0.f,-20.f));
+
     Cube* pBox = new Cube(this, pGame->GetMesh("Cube"), pGame->GetMaterial("Cube"), vec2(1.5f * 10, 1.5f * 10) / 2, vec3());
     pBox->CreateBody(m_pPhysicsWorld, false, vec3(2.0f, 2.0f, 2.0f), 1.f);
     m_Objects.push_back(pBox);

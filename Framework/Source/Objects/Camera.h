@@ -19,13 +19,15 @@ public:
     matrix GetProjecMatrix();
 
     // Setters.
+    void SetFPS() { m_offset = 0.f; }
+    void SetThirdPerson(vec3 offset) { m_offset = offset; }
+
     void AttachTo(GameObject* pObj) { m_pCameraOperator = pObj; }
+    void ClearAttachment() { m_pCameraOperator = nullptr; }
     void LockViewToPos(vec3 pos) { m_lookAtPos = pos; m_lockView = true; }
     void LockView() { m_lockView = true; }
     void UnlockView() { m_lockView = false; }
 
-    void SetFPS() { m_offset = 0.f; }
-    void SetThirdPerson(vec3 offset) { m_offset = offset; }
 
 
 protected:
