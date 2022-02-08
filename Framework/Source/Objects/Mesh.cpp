@@ -53,6 +53,12 @@ void Mesh::SetupUniform(ShaderProgram* pShader, char* name, vec2 value)
     glUniform2f( location, value.x, value.y );
 }
 
+void Mesh::SetupUniform(ShaderProgram* pShader, char* name, vec4 value)
+{
+    GLint location = glGetUniformLocation(pShader->GetProgram(), name);
+    glUniform4f(location, value.x, value.y, value.z, value.w);
+}
+
 void Mesh::SetupUniform(ShaderProgram* pShader, char* name, matrix matrix)
 {
     GLint location = glGetUniformLocation(pShader->GetProgram(), name);
@@ -98,6 +104,9 @@ void Mesh::Draw(Camera* pCamera, Material* pMaterial, matrix worldMat, vec2 uvSc
     
     // Misc uniforms.
     SetupUniform(pShader, "u_Time", (float)GetSystemTimeSinceGameStart());
+    //SetupUniform(pShader, "u_MaterialColor", vec4(15.f / 255, 103.f / 255, 227.f / 255, 1.f));
+
+    SetupUniform(pShader, "u_MaterialColor", vec4(pMaterial->GetColor().r, pMaterial->GetColor().g, pMaterial->GetColor().b, pMaterial->GetColor().a));
 
     // Setup textures.
     glActiveTexture( GL_TEXTURE0 );

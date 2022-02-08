@@ -74,9 +74,13 @@ fw::Mesh* CreatePlane(vec2 size, ivec2 vertRes)
     {
         for (int x = 0; x < vertRes.x; x++)
         {
-            vec3 pos = vec3((float(x) - ((vertRes.x / 2) - 0.5f)) * stepSize.x, (float(y) - ((vertRes.y / 2) - 0.5f)) * stepSize.y, 0);
+            vec3 pos = vec3((float(x) - ((vertRes.x / 2) - 0.5f)) * stepSize.x, 0, (float(y) - ((vertRes.y / 2) - 0.5f)) * stepSize.y);
 
-            verts.push_back({ pos,  255,255,255,255,  vec2(float(x) / float(vertRes.x - 1.f), float(y) / float(vertRes.y - 1.f)) });
+            vec2 uv = vec2(float(x) / float(vertRes.x - 1.f), float(y) / float(vertRes.y - 1.f));
+
+            uv = uv * size/2;
+
+            verts.push_back({ pos,  255,255,255,255,  uv });
         }
     }
 

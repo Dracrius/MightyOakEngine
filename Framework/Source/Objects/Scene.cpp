@@ -45,6 +45,8 @@ void Scene::Update(float deltaTime)
         fw::GameObject* pObject = *it;
         pObject->Update(deltaTime);
     }
+
+    m_pCamera->Update(deltaTime);
 }
 void Scene::Draw()
 {
