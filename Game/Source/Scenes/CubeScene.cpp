@@ -10,11 +10,13 @@ CubeScene::CubeScene(Game* pGame) : fw::Scene(pGame)
     m_pPhysicsWorld = new fw::PhysicsWorldBox2D();
     m_pPhysicsWorld->SetGravity(vec2(0.f, -9.8f));
 
-    m_pCamera = new fw::Camera(this, vec3(vec2(1.5f * 10, 1.5f * 10) / 2) + vec3(0.f, 0.f, -20.f));
+    vec3 centerOfScreen = vec2(1.5f * 10, 1.5f * 10) / 2;
+    vec3 cameraOffset = vec3(0.f, 0.f, -20.f);
 
-    Cube* pPlatform = new Cube(this, pGame->GetMesh("Cube"), pGame->GetMaterial("Cube"), vec2(1.5f * 10, 1.5f * 10) / 2, vec3());
-    //pPlatform->CreateBody(m_pPhysicsWorld, false, vec3(1.f, 1.f, 1.f), 1.f);
-    m_Objects.push_back(pPlatform);
+    m_pCamera = new fw::Camera(this, centerOfScreen + cameraOffset);
+
+    Cube* pCube = new Cube(this, pGame->GetMesh("Cube"), pGame->GetMaterial("Cube"), centerOfScreen, vec3());
+    m_Objects.push_back(pCube);
 }
 
 CubeScene::~CubeScene()

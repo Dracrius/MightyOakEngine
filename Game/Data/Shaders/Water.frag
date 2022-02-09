@@ -12,12 +12,12 @@ void main()
     vec4 shade = vec4(v_ObjectYPos,v_ObjectYPos,v_ObjectYPos,1);
 
     vec2 uvP = v_UVCoord;
-    uvP.x += sin(u_Time + v_UVCoord.y * 10.0) * 0.08;
-    uvP.y -= sin(u_Time + v_UVCoord.x * 15.0) * 0.12;
+    uvP.x += sin(u_Time + v_UVCoord.y * 10.0) * 0.04;
+    uvP.y -= sin(u_Time + v_UVCoord.x * 15.0) * 0.06;
 
     vec2 uvS = v_UVCoord;
-    uvS.x += sin(u_Time - v_UVCoord.y * 10.0) * 0.08;
-    uvS.y -= sin(u_Time - v_UVCoord.x * 15.0) * 0.12;
+    uvS.x += sin(u_Time - v_UVCoord.y * 10.0) * 0.04;
+    uvS.y -= sin(u_Time - v_UVCoord.x * 15.0) * 0.06;
 
     vec4 primaryWater = texture2D( u_Texture, uvP ) + u_MaterialColor;
 
