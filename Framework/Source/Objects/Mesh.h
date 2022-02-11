@@ -20,6 +20,7 @@ struct VertexFormat
 class Mesh
 {
 public:
+    Mesh();
     Mesh(GLenum primitiveType, const std::vector<VertexFormat>& verts);
     Mesh(GLenum primitiveType, const std::vector<VertexFormat>& verts, const std::vector<unsigned int>& indices);
     virtual ~Mesh();
@@ -29,7 +30,12 @@ public:
     void SetupUniform(ShaderProgram* pShader, char* name, vec4 value);
     void SetupUniform(ShaderProgram* pShader, char* name, matrix matrix);
     void SetupAttribute(ShaderProgram* pShader, char* name, int size, GLenum type, GLboolean normalize, int stride, int64_t startIndex);
-    void Draw(Camera* pCamera, Material* pMaterial, matrix worldMat, vec2 uvScale, vec2 uvOffset, float time);
+    void Draw(Camera* pCamera, Material* pMaterial, const matrix& worldMat, vec2 uvScale, vec2 uvOffset, float time);
+
+    void Rebuild(GLenum primitiveType, const std::vector<VertexFormat>& verts);
+    void Rebuild(GLenum primitiveType, const std::vector<VertexFormat>& verts, const std::vector<unsigned int>& indices);
+
+    void CreatePlane(vec2 size, ivec2 vertRes);
 
 protected:
     GLuint m_VBO = 0;

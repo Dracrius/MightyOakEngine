@@ -4,10 +4,10 @@
 #include "PlayerController.h"
 
 Player::Player(fw::Scene* pScene, fw::Mesh* pMesh, fw::Material* pMaterial, vec2 pos, PlayerController* pController)
-    : GameObject(pScene, pMesh, pMaterial, pos, vec3())
+    : GameObject(pScene, pos, vec3())
     , m_pPlayerController( pController )
 {
-
+    AddComponent(new fw::MeshComponent(pMesh, pMaterial));
 }
 
 Player::~Player()
@@ -66,6 +66,7 @@ void Player::Update(float deltaTime)
     {
         CycleAnimFrames(static_cast<int>(m_playerDirections.down.size()));
 
+        fw::MeshComponent* m_pMeshComponent = static_cast<fw::MeshComponent*>(m_pComponent[0]);
 
         if (m_velocity.x < 0.1f && m_velocity.x > -0.1f)
         {
@@ -105,6 +106,9 @@ void Player::SetAnimations()
     playerRight.push_back(m_pSpriteSheet->GetSpriteByName("player_19"));
 
     m_playerDirections = spriteDirections(playerUp, playerDown, playerLeft, playerRight);
+
+    fw::MeshComponent* m_pMeshComponent = static_cast<fw::MeshComponent*>(m_pComponent[0]);
+    //fw::MeshComponent* m_pMeshComponent = static_cast<fw::MeshComponent*>(GetComponent(fw::MeshComponent::GetStaticType());
 
     m_pMeshComponent->SetUVScale(m_playerDirections.down[m_animFrame]->uvScale);
     m_pMeshComponent->SetUVOffset(m_playerDirections.down[m_animFrame]->uvOffset);

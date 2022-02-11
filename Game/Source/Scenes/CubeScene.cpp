@@ -15,7 +15,8 @@ CubeScene::CubeScene(Game* pGame) : fw::Scene(pGame)
 
     m_pCamera = new fw::Camera(this, centerOfScreen + cameraOffset);
 
-    Cube* pCube = new Cube(this, pGame->GetMesh("Cube"), pGame->GetMaterial("Cube"), centerOfScreen, vec3());
+    fw::GameObject* pCube = new fw::GameObject(this, centerOfScreen, vec3());
+    pCube->AddComponent(new fw::MeshComponent(pGame->GetMesh("Cube"), pGame->GetMaterial("Cube")));
     m_Objects.push_back(pCube);
 }
 

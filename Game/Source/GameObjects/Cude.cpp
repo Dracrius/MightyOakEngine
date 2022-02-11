@@ -3,7 +3,7 @@
 #include "Cube.h"
 
 Cube::Cube(fw::Scene* pScene, fw::Mesh* pMesh, fw::Material* pMaterial, vec3 pos, vec3 rot)
-    : GameObject(pScene, pMesh, pMaterial, pos, rot )
+    : GameObject(pScene, pos, rot )
 {
 }
 

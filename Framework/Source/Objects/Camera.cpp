@@ -5,11 +5,11 @@
 
 namespace fw {
 
-Camera::Camera(Scene* pScene, vec3 pos) : GameObject( pScene, nullptr, nullptr, pos, vec3() )
+Camera::Camera(Scene* pScene, vec3 pos) : GameObject( pScene,  pos, vec3() )
 {
 }
 
-Camera::Camera(Scene* pScene, vec3 pos, vec3 lookAtPos) : GameObject(pScene, nullptr, nullptr, pos, vec3()), m_lookAtPos(lookAtPos), m_lockView(true)
+Camera::Camera(Scene* pScene, vec3 pos, vec3 lookAtPos) : GameObject(pScene, pos, vec3()), m_lookAtPos(lookAtPos), m_lockView(true)
 {
 }
 

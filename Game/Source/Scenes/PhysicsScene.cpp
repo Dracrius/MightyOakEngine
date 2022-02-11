@@ -27,7 +27,8 @@ PhysicsScene::PhysicsScene(Game* pGame) : fw::Scene(pGame)
     m_pCamera->AttachTo(m_Objects.front());
     m_pCamera->SetThirdPerson(cameraOffset);
 
-    Cube* pBox = new Cube(this, pGame->GetMesh("Cube"), pGame->GetMaterial("Cube"), centerOfScreen, vec3());
+    fw::GameObject* pBox = new fw::GameObject(this, centerOfScreen, vec3());
+    pBox->AddComponent(new fw::MeshComponent(pGame->GetMesh("Cube"), pGame->GetMaterial("Cube")));
     pBox->CreateBody(m_pPhysicsWorld, false, vec3(2.0f, 2.0f, 2.0f), 1.f);
     m_Objects.push_back(pBox);
 }

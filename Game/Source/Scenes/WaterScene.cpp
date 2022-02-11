@@ -19,7 +19,8 @@ WaterScene::WaterScene(Game* pGame) : fw::Scene(pGame)
     vec3 rot = vec3(0.f, 0.f, 0.f);
     vec3 pos = centerOfScreen + vec3(0.f,-1.f,0.f);
 
-    Cube* pPlane = new Cube(this, pGame->GetMesh("Plane"), pGame->GetMaterial("Water"), pos, rot);
+    fw::GameObject* pPlane = new fw::GameObject(this, pos, rot);
+    pPlane->AddComponent(new fw::MeshComponent(pGame->GetMesh("Plane"), pGame->GetMaterial("Water")));
     m_Objects.push_back(pPlane);
 }
 

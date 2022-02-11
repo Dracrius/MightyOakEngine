@@ -10,6 +10,10 @@
 
 namespace fw {
 
+Mesh::Mesh()
+{
+}
+
 Mesh::Mesh(GLenum primitiveType, const std::vector<VertexFormat>& verts)
     : m_PrimitiveType( primitiveType )
 {
@@ -39,6 +43,7 @@ Mesh::~Mesh()
 {
     // Release the memory.
     glDeleteBuffers( 1, &m_VBO );
+    glDeleteBuffers(1, &m_IBO);
 }
 
 void Mesh::SetupUniform(ShaderProgram* pShader, char* name, float value)
@@ -75,7 +80,7 @@ void Mesh::SetupAttribute(ShaderProgram* pShader, char* name, int size, GLenum t
     }
 }
 
-void Mesh::Draw(Camera* pCamera, Material* pMaterial, matrix worldMat, vec2 uvScale, vec2 uvOffset, float time)
+void Mesh::Draw(Camera* pCamera, Material* pMaterial, const matrix& worldMat, vec2 uvScale, vec2 uvOffset, float time)
 {
     ShaderProgram* pShader = pMaterial->GetShader();
     Texture* pTexture = pMaterial->GetTexture();
@@ -122,5 +127,87 @@ void Mesh::Draw(Camera* pCamera, Material* pMaterial, matrix worldMat, vec2 uvSc
         glDrawArrays( m_PrimitiveType, 0, m_NumVerts );
     }
 }
+
+void Mesh::Rebuild(GLenum primitiveType, const std::vector<VertexFormat>& verts)
+{
+    glDeleteBuffers(1, &m_VBO);
+    glDeleteBuffers(1, &m_IBO);
+
+    m_PrimitiveType = primitiveType;
+
+    m_NumVerts = (int)verts.size();
+
+    // Generate a buffer for our vertex attributes.
+    glGenBuffers(1, &m_VBO);
+
+    // Set this VBO to be the currently active one.
+    glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
+
+    // Copy our attribute data into the VBO.
+    glBufferData(GL_ARRAY_BUFFER, sizeof(VertexFormat) * m_NumVerts, &verts[0], GL_STATIC_DRAW);
+}
+
+void Mesh::Rebuild(GLenum primitiveType, const std::vector<VertexFormat>& verts, const std::vector<unsigned int>& indices)
+{
+    Rebuild(primitiveType, verts);
+
+    m_NumIndices = (int)indices.size();
+
+    // Generate a buffer for our indices.
+    glGenBuffers(1, &m_IBO);
+    glBindBuffer(GL_ARRAY_BUFFER, m_IBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(unsigned int) * m_NumIndices, &indices[0], GL_STATIC_DRAW);
+}
+
+void Mesh::CreatePlane(vec2 size, ivec2 vertRes)
+{
+    vec2 stepSize = vec2(size.x / (vertRes.x - 1), size.y / (vertRes.y - 1));
+
+    std::vector<fw::VertexFormat> verts;
+    std::vector<unsigned int> indices;
+
+    //Centered
+    for (int y = 0; y < vertRes.y; y++)
+    {
+        for (int x = 0; x < vertRes.x; x++)
+        {
+            vec3 pos = vec3((float(x) - ((vertRes.x / 2) - 0.5f)) * stepSize.x, 0, (float(y) - ((vertRes.y / 2) - 0.5f)) * stepSize.y);
+
+            vec2 uv = vec2(float(x) / float(vertRes.x - 1.f), float(y) / float(vertRes.y - 1.f));
+
+            uv = uv * size / 2;
+
+            verts.push_back({ pos,  255,255,255,255,  uv });
+        }
+    }
+
+    //Bottom Left
+    /*for (int y = 0; y < vertRes.y; y++)
+    {
+        for (int x = 0; x < vertRes.x; x++)
+        {
+            vec3 pos = vec3(x * stepSize.x, y * stepSize.y, 0);
+
+            verts.push_back({ pos,  255,255,255,255,  vec2(float(x) / float(vertRes.x - 1.f), float(y) / float(vertRes.y - 1.f)) });
+        }
+    }*/
+
+    for (int iy = 0; iy < (vertRes.y - 1); iy++)
+    {
+        for (int ix = 0; ix < (vertRes.x - 1); ix++)
+        {
+            indices.push_back((iy * vertRes.x) + ix);
+            indices.push_back((vertRes.x * (iy + 1)) + ix);
+            indices.push_back((vertRes.x * (iy + 1) + 1) + ix);
+            indices.push_back((iy * vertRes.x) + ix);
+            indices.push_back((vertRes.x * (iy + 1) + 1) + ix);
+            indices.push_back((iy * vertRes.x) + 1 + ix);
+        }
+    }
+
+    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+    Rebuild(GL_TRIANGLES, verts, indices);
+};
 
 } // namespace fw

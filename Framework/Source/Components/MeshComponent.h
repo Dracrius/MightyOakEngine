@@ -18,7 +18,7 @@ public:
     MeshComponent(Mesh* pMesh, Material* pMaterial);
     virtual ~MeshComponent();
 
-    void Draw(Camera* pCamera, matrix& worldMat);
+    void Draw(Camera* pCamera, const matrix& worldMat);
 
     static const char* GetStaticType() { return "MeshComponent"; }
     virtual const char* GetType() override { return GetStaticType(); }

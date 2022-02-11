@@ -7,6 +7,7 @@ class Event;
 class GameCore;
 class GameObject;
 class PhysicsWorld;
+class ComponentManager;
 
 class Scene
 {
@@ -14,10 +15,10 @@ protected:
     GameCore* m_pGame = nullptr;
 
     Camera* m_pCamera = nullptr;
-    PhysicsWorld* m_pPhysicsWorld;
+    PhysicsWorld* m_pPhysicsWorld = nullptr;
     std::vector<GameObject*> m_Objects;
 
-    //PlayerController* m_pPlayerController = nullptr;
+    ComponentManager* m_pComponentManager = nullptr;
 public:
     Scene(GameCore* pGameCore);
     virtual ~Scene();
@@ -28,6 +29,8 @@ public:
 
     virtual void Update(float deltaTime);
     virtual void Draw();
+
+    ComponentManager* GetComponentManager() { return m_pComponentManager; }
 };
 
 } // namespace fw

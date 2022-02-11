@@ -7,18 +7,31 @@
 
 namespace fw {
 
-GameObject::GameObject(Scene* pScene, Mesh* pMesh, Material* pMaterial, vec3 pos, vec3 rot)
+GameObject::GameObject(Scene* pScene, vec3 pos, vec3 rot)
     : m_pScene(pScene)
     , m_Position( pos )
     , m_Rotation( rot )
 {
-    m_pMeshComponent = new MeshComponent(pMesh, pMaterial);
+    //if (pMesh != nullptr)
+    //{
+    //    m_pMeshComponent = new MeshComponent(pMesh, pMaterial);
+    //    m_pMeshComponent->SetGameObject(this);
+    //    pScene->GetComponentManager()->AddComponent(m_pMeshComponent);
+    //}
 }
 
 GameObject::~GameObject()
 {
     delete m_pPhysicsBody;
-    delete m_pMeshComponent;
+
+    for (auto pComponent : m_pComponent)
+    {
+        if (pComponent != nullptr)
+        {
+            m_pScene->GetComponentManager()->RemoveComponent(pComponent);
+            delete pComponent;
+        }
+    }
 }
 
 void GameObject::Update(float deltaTime)
@@ -30,14 +43,6 @@ void GameObject::Update(float deltaTime)
     }
 }
 
-void GameObject::Draw(Camera* pCamera)
-{
-    matrix worldMat;
-    worldMat.CreateSRT(m_Scale, m_Rotation, m_Position);
-
-    m_pMeshComponent->Draw(pCamera, worldMat);
-}
-
 void GameObject::CreateBody(PhysicsWorld* pWorld, bool isDynamic, float density)
 {
     m_pPhysicsBody = pWorld->CreateBody(isDynamic, m_Scale, density, m_Position, m_Rotation);
@@ -46,6 +51,24 @@ void GameObject::CreateBody(PhysicsWorld* pWorld, bool isDynamic, float density)
 void GameObject::CreateBody(PhysicsWorld* pWorld, bool isDynamic, vec3 size, float density)
 {
     m_pPhysicsBody = pWorld->CreateBody(isDynamic, size, density, m_Position, m_Rotation);
+}
+
+void GameObject::AddComponent(Component* pComponent)
+{
+    pComponent->SetGameObject(this);
+    m_pScene->GetComponentManager()->AddComponent(pComponent);
+
+    m_pComponent.push_back(pComponent);
+}
+
+void GameObject::RemoveComponent(Component* pComponent)
+{
+}
+
+const matrix& GameObject::GetWorldTransform()
+{
+    m_WorldTransform.CreateSRT(m_Scale, m_Rotation, m_Position);
+    return m_WorldTransform;
 }
 
 } // namespace fw
