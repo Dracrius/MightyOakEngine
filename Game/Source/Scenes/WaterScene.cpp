@@ -39,4 +39,35 @@ void WaterScene::OnEvent(fw::Event* pEvent)
 void WaterScene::Update(float deltaTime)
 {
     Scene::Update(deltaTime);
+
+    ImGui::Begin("Plane Settings");
+
+    float lastSize[2] = { m_planeSize[0], m_planeSize[1] };
+    int lastVertRes[2] = { m_planeVertRes[0], m_planeVertRes[1] };
+
+    ImGui::SliderFloat2("Plane Size", m_planeSize, 1.f, 200.0f);
+    ImGui::SliderInt2("Vertex Resolution", m_planeVertRes, 2, 2000);
+
+    if (ImGui::Button("Wireframe"))
+    {
+        m_wireframeToggle = !m_wireframeToggle;
+
+        if (m_wireframeToggle)
+        {
+            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        }
+        else
+        {
+            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+        }
+    }
+
+    if (m_planeSize[0] != lastSize[0] || m_planeSize[1] != lastSize[1] || m_planeVertRes[0] != lastVertRes[0] || m_planeVertRes[1] != lastVertRes[1])
+    {
+        Game* pGame = static_cast<Game*>(m_pGame);
+
+        pGame->GetMesh("Plane")->CreatePlane(vec2(m_planeSize[0], m_planeSize[1]), vec2(m_planeVertRes[0], m_planeVertRes[1]));
+    }
+
+    ImGui::End();
 }

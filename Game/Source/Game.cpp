@@ -70,7 +70,7 @@ void Game::Init()
     m_Meshes["Sprite"] = new fw::Mesh(GL_TRIANGLES, g_SpriteVerts, g_SpriteIndices);
     m_Meshes["Cube"] = new fw::Mesh(GL_TRIANGLES, g_CubeVerts);
     m_Meshes["Plane"] = new fw::Mesh();
-    m_Meshes["Plane"]->CreatePlane(vec2(100.f, 100.f), vec2(1000.f, 1000.f));
+    m_Meshes["Plane"]->CreatePlane(vec2(100.f, 100.f), ivec2(1000, 1000));
 
     // Setup Shaders
     m_Shaders["Basic"] = new fw::ShaderProgram( "Data/Shaders/Basic.vert", "Data/Shaders/Basic.frag" );
