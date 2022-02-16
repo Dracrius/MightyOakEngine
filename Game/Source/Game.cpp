@@ -58,7 +58,7 @@ void Game::Init()
 
     // OpenGL settings.
     glPointSize( 10 );
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    //glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
     glEnable(GL_BLEND);
     glEnable(GL_DEPTH_TEST);
@@ -104,7 +104,7 @@ void Game::Init()
     m_Scenes["Water"] = new WaterScene(this);
     m_Scenes["Obj"] = new ObjScene(this);
 
-    m_pCurrentScene = m_Scenes["Obj"];
+    SetCurrentScene("Obj");
 }
 
 void Game::StartFrame(float deltaTime)
@@ -119,16 +119,7 @@ void Game::OnEvent(fw::Event* pEvent)
     if (pEvent->GetEventType() == "SceneChangeEvent")
     {
         SceneChangeEvent* pSceneChange = static_cast<SceneChangeEvent*>(pEvent);
-        m_pCurrentScene = m_Scenes[pSceneChange->GetSceneName()];
-
-        if (pSceneChange->GetSceneName() == "Obj")
-        {
-            glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-        }
-        else
-        {
-            glClearColor(0.0f, 0.0f, 0.2f, 1.0f);
-        }
+        SetCurrentScene(pSceneChange->GetSceneName());
     }
     else
     {
@@ -136,37 +127,163 @@ void Game::OnEvent(fw::Event* pEvent)
     }
 }
 
+static void HelpMarker(const char* desc)
+{
+	ImGui::TextDisabled("(?)");
+	if (ImGui::IsItemHovered())
+	{
+		ImGui::BeginTooltip();
+		ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
+		ImGui::TextUnformatted(desc);
+		ImGui::PopTextWrapPos();
+		ImGui::EndTooltip();
+	}
+}
+
 void Game::Update(float deltaTime)
 {
-    //ImGui::ShowDemoWindow();
+	if (m_showBGColorSelect)
+	{
+		ImGui::SetNextWindowSize(ImVec2(410, 300), ImGuiCond_Always);
+		if (!ImGui::Begin("Background Color", &m_showBGColorSelect))
+		{
+			ImGui::End();
+			return;
+		}
 
-    ImGui::Begin("Scenes");
+		static bool alpha_preview = false;
+		static bool alpha_half_preview = false;
+		static bool drag_and_drop = true;
+		static bool options_menu = true;
+		static bool hdr = false;
+		ImGuiColorEditFlags misc_flags = (hdr ? ImGuiColorEditFlags_HDR : 0) | (drag_and_drop ? 0 : ImGuiColorEditFlags_NoDragDrop) | (alpha_half_preview ? ImGuiColorEditFlags_AlphaPreviewHalf : (alpha_preview ? ImGuiColorEditFlags_AlphaPreview : 0)) | (options_menu ? 0 : ImGuiColorEditFlags_NoOptions);
 
-    if (ImGui::Button("Physics"))
-    {
-        SceneChangeEvent* pSceneChange = new SceneChangeEvent("Physics");
-        m_FWCore.GetEventManager()->AddEvent(pSceneChange);
-    }
 
-    if (ImGui::Button("Cube"))
-    {
-        SceneChangeEvent* pSceneChange = new SceneChangeEvent("Cube");
-        m_FWCore.GetEventManager()->AddEvent(pSceneChange);
-    }
+		static bool saved_palette_init = true;
+		static fw::Color4f saved_palette[32] = {};
+		if (saved_palette_init)
+		{
+			for (int n = 0; n < IM_ARRAYSIZE(saved_palette); n++)
+			{
+				ImGui::ColorConvertHSVtoRGB(n / 31.0f, 0.8f, 0.8f,
+					saved_palette[n].r, saved_palette[n].g, saved_palette[n].b);
+				saved_palette[n].a = 1.0f; // Alpha
+			}
+			saved_palette_init = false;
+		}
 
-    if (ImGui::Button("Water"))
-    {
-        SceneChangeEvent* pSceneChange = new SceneChangeEvent("Water");
-        m_FWCore.GetEventManager()->AddEvent(pSceneChange);
-    }
+		static fw::Color4f backup_color = m_backgroundColor;
 
-    if (ImGui::Button("Obj"))
-    {
-        SceneChangeEvent* pSceneChange = new SceneChangeEvent("Obj");
-        m_FWCore.GetEventManager()->AddEvent(pSceneChange);
-    }
+		ImGui::PushItemWidth(200.f);
+		ImGui::ColorPicker4("##picker", (float*)&m_backgroundColor, misc_flags | ImGuiColorEditFlags_NoSidePreview | ImGuiColorEditFlags_NoSmallPreview);
+		ImGui::SameLine();
 
-    ImGui::End();
+		ImGui::BeginGroup(); // Lock X position
+		ImGui::Text("Current");
+		ImGui::ColorButton("##current", ImVec4(m_backgroundColor.r, m_backgroundColor.g, m_backgroundColor.b, m_backgroundColor.a), ImGuiColorEditFlags_NoPicker | ImGuiColorEditFlags_AlphaPreviewHalf, ImVec2(60, 40));
+		ImGui::Text("Previous");
+		if (ImGui::ColorButton("##previous", ImVec4(backup_color.r, backup_color.g, backup_color.b, backup_color.a), ImGuiColorEditFlags_NoPicker | ImGuiColorEditFlags_AlphaPreviewHalf, ImVec2(60, 40)))
+			m_backgroundColor = backup_color;
+		ImGui::Separator();
+		ImGui::Text("Palette");
+		for (int n = 0; n < IM_ARRAYSIZE(saved_palette); n++)
+		{
+			ImGui::PushID(n);
+			if ((n % 8) != 0)
+				ImGui::SameLine(0.0f, ImGui::GetStyle().ItemSpacing.y);
+
+			ImGuiColorEditFlags palette_button_flags = ImGuiColorEditFlags_NoAlpha | ImGuiColorEditFlags_NoPicker | ImGuiColorEditFlags_NoTooltip;
+			if (ImGui::ColorButton("##palette", ImVec4(saved_palette[n].r, saved_palette[n].g, saved_palette[n].b, saved_palette[n].a), palette_button_flags, ImVec2(20, 20)))
+				m_backgroundColor = fw::Color4f(saved_palette[n].r, saved_palette[n].g, saved_palette[n].b, m_backgroundColor.a); // Preserve alpha!
+
+			// Allow user to drop colors into each palette entry. Note that ColorButton() is already a
+			// drag source by default, unless specifying the ImGuiColorEditFlags_NoDragDrop flag.
+			if (ImGui::BeginDragDropTarget())
+			{
+				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(IMGUI_PAYLOAD_TYPE_COLOR_3F))
+					memcpy((float*)&saved_palette[n], payload->Data, sizeof(float) * 3);
+				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(IMGUI_PAYLOAD_TYPE_COLOR_4F))
+					memcpy((float*)&saved_palette[n], payload->Data, sizeof(float) * 4);
+				ImGui::EndDragDropTarget();
+			}
+
+			ImGui::PopID();
+		}
+		ImGui::EndGroup();
+		HelpMarker( "This Window allows you to override the default Background Color.\n");
+
+		if (m_backgroundColor.r != 0.0f && m_backgroundColor.g != 0.0f && m_backgroundColor.b != 0.0f)
+		{
+			m_backupColor = m_backgroundColor;
+		}
+
+		glClearColor(m_backgroundColor.r, m_backgroundColor.g, m_backgroundColor.b, m_backgroundColor.a);
+
+		ImGui::End();
+	}
+
+	if (m_showDemo)
+	{
+		ImGui::ShowDemoWindow();
+	}
+
+	if (ImGui::BeginMainMenuBar())
+	{
+		if (ImGui::BeginMenu("File"))
+		{
+			if (ImGui::BeginMenu("Load Scene"))
+			{
+				if (ImGui::MenuItem("Cube", "Ctrl+C"))
+				{
+					SceneChangeEvent* pSceneChange = new SceneChangeEvent("Cube");
+					m_FWCore.GetEventManager()->AddEvent(pSceneChange);
+				}
+
+				if (ImGui::MenuItem("Obj File Loader", "Ctrl+L"))
+				{
+					SceneChangeEvent* pSceneChange = new SceneChangeEvent("Obj");
+					m_FWCore.GetEventManager()->AddEvent(pSceneChange);
+				}
+
+				if (ImGui::MenuItem("Physics", "Ctrl+P"))
+				{
+					SceneChangeEvent* pSceneChange = new SceneChangeEvent("Physics");
+					m_FWCore.GetEventManager()->AddEvent(pSceneChange);
+				}
+
+				if (ImGui::MenuItem("Water", "Ctrl+W"))
+				{
+					SceneChangeEvent* pSceneChange = new SceneChangeEvent("Water");
+					m_FWCore.GetEventManager()->AddEvent(pSceneChange);
+				}
+
+				ImGui::EndMenu();
+			}
+
+			ImGui::Separator();
+			if (ImGui::BeginMenu("Options"))
+			{
+				ImGui::MenuItem("Show ImGui Demo", "", &m_showDemo);
+				ImGui::Checkbox("Wireframe", &m_wireframeToggle);
+
+				if (m_wireframeToggle)
+				{
+					glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+				}
+				else
+				{
+					glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+				}
+
+				ImGui::MenuItem("Change Background Color", "Ctrl+B", &m_showBGColorSelect);
+				ImGui::EndMenu();
+			}
+			if (ImGui::MenuItem("Quit", "Alt+F4")) { m_FWCore.Shutdown(); }
+			ImGui::EndMenu();
+		}
+		ImGui::EndMainMenuBar();
+	}
+
  
     m_pCurrentScene->Update(deltaTime);
 }
@@ -178,4 +295,38 @@ void Game::Draw()
     m_pCurrentScene->Draw();
 
     m_pImGuiManager->EndFrame();
+}
+
+void Game::SetCurrentScene(std::string scene)
+{
+	m_pCurrentScene = m_Scenes[scene];
+
+	if (scene == "Obj")
+	{
+		if (m_backupColor.r  == 0.0f && m_backupColor.g == 0.0f && m_backupColor.b == 0.2f)
+		{
+			m_backgroundColor = fw::Color4f(0.0f, 0.0f, 0.0f, 1.0f);
+		}
+	}
+	else
+	{
+		m_backgroundColor = m_backupColor;
+	}
+		glClearColor(m_backgroundColor.r, m_backgroundColor.g, m_backgroundColor.b, m_backgroundColor.a);
+}
+
+void Game::ResetBackgroundColor(bool toBlack)
+{
+	m_backupColor = fw::Color4f(0.0f, 0.0f, 0.2f, 1.0f);
+
+	if (toBlack)
+	{
+		m_backgroundColor = fw::Color4f(0.0f, 0.0f, 0.0f, 1.0f);
+	}
+	else
+	{
+		m_backgroundColor = m_backupColor;
+	}
+
+	glClearColor(m_backgroundColor.r, m_backgroundColor.g, m_backgroundColor.b, m_backgroundColor.a);
 }

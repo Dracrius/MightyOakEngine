@@ -29,6 +29,7 @@ public:
 
     void AddComponent(Component* pComponent);
     void RemoveComponent(Component* pComponent);
+	Component* GetComponent(const char* component);
 
     // Getters.
     const matrix& GetWorldTransform();
@@ -50,7 +51,7 @@ protected:
     PhysicsBody* m_pPhysicsBody = nullptr;
 
     //MeshComponent* m_pMeshComponent = nullptr;
-    std::vector<Component*> m_pComponent;
+    std::vector<Component*> m_pComponents;
 
     //Transform Comp
     matrix m_WorldTransform;

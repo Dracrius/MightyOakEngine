@@ -26,6 +26,8 @@ public:
     void SetUVScale(vec2 uvScale) { m_UVScale = uvScale; }
     void SetUVOffset(vec2 uvOffset) { m_UVOffset = uvOffset; }
 
+	void SetMaterial(Material* pMaterial) { m_pMaterial = pMaterial;}
+
     vec2 GetUVScale() { return m_UVScale; }
     vec2 GetUVOffset() { return m_UVOffset; }
 

@@ -36,6 +36,65 @@ void CubeScene::Update(float deltaTime)
 {
     Scene::Update(deltaTime);
 
-    float time = (float)fw::GetSystemTimeSinceGameStart() * 10;
-    m_Objects[0]->SetRotation(vec3(time, time, time));
+	vec3 centerOfScreen = vec2(1.5f * 10, 1.5f * 10) / 2;
+
+	vec3 rot = m_Objects[0]->GetRotation();
+	float offset = 0.f;
+
+	Game* pGame = static_cast<Game*>(m_pGame);
+
+	m_openRot[0] = m_Objects[0]->GetRotation().x;
+	m_openRot[1] = m_Objects[0]->GetRotation().y;
+	m_openRot[2] = m_Objects[0]->GetRotation().z;
+
+	if (m_showSlider)
+	{
+		ImGui::SetNextWindowSize(ImVec2(180, 60), ImGuiCond_Always);
+		if (!ImGui::Begin("Rotation Slider", &m_showSlider))
+		{
+			ImGui::End();
+			return;
+		}
+
+		ImGui::SliderFloat3("Angle", m_openRot, 0.f, 359.9f);
+
+		ImGui::End();
+	}
+
+	if (ImGui::BeginMainMenuBar())
+	{
+		if (ImGui::BeginMenu("File"))
+		{
+			if (ImGui::BeginMenu("Options"))
+			{
+				if (ImGui::MenuItem("Reset Background Color", "Ctrl+R"))
+				{
+					Game* pGame = static_cast<Game*>(m_pGame);
+
+					pGame->ResetBackgroundColor(false);
+				}
+				ImGui::EndMenu();
+			}
+			ImGui::EndMenu();
+		}
+		if (ImGui::BeginMenu("Settings"))
+		{
+			if (ImGui::MenuItem("Auto Rotation", "", &m_autoRotate)) {}
+			ImGui::InputInt("Speed", &m_rotationSpeed, 1, 5);
+
+			ImGui::MenuItem("Show Rotation Slider", "", &m_showSlider);
+
+			ImGui::EndMenu();
+		}
+		ImGui::MenuItem("Cube Scene", NULL, false, false);
+		
+		ImGui::EndMainMenuBar();
+	}
+
+	if (m_autoRotate)
+	{
+		offset = m_rotationSpeed * deltaTime;
+	}
+
+    m_Objects[0]->SetRotation(vec3(m_openRot[0] + offset, m_openRot[1] + offset, m_openRot[2] + offset));
 }

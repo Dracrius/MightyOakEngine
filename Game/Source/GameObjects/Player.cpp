@@ -66,7 +66,7 @@ void Player::Update(float deltaTime)
     {
         CycleAnimFrames(static_cast<int>(m_playerDirections.down.size()));
 
-        fw::MeshComponent* m_pMeshComponent = static_cast<fw::MeshComponent*>(m_pComponent[0]);
+        fw::MeshComponent* m_pMeshComponent = static_cast<fw::MeshComponent*>(m_pComponents[0]);
 
         if (m_velocity.x < 0.1f && m_velocity.x > -0.1f)
         {
@@ -107,7 +107,7 @@ void Player::SetAnimations()
 
     m_playerDirections = spriteDirections(playerUp, playerDown, playerLeft, playerRight);
 
-    fw::MeshComponent* m_pMeshComponent = static_cast<fw::MeshComponent*>(m_pComponent[0]);
+    fw::MeshComponent* m_pMeshComponent = static_cast<fw::MeshComponent*>(m_pComponents[0]);
     //fw::MeshComponent* m_pMeshComponent = static_cast<fw::MeshComponent*>(GetComponent(fw::MeshComponent::GetStaticType());
 
     m_pMeshComponent->SetUVScale(m_playerDirections.down[m_animFrame]->uvScale);

@@ -36,3 +36,17 @@ public:
     std::string GetSceneName() { return m_sceneName; }
 
 };
+
+class OpenFileEvent : public fw::Event
+{
+protected:
+	char*  m_filename;
+public:
+	OpenFileEvent(char* filename) : m_filename(filename) {}
+
+	static const char* GetStaticEventType() { return "OpenFileEvent"; }
+	virtual const char* GetEventType() override { return GetStaticEventType(); }
+
+	char* GetFilename() { return m_filename; }
+
+};

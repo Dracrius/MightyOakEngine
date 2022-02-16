@@ -53,4 +53,34 @@ void PhysicsScene::OnEvent(fw::Event* pEvent)
 void PhysicsScene::Update(float deltaTime)
 {
     Scene::Update(deltaTime);
+
+	if (ImGui::BeginMainMenuBar())
+	{
+		if (ImGui::BeginMenu("File"))
+		{
+			if (ImGui::BeginMenu("Options"))
+			{
+				if (ImGui::MenuItem("Reset Background Color", "Ctrl+R"))
+				{
+					Game* pGame = static_cast<Game*>(m_pGame);
+
+					pGame->ResetBackgroundColor(false);
+				}
+				ImGui::EndMenu();
+			}
+			ImGui::EndMenu();
+		}
+		if (ImGui::BeginMenu("Controls"))
+		{
+			ImGui::Text("Left = <- or A");
+			ImGui::Text("Right = -> or D");
+			ImGui::Text("Jump = Up or Space");
+			ImGui::Text("Teleport = Z");
+
+			ImGui::EndMenu();
+		}
+		ImGui::MenuItem("Physics Scene", NULL, false, false);
+
+		ImGui::EndMainMenuBar();
+	}
 }

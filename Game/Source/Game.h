@@ -18,6 +18,9 @@ public:
     virtual void Update(float deltaTime) override;
     virtual void Draw() override;
 
+	virtual void SetCurrentScene(std::string scene);
+	virtual void ResetBackgroundColor(bool toBlack);
+
     // Getters.
     fw::Mesh* GetMesh(std::string name) { return m_Meshes[name]; }
     fw::ShaderProgram* GetShader(std::string name) { return m_Shaders[name]; }
@@ -38,4 +41,10 @@ protected:
     std::map<std::string, fw::Scene*> m_Scenes;
 
     fw::Scene* m_pCurrentScene = nullptr;
+
+	bool m_showDemo = false;
+	bool m_showBGColorSelect = false;
+	bool m_wireframeToggle = false;
+	fw::Color4f m_backgroundColor = fw::Color4f(0.0f, 0.0f, 0.0f, 1.0f);
+	fw::Color4f m_backupColor = fw::Color4f(0.0f, 0.0f, 0.2f, 1.0f);
 };

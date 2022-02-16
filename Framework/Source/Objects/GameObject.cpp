@@ -24,7 +24,7 @@ GameObject::~GameObject()
 {
     delete m_pPhysicsBody;
 
-    for (auto pComponent : m_pComponent)
+    for (auto pComponent : m_pComponents)
     {
         if (pComponent != nullptr)
         {
@@ -58,11 +58,23 @@ void GameObject::AddComponent(Component* pComponent)
     pComponent->SetGameObject(this);
     m_pScene->GetComponentManager()->AddComponent(pComponent);
 
-    m_pComponent.push_back(pComponent);
+    m_pComponents.push_back(pComponent);
 }
 
 void GameObject::RemoveComponent(Component* pComponent)
 {
+}
+
+Component* GameObject::GetComponent(const char* component)
+{
+	for (auto pComponent : m_pComponents)
+	{
+		if (pComponent->GetType() == component)
+		{
+			return pComponent;
+		}
+	}
+    return nullptr;
 }
 
 const matrix& GameObject::GetWorldTransform()

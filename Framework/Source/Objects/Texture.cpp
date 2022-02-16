@@ -51,29 +51,34 @@ Texture::Texture()
 
 Texture::Texture(const char* filename)
 {
-    int width;
-    int height;
-    int channels;
-    stbi_set_flip_vertically_on_load( true );
-    unsigned char* pixels = stbi_load( filename, &width, &height, &channels, 4 );
-    assert( pixels != nullptr );
-
-    glGenTextures( 1, &m_TextureID );
-
-    glActiveTexture( GL_TEXTURE0 );
-    glBindTexture( GL_TEXTURE_2D, m_TextureID );
-
-    glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels );
-
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
-
-    stbi_image_free( pixels );
+	SetTexture(filename);
 }
 
 Texture::~Texture()
 {
     glDeleteTextures( 1, &m_TextureID );
+}
+
+void Texture::SetTexture(const char* filename)
+{
+	int width;
+	int height;
+	int channels;
+	stbi_set_flip_vertically_on_load(true);
+	unsigned char* pixels = stbi_load(filename, &width, &height, &channels, 4);
+	assert(pixels != nullptr);
+
+	glGenTextures(1, &m_TextureID);
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, m_TextureID);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+	stbi_image_free(pixels);
 }
 
 } // namespace fw
