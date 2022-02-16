@@ -58,7 +58,7 @@ void Game::Init()
 
     // OpenGL settings.
     glPointSize( 10 );
-    glClearColor(0.0f, 0.0f, 0.2f, 1.0f);
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
     glEnable(GL_BLEND);
     glEnable(GL_DEPTH_TEST);
@@ -83,8 +83,9 @@ void Game::Init()
     // Setup Textures
     m_Textures["Sprites"] = new fw::Texture( "Data/Textures/Sprites.png" );
     m_Textures["Cube"] = new fw::Texture("Data/Textures/CubeTexture.png");
-    m_Textures["Water"] = new fw::Texture("Data/Textures/WaterBW.png");
+    m_Textures["Water"] = new fw::Texture("Data/Textures/WaterTile.png");
     m_Textures["Arcade_Cabinet"] = new fw::Texture("Data/Textures/Arcade_Cabinet.png");
+    m_Textures["Arcade_Floor"] = new fw::Texture("Data/Textures/Arcade_Cabinet_Floor_Low_Light.png");
 
     // Setup Sprite Sheets
     m_SpriteSheets["Sprites"] = new fw::SpriteSheet( "Data/Textures/Sprites.json", m_Textures["Sprites"] );
@@ -95,6 +96,7 @@ void Game::Init()
     m_Materials["Water"] = new fw::Material(m_Shaders["Water"], m_Textures["Water"], fw::Color4f(15.f / 255, 103.f / 255, 227.f / 255, 1.f));
     m_Materials["SolidColor"] = new fw::Material(m_Shaders["SolidColor"], fw::Color4f(128.f / 255, 128.f / 255, 128.f / 255, 1.f));
     m_Materials["Arcade_Cabinet"] = new fw::Material(m_Shaders["Basic"], m_Textures["Arcade_Cabinet"], fw::Color4f(128.f / 255, 128.f / 255, 128.f / 255, 1.f));
+    m_Materials["Arcade_Floor"] = new fw::Material(m_Shaders["Basic"], m_Textures["Arcade_Floor"], fw::Color4f(128.f / 255, 128.f / 255, 128.f / 255, 1.f));
 
     // Setup Scenes
     m_Scenes["Physics"] = new PhysicsScene(this);
@@ -118,6 +120,15 @@ void Game::OnEvent(fw::Event* pEvent)
     {
         SceneChangeEvent* pSceneChange = static_cast<SceneChangeEvent*>(pEvent);
         m_pCurrentScene = m_Scenes[pSceneChange->GetSceneName()];
+
+        if (pSceneChange->GetSceneName() == "Obj")
+        {
+            glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+        }
+        else
+        {
+            glClearColor(0.0f, 0.0f, 0.2f, 1.0f);
+        }
     }
     else
     {

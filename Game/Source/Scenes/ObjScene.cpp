@@ -20,6 +20,11 @@ ObjScene::ObjScene(Game* pGame) : fw::Scene(pGame)
     m_Objects.push_back(pObj);
 
     pGame->GetMesh("Obj")->LoadObj("Data/Models/Arcade_Cabinet.obj", true);
+
+    fw::GameObject* pFloor = new fw::GameObject(this, centerOfScreen + vec3(0.f, -3.5f, 0.f), vec3(-90.f, 0.f, 0.f));
+    pFloor->AddComponent(new fw::MeshComponent(pGame->GetMesh("Sprite"), pGame->GetMaterial("Arcade_Floor")));
+    pFloor->SetScale(vec3(28.f));
+    m_Objects.push_back(pFloor);
 }
 
 ObjScene::~ObjScene()
@@ -40,4 +45,5 @@ void ObjScene::Update(float deltaTime)
 
     float time = (float)fw::GetSystemTimeSinceGameStart() * 10;
     m_Objects[0]->SetRotation(vec3(0.f, time, 0.f));
+    m_Objects[1]->SetRotation(vec3(-90.f, time, 0.f));
 }

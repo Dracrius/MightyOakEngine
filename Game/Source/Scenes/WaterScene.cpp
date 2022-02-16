@@ -8,6 +8,7 @@
 
 WaterScene::WaterScene(Game* pGame) : fw::Scene(pGame)
 {
+
     m_pPhysicsWorld = new fw::PhysicsWorldBox2D();
     m_pPhysicsWorld->SetGravity(vec2(0.f, -9.8f));
 
@@ -66,7 +67,7 @@ void WaterScene::Update(float deltaTime)
     {
         Game* pGame = static_cast<Game*>(m_pGame);
 
-        pGame->GetMesh("Plane")->CreatePlane(vec2(m_planeSize[0], m_planeSize[1]), vec2(m_planeVertRes[0], m_planeVertRes[1]));
+        pGame->GetMesh("Plane")->CreatePlane(vec2(m_planeSize[0], m_planeSize[1]), ivec2(m_planeVertRes[0], m_planeVertRes[1]));
     }
 
     ImGui::End();
