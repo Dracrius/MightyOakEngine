@@ -15,6 +15,7 @@ protected:
     Color4f m_color;
 public:
     Material(ShaderProgram* pShader, Texture* pTexture, Color4f color);
+    Material(ShaderProgram* pShader, Color4f color);
     virtual ~Material();
 
     // Getters.

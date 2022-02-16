@@ -9,6 +9,7 @@
 #include "Scenes/PhysicsScene.h"
 #include "Scenes/CubeScene.h"
 #include "Scenes/WaterScene.h"
+#include "Scenes/ObjScene.h"
 
 Game::Game(fw::FWCore& fwCore)
     : m_FWCore( fwCore )
@@ -71,15 +72,19 @@ void Game::Init()
     m_Meshes["Cube"] = new fw::Mesh(GL_TRIANGLES, g_CubeVerts);
     m_Meshes["Plane"] = new fw::Mesh();
     m_Meshes["Plane"]->CreatePlane(vec2(100.f, 100.f), ivec2(1000, 1000));
+    m_Meshes["Obj"] = new fw::Mesh();
+
 
     // Setup Shaders
     m_Shaders["Basic"] = new fw::ShaderProgram( "Data/Shaders/Basic.vert", "Data/Shaders/Basic.frag" );
     m_Shaders["Water"] = new fw::ShaderProgram("Data/Shaders/Water.vert", "Data/Shaders/Water.frag");
+    m_Shaders["SolidColor"] = new fw::ShaderProgram("Data/Shaders/SolidColor.vert", "Data/Shaders/SolidColor.frag");
 
     // Setup Textures
     m_Textures["Sprites"] = new fw::Texture( "Data/Textures/Sprites.png" );
     m_Textures["Cube"] = new fw::Texture("Data/Textures/CubeTexture.png");
     m_Textures["Water"] = new fw::Texture("Data/Textures/WaterBW.png");
+    m_Textures["Arcade_Cabinet"] = new fw::Texture("Data/Textures/Arcade_Cabinet.png");
 
     // Setup Sprite Sheets
     m_SpriteSheets["Sprites"] = new fw::SpriteSheet( "Data/Textures/Sprites.json", m_Textures["Sprites"] );
@@ -88,13 +93,16 @@ void Game::Init()
     m_Materials["Sokoban"] = new fw::Material(m_Shaders["Basic"], m_Textures["Sprites"], fw::Color4f::Red());
     m_Materials["Cube"] = new fw::Material(m_Shaders["Basic"], m_Textures["Cube"], fw::Color4f::Green());
     m_Materials["Water"] = new fw::Material(m_Shaders["Water"], m_Textures["Water"], fw::Color4f(15.f / 255, 103.f / 255, 227.f / 255, 1.f));
+    m_Materials["SolidColor"] = new fw::Material(m_Shaders["SolidColor"], fw::Color4f(128.f / 255, 128.f / 255, 128.f / 255, 1.f));
+    m_Materials["Arcade_Cabinet"] = new fw::Material(m_Shaders["Basic"], m_Textures["Arcade_Cabinet"], fw::Color4f(128.f / 255, 128.f / 255, 128.f / 255, 1.f));
 
     // Setup Scenes
     m_Scenes["Physics"] = new PhysicsScene(this);
     m_Scenes["Cube"] = new CubeScene(this);
     m_Scenes["Water"] = new WaterScene(this);
+    m_Scenes["Obj"] = new ObjScene(this);
 
-    m_pCurrentScene = m_Scenes["Water"];
+    m_pCurrentScene = m_Scenes["Obj"];
 }
 
 void Game::StartFrame(float deltaTime)
@@ -138,6 +146,12 @@ void Game::Update(float deltaTime)
     if (ImGui::Button("Water"))
     {
         SceneChangeEvent* pSceneChange = new SceneChangeEvent("Water");
+        m_FWCore.GetEventManager()->AddEvent(pSceneChange);
+    }
+
+    if (ImGui::Button("Obj"))
+    {
+        SceneChangeEvent* pSceneChange = new SceneChangeEvent("Obj");
         m_FWCore.GetEventManager()->AddEvent(pSceneChange);
     }
 

@@ -7,6 +7,7 @@
 #include "Material.h"
 #include "Utility/Utility.h"
 #include "Math/Matrix.h"
+#include <stdio.h>
 
 namespace fw {
 
@@ -15,28 +16,13 @@ Mesh::Mesh()
 }
 
 Mesh::Mesh(GLenum primitiveType, const std::vector<VertexFormat>& verts)
-    : m_PrimitiveType( primitiveType )
 {
-    m_NumVerts = (int)verts.size();
-
-    // Generate a buffer for our vertex attributes.
-    glGenBuffers( 1, &m_VBO );
-
-    // Set this VBO to be the currently active one.
-    glBindBuffer( GL_ARRAY_BUFFER, m_VBO );
-
-    // Copy our attribute data into the VBO.
-    glBufferData( GL_ARRAY_BUFFER, sizeof(VertexFormat)*m_NumVerts, &verts[0], GL_STATIC_DRAW );
+    Rebuild(primitiveType, verts);
 }
 
-Mesh::Mesh(GLenum primitiveType, const std::vector<VertexFormat>& verts, const std::vector<unsigned int>& indices) : Mesh(primitiveType, verts)
+Mesh::Mesh(GLenum primitiveType, const std::vector<VertexFormat>& verts, const std::vector<unsigned int>& indices)
 {
-    m_NumIndices = (int)indices.size();
-
-    // Generate a buffer for our indices.
-    glGenBuffers(1, &m_IBO);
-    glBindBuffer(GL_ARRAY_BUFFER, m_IBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(unsigned int) * m_NumIndices, &indices[0], GL_STATIC_DRAW);
+    Rebuild(primitiveType, verts, indices);
 }
 
 Mesh::~Mesh()
@@ -114,8 +100,11 @@ void Mesh::Draw(Camera* pCamera, Material* pMaterial, const matrix& worldMat, ve
     SetupUniform(pShader, "u_MaterialColor", vec4(pMaterial->GetColor().r, pMaterial->GetColor().g, pMaterial->GetColor().b, pMaterial->GetColor().a));
 
     // Setup textures.
-    glActiveTexture( GL_TEXTURE0 );
-    glBindTexture( GL_TEXTURE_2D, pTexture->GetTextureID() );
+    if (pTexture)
+    {
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, pTexture->GetTextureID());
+    }
 
     // Draw the primitive.
     if (m_NumIndices > 0)
@@ -131,7 +120,6 @@ void Mesh::Draw(Camera* pCamera, Material* pMaterial, const matrix& worldMat, ve
 void Mesh::Rebuild(GLenum primitiveType, const std::vector<VertexFormat>& verts)
 {
     glDeleteBuffers(1, &m_VBO);
-    glDeleteBuffers(1, &m_IBO);
 
     m_PrimitiveType = primitiveType;
 
@@ -151,12 +139,14 @@ void Mesh::Rebuild(GLenum primitiveType, const std::vector<VertexFormat>& verts,
 {
     Rebuild(primitiveType, verts);
 
+    glDeleteBuffers(1, &m_IBO);
+
     m_NumIndices = (int)indices.size();
 
     // Generate a buffer for our indices.
     glGenBuffers(1, &m_IBO);
-    glBindBuffer(GL_ARRAY_BUFFER, m_IBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(unsigned int) * m_NumIndices, &indices[0], GL_STATIC_DRAW);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_IBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * m_NumIndices, &indices[0], GL_STATIC_DRAW);
 }
 
 void Mesh::CreatePlane(vec2 size, ivec2 vertRes)
@@ -208,6 +198,111 @@ void Mesh::CreatePlane(vec2 size, ivec2 vertRes)
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
     Rebuild(GL_TRIANGLES, verts, indices);
-};
+}
+
+void Mesh::LoadObj(char* filename)
+{
+    LoadObj(filename, false);
+}
+void Mesh::LoadObj(char* filename, bool righthanded)
+{
+    //CreatePlane(vec2(10.f,10.f), ivec2(2,2));
+    std::vector<vec3> positions;
+    std::vector <vec2> uvs;
+    std::vector <vec3> normals;
+
+    std::vector<fw::VertexFormat> verts;
+    //std::vector<unsigned int> indices;
+
+    long length = 0;
+    char* buffer = LoadCompleteFile(filename, &length);
+    if (buffer == 0 || length == 0)
+    {
+        delete[] buffer;
+        return;
+    }
+    char* next_token = 0;
+    char* line = strtok_s(buffer, "\n", &next_token);
+    while (line)
+    {
+        if (line[0] == 'v' && line[1] == ' ')
+        {
+            vec3 pos;
+            sscanf_s(line, "v %f %f %f", &pos.x, &pos.y, &pos.z);
+            if (righthanded)
+            {
+                pos.z = pos.z * -1.f;
+            }
+            positions.push_back(pos);
+        }
+        if (line[0] == 'v' && line[1] == 't')
+        {
+            vec2 uv;
+            sscanf_s(line, "vt %f %f", &uv.x, &uv.y);
+            if (righthanded)
+            uvs.push_back(uv);
+        }
+        if (line[0] == 'v' && line[1] == 'n')
+        {
+            vec3 norm;
+            sscanf_s(line, "vn %f %f %f", &norm.x, &norm.y, &norm.z);
+            if (righthanded)
+            {
+                norm.z = norm.z * -1.f;
+            }
+            normals.push_back(norm);
+        }
+        if (line[0] == 'f')
+        {
+            std::vector<int> f(9);
+            if (sscanf_s(line, "f %d/%d/%d %d/%d/%d %d/%d/%d", &f[0], &f[1], &f[2], &f[3], &f[4], &f[5], &f[6], &f[7], &f[8]) != 9)
+            {
+                sscanf_s(line, "f %d//%d %d//%d %d//%d", &f[0], &f[2], &f[3], &f[5], &f[6], &f[8]);
+            }
+
+            if (uvs.size() != 0)
+            {
+                for (int i = 0; i < 3; i++)
+                {
+                    verts.push_back({ positions[f[0] - 1],  255,255,255,255,  uvs[f[1] - 1] }); //normals[f[2] - 1]
+                    if (righthanded)
+                    {
+                        verts.push_back({ positions[f[6] - 1],  255,255,255,255,  uvs[f[7] - 1] }); //normals[f[8] - 1]
+                        verts.push_back({ positions[f[3] - 1],  255,255,255,255,  uvs[f[4] - 1] }); //normals[f[5] - 1]
+                    }
+                    else
+                    {
+                        verts.push_back({ positions[f[3] - 1],  255,255,255,255,  uvs[f[4] - 1] }); //normals[f[5] - 1]
+                        verts.push_back({ positions[f[6] - 1],  255,255,255,255,  uvs[f[7] - 1] }); //normals[f[8] - 1]
+                    }
+                    
+                }
+            }
+            else
+            {
+                for (int i = 0; i < 3; i++)
+                {
+                    verts.push_back({ positions[f[0] - 1],  255,255,255,255,  vec2() }); //normals[f[2] - 1]
+                    if (righthanded)
+                    {
+                        verts.push_back({ positions[f[6] - 1],  255,255,255,255,  vec2() }); //normals[f[8] - 1]
+                        verts.push_back({ positions[f[3] - 1],  255,255,255,255,  vec2() }); //normals[f[5] - 1]
+                    }
+                    else
+                    {
+                        verts.push_back({ positions[f[3] - 1],  255,255,255,255,  vec2() }); //normals[f[5] - 1]
+                        verts.push_back({ positions[f[6] - 1],  255,255,255,255,  vec2() }); //normals[f[8] - 1]
+                    }
+                }
+            }
+        }
+
+        OutputMessage("%s\n", line);
+        line = strtok_s(0, "\n", &next_token);
+    }
+
+    Rebuild(GL_TRIANGLES, verts);
+}
+;
 
 } // namespace fw

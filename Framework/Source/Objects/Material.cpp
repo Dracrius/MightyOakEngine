@@ -7,6 +7,9 @@ namespace fw {
 Material::Material(ShaderProgram* pShader, Texture* pTexture, Color4f color) : m_pShader(pShader), m_pTexture(pTexture), m_color(color)
 {
 }
+Material::Material(ShaderProgram* pShader, Color4f color) : m_pShader(pShader), m_pTexture(nullptr), m_color(color)
+{
+}
 Material::~Material()
 {
 }
