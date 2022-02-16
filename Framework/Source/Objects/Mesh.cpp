@@ -297,7 +297,7 @@ void Mesh::LoadObj(char* filename, bool righthanded)
             }
         }
 
-        OutputMessage("%s\n", line);
+        //OutputMessage("%s\n", line);
         line = strtok_s(0, "\n", &next_token);
     }
 
