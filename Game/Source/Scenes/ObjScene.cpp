@@ -12,7 +12,7 @@ ObjScene::ObjScene(Game* pGame) : fw::Scene(pGame)
 	char textureName[260] = "Data/Textures/Arcade_Cabinet.png";
 	strcpy_s(m_textureName, textureName);
 
-    m_pPhysicsWorld = new fw::PhysicsWorldBox2D();
+    m_pPhysicsWorld = new fw::PhysicsWorldBox2D(pGame->GetFramework()->GetEventManager());
     m_pPhysicsWorld->SetGravity(vec2(0.f, -9.8f));
 
     vec3 centerOfScreen = vec2(1.5f * 10, 1.5f * 10) / 2;
@@ -100,15 +100,10 @@ void ObjScene::Update(float deltaTime)
 		m_openScale[1] = m_Objects[0]->GetScale().y;
 		m_openScale[2] = m_Objects[0]->GetScale().z;
 
+		
 		ImGui::InputTextWithHint("Filename", "Data/Models/filename.obj", m_filename, IM_ARRAYSIZE(m_filename));
-		if (!ImGui::IsAnyItemActive())
-			ImGui::SetKeyboardFocusHere();
 		ImGui::MenuItem("Does it have a Texture?", "", &m_hasTexture);
 		ImGui::InputTextWithHint("Texture", "Data/Textures/filename.ext", m_textureName, IM_ARRAYSIZE(m_textureName));
-		if (ImGui::IsWindowFocused() && !ImGui::IsAnyItemActive())
-		{
-			ImGui::SetKeyboardFocusHere(1);
-		}
 
 		ImGui::MenuItem("Is the Model Righthanded?", "", &m_righthanded);
 

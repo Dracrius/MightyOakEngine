@@ -104,7 +104,7 @@ void Game::Init()
     m_Scenes["Water"] = new WaterScene(this);
     m_Scenes["Obj"] = new ObjScene(this);
 
-    SetCurrentScene("Obj");
+    SetCurrentScene("Physics");
 }
 
 void Game::StartFrame(float deltaTime)
@@ -123,7 +123,17 @@ void Game::OnEvent(fw::Event* pEvent)
     }
     else
     {
-        m_pCurrentScene->OnEvent(pEvent);
+		fw::InputEvent* pInputEvent = static_cast<fw::InputEvent*>(pEvent);
+
+		if (pEvent->GetEventType() == fw::InputEvent::GetStaticEventType()
+		&& (pInputEvent->GetDeviceType() == fw::DeviceType::Keyboard && pInputEvent->GetInputState() == fw::InputState::Input))
+		{
+			m_pImGuiManager->OnInput(pInputEvent);
+		}
+		else
+		{
+			m_pCurrentScene->OnEvent(pEvent);
+		}
     }
 }
 

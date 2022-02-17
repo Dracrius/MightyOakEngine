@@ -3,6 +3,7 @@
 #include "FWCore.h"
 #include "ImGuiManager.h"
 #include "../Libraries/imgui/imgui.h"
+#include "Events/Event.h"
 
 namespace fw {
 
@@ -51,6 +52,7 @@ void ImGuiManager::Init()
     io.KeyMap[ImGuiKey_X] = 'X';
     io.KeyMap[ImGuiKey_Y] = 'Y';
     io.KeyMap[ImGuiKey_Z] = 'Z';
+
 }
 
 void ImGuiManager::Shutdown()
@@ -78,6 +80,16 @@ void ImGuiManager::ClearInput()
     io.KeySuper = false;
 }
 
+void ImGuiManager::OnInput(InputEvent* pInputEvent)
+{
+	ImGuiIO& io = ImGui::GetIO();
+	
+	if (pInputEvent->GetDeviceType() == fw::DeviceType::Keyboard && pInputEvent->GetInputState() == fw::InputState::Input)
+	{
+		io.AddInputCharacterUTF16((unsigned short)pInputEvent->GetID());
+	}
+}
+
 void ImGuiManager::OnFocusLost()
 {
     ClearInput();
@@ -102,6 +114,14 @@ void ImGuiManager::StartFrame(float deltaTime)
     io.MousePos.x = (float)mx;
     io.MousePos.y = (float)my;
     io.MouseDown[0] = m_pFramework->IsMouseButtonDown( 0 );
+
+	for (int i = 0; i < 112; i++)
+	{
+		if (i != 16 && i != 17 && i != 18 && i != 20 && i != 91 && i != 92)
+		{
+			io.KeysDown[i] = m_pFramework->IsKeyDown(i);
+		}
+	}
 }
 
 void ImGuiManager::EndFrame()

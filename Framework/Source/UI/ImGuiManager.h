@@ -5,6 +5,7 @@ struct ImDrawData;
 namespace fw {
 
 class FWCore;
+class InputEvent;
 
 class ImGuiManager
 {
@@ -15,6 +16,7 @@ public:
     void Init();
     void Shutdown();
 
+	void OnInput(InputEvent* pInputEvent);
     void OnFocusLost();
 
     void StartFrame(float deltaTime);
@@ -22,7 +24,7 @@ public:
 
 protected:
     void ClearInput();
-
+	
     void RenderDrawLists(ImDrawData* draw_data);
 
     bool CreateFontsTexture();

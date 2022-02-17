@@ -7,7 +7,7 @@
 
 CubeScene::CubeScene(Game* pGame) : fw::Scene(pGame)
 {
-    m_pPhysicsWorld = new fw::PhysicsWorldBox2D();
+    m_pPhysicsWorld = new fw::PhysicsWorldBox2D(pGame->GetFramework()->GetEventManager());
     m_pPhysicsWorld->SetGravity(vec2(0.f, -9.8f));
 
     vec3 centerOfScreen = vec2(1.5f * 10, 1.5f * 10) / 2;

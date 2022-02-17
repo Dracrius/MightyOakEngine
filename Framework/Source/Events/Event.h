@@ -7,7 +7,7 @@ namespace fw {
 class GameObject;
 
 enum class DeviceType { Keyboard, Mouse };
-enum class InputState { Pressed, Released };
+enum class InputState { Pressed, Released, Input };
 
 //===============================================
 // Event class
@@ -73,6 +73,36 @@ public:
 
 protected:
     GameObject* m_pObject = nullptr;
+};
+
+//===============================================
+// CollisionEvent class
+//===============================================
+enum class ContactState { Begin, End };
+
+class CollisionEvent : public Event
+{
+public:
+	CollisionEvent(GameObject* one, GameObject* two, ContactState contactState)
+		: m_one(one)
+		, m_two(two)
+		, m_contactState(contactState)
+	{
+	}
+
+	// Event Type Getters.
+	static const char* GetStaticEventType() { return "CollisionEvent"; }
+	virtual const char* GetEventType() override { return GetStaticEventType(); }
+
+	// Getters.
+	GameObject* GetGameObjectOne() { return m_one; }
+	GameObject* GetGameObjectTwo() { return m_two; }
+	ContactState GetContactState() { return m_contactState; }
+
+protected:
+	GameObject* m_one;
+	GameObject* m_two;
+	ContactState m_contactState;
 };
 
 } // namespace fw

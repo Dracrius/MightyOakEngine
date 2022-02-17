@@ -45,12 +45,12 @@ void GameObject::Update(float deltaTime)
 
 void GameObject::CreateBody(PhysicsWorld* pWorld, bool isDynamic, float density)
 {
-    m_pPhysicsBody = pWorld->CreateBody(isDynamic, m_Scale, density, m_Position, m_Rotation);
+    m_pPhysicsBody = pWorld->CreateBody(this, isDynamic, m_Scale, density, m_Position, m_Rotation);
 }
 
 void GameObject::CreateBody(PhysicsWorld* pWorld, bool isDynamic, vec3 size, float density)
 {
-    m_pPhysicsBody = pWorld->CreateBody(isDynamic, size, density, m_Position, m_Rotation);
+    m_pPhysicsBody = pWorld->CreateBody(this, isDynamic, size, density, m_Position, m_Rotation);
 }
 
 void GameObject::AddComponent(Component* pComponent)

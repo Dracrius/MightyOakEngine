@@ -422,6 +422,15 @@ LRESULT CALLBACK FWCore::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPa
         }
         return 0;
 
+	case WM_CHAR:
+	{
+
+		InputEvent* pInput = new InputEvent(DeviceType::Keyboard, InputState::Input, (int)wParam);
+		pFWCore->m_pEventManager->AddEvent(pInput);
+
+	}
+	return 0;
+
     case WM_KEYDOWN:
         {
             bool keyWasPressedLastTimeMessageArrived = lParam & (1 << 30);

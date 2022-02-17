@@ -22,6 +22,7 @@ public:
 	virtual void ResetBackgroundColor(bool toBlack);
 
     // Getters.
+	fw::FWCore* GetFramework() { return &m_FWCore; }
     fw::Mesh* GetMesh(std::string name) { return m_Meshes[name]; }
     fw::ShaderProgram* GetShader(std::string name) { return m_Shaders[name]; }
     fw::Texture* GetTexture(std::string name) { return m_Textures[name]; }
