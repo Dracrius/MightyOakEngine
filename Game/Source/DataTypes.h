@@ -1,10 +1,11 @@
 #pragma once
-
 #include "Framework.h"
 
 typedef fw::vec2 vec2;
 typedef fw::vec3 vec3;
 typedef fw::ivec2 ivec2;
+
+typedef fw::Color4f Color4f;
 
 //typedef int32_t             int32;
 //typedef short               int16;

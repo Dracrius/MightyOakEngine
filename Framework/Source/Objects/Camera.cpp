@@ -19,19 +19,25 @@ Camera::~Camera()
 
 void Camera::Update(float deltaTime)
 {
-    //m_ProjecMatrix.CreateOrtho(-5 ,5, -5, 5, -5, 5);
-    m_ProjecMatrix.CreatePerspectiveVFoV(45.f, 1.f, 0.01f, 100.f);
+	if (m_perspectiveMode) //Check that Perspective Mode is enabled
+	{
+		m_ProjecMatrix.CreatePerspectiveVFoV(45.f, 1.f, 0.01f, 100.f);
+	}
+	else //If not use Ortho Projection
+	{
+		m_ProjecMatrix.CreateOrtho(-5 ,5, -5, 5, -5, 5);
+	}
 
-    if (m_pCameraOperator)
+    if (m_pCameraOperator) //Check if the Camera is Attached to an Object ie. has a Camera Operatior
     {
         m_Position = m_pCameraOperator->GetPosition() + m_offset;
     }
 
-    if (m_lockView)
+    if (m_lockView) //Check if the view has been locked to a position
     {
         m_ViewMatrix.CreateLookAtView(m_Position, vec3(0.f, 1.f, 0.f), m_lookAtPos);
     }
-    else
+    else //Otherwise look at the Camera's Position
     {
         m_ViewMatrix.CreateLookAtView(m_Position, vec3(0.f, 1.f, 0.f), vec3(m_Position.x, m_Position.y, 0.f));
     }

@@ -1,7 +1,6 @@
 #include "Framework.h"
 
 #include "Game.h"
-#include "GameObjects/Cube.h"
 #include "GameObjects/Player.h"
 #include "GameObjects/PlayerController.h"
 #include "Meshes/Shapes.h"
@@ -10,6 +9,7 @@
 #include "Scenes/CubeScene.h"
 #include "Scenes/WaterScene.h"
 #include "Scenes/ObjScene.h"
+#include "DefaultSettings.h"
 
 Game::Game(fw::FWCore& fwCore)
     : m_FWCore( fwCore )
@@ -93,10 +93,10 @@ void Game::Init()
     // Setup Materials
     m_Materials["Sokoban"] = new fw::Material(m_Shaders["Basic"], m_Textures["Sprites"], fw::Color4f::Red());
     m_Materials["Cube"] = new fw::Material(m_Shaders["Basic"], m_Textures["Cube"], fw::Color4f::Green());
-    m_Materials["Water"] = new fw::Material(m_Shaders["Water"], m_Textures["Water"], fw::Color4f(15.f / 255, 103.f / 255, 227.f / 255, 1.f));
-    m_Materials["SolidColor"] = new fw::Material(m_Shaders["SolidColor"], fw::Color4f(128.f / 255, 128.f / 255, 128.f / 255, 1.f));
-    m_Materials["Arcade_Cabinet"] = new fw::Material(m_Shaders["Basic"], m_Textures["Arcade_Cabinet"], fw::Color4f(128.f / 255, 128.f / 255, 128.f / 255, 1.f));
-    m_Materials["Arcade_Floor"] = new fw::Material(m_Shaders["Basic"], m_Textures["Arcade_Floor"], fw::Color4f(128.f / 255, 128.f / 255, 128.f / 255, 1.f));
+    m_Materials["Water"] = new fw::Material(m_Shaders["Water"], m_Textures["Water"], c_defaultWaterColor);
+    m_Materials["SolidColor"] = new fw::Material(m_Shaders["SolidColor"], c_defaultObjColor);
+    m_Materials["Arcade_Cabinet"] = new fw::Material(m_Shaders["Basic"], m_Textures["Arcade_Cabinet"], c_defaultObjColor);
+    m_Materials["Arcade_Floor"] = new fw::Material(m_Shaders["Basic"], m_Textures["Arcade_Floor"], c_defaultObjColor);
 
     // Setup Scenes
     m_Scenes["Physics"] = new PhysicsScene(this);
@@ -104,7 +104,7 @@ void Game::Init()
     m_Scenes["Water"] = new WaterScene(this);
     m_Scenes["Obj"] = new ObjScene(this);
 
-    SetCurrentScene("Physics");
+    SetCurrentScene(c_defaultScene);
 }
 
 void Game::StartFrame(float deltaTime)
@@ -137,99 +137,13 @@ void Game::OnEvent(fw::Event* pEvent)
     }
 }
 
-static void HelpMarker(const char* desc)
-{
-	ImGui::TextDisabled("(?)");
-	if (ImGui::IsItemHovered())
-	{
-		ImGui::BeginTooltip();
-		ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
-		ImGui::TextUnformatted(desc);
-		ImGui::PopTextWrapPos();
-		ImGui::EndTooltip();
-	}
-}
-
 void Game::Update(float deltaTime)
 {
+	MainMenu();
+
 	if (m_showBGColorSelect)
 	{
-		ImGui::SetNextWindowSize(ImVec2(410, 300), ImGuiCond_Always);
-		if (!ImGui::Begin("Background Color", &m_showBGColorSelect))
-		{
-			ImGui::End();
-			return;
-		}
-
-		static bool alpha_preview = false;
-		static bool alpha_half_preview = false;
-		static bool drag_and_drop = true;
-		static bool options_menu = true;
-		static bool hdr = false;
-		ImGuiColorEditFlags misc_flags = (hdr ? ImGuiColorEditFlags_HDR : 0) | (drag_and_drop ? 0 : ImGuiColorEditFlags_NoDragDrop) | (alpha_half_preview ? ImGuiColorEditFlags_AlphaPreviewHalf : (alpha_preview ? ImGuiColorEditFlags_AlphaPreview : 0)) | (options_menu ? 0 : ImGuiColorEditFlags_NoOptions);
-
-
-		static bool saved_palette_init = true;
-		static fw::Color4f saved_palette[32] = {};
-		if (saved_palette_init)
-		{
-			for (int n = 0; n < IM_ARRAYSIZE(saved_palette); n++)
-			{
-				ImGui::ColorConvertHSVtoRGB(n / 31.0f, 0.8f, 0.8f,
-					saved_palette[n].r, saved_palette[n].g, saved_palette[n].b);
-				saved_palette[n].a = 1.0f; // Alpha
-			}
-			saved_palette_init = false;
-		}
-
-		static fw::Color4f backup_color = m_backgroundColor;
-
-		ImGui::PushItemWidth(200.f);
-		ImGui::ColorPicker4("##picker", (float*)&m_backgroundColor, misc_flags | ImGuiColorEditFlags_NoSidePreview | ImGuiColorEditFlags_NoSmallPreview);
-		ImGui::SameLine();
-
-		ImGui::BeginGroup(); // Lock X position
-		ImGui::Text("Current");
-		ImGui::ColorButton("##current", ImVec4(m_backgroundColor.r, m_backgroundColor.g, m_backgroundColor.b, m_backgroundColor.a), ImGuiColorEditFlags_NoPicker | ImGuiColorEditFlags_AlphaPreviewHalf, ImVec2(60, 40));
-		ImGui::Text("Previous");
-		if (ImGui::ColorButton("##previous", ImVec4(backup_color.r, backup_color.g, backup_color.b, backup_color.a), ImGuiColorEditFlags_NoPicker | ImGuiColorEditFlags_AlphaPreviewHalf, ImVec2(60, 40)))
-			m_backgroundColor = backup_color;
-		ImGui::Separator();
-		ImGui::Text("Palette");
-		for (int n = 0; n < IM_ARRAYSIZE(saved_palette); n++)
-		{
-			ImGui::PushID(n);
-			if ((n % 8) != 0)
-				ImGui::SameLine(0.0f, ImGui::GetStyle().ItemSpacing.y);
-
-			ImGuiColorEditFlags palette_button_flags = ImGuiColorEditFlags_NoAlpha | ImGuiColorEditFlags_NoPicker | ImGuiColorEditFlags_NoTooltip;
-			if (ImGui::ColorButton("##palette", ImVec4(saved_palette[n].r, saved_palette[n].g, saved_palette[n].b, saved_palette[n].a), palette_button_flags, ImVec2(20, 20)))
-				m_backgroundColor = fw::Color4f(saved_palette[n].r, saved_palette[n].g, saved_palette[n].b, m_backgroundColor.a); // Preserve alpha!
-
-			// Allow user to drop colors into each palette entry. Note that ColorButton() is already a
-			// drag source by default, unless specifying the ImGuiColorEditFlags_NoDragDrop flag.
-			if (ImGui::BeginDragDropTarget())
-			{
-				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(IMGUI_PAYLOAD_TYPE_COLOR_3F))
-					memcpy((float*)&saved_palette[n], payload->Data, sizeof(float) * 3);
-				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(IMGUI_PAYLOAD_TYPE_COLOR_4F))
-					memcpy((float*)&saved_palette[n], payload->Data, sizeof(float) * 4);
-				ImGui::EndDragDropTarget();
-			}
-
-			ImGui::PopID();
-		}
-		ImGui::EndGroup();
-		HelpMarker( "This Window allows you to override the default Background Color.\n");
-
-		if (m_backgroundColor.r != 0.0f && m_backgroundColor.g != 0.0f && m_backgroundColor.b != 0.0f)
-		{
-			m_backupColor = m_backgroundColor;
-		}
-
-		glClearColor(m_backgroundColor.r, m_backgroundColor.g, m_backgroundColor.b, m_backgroundColor.a);
-
-		ImGui::End();
+		BGColorSelect();
 	}
 
 	if (m_showDemo)
@@ -237,6 +151,134 @@ void Game::Update(float deltaTime)
 		ImGui::ShowDemoWindow();
 	}
 
+    m_pCurrentScene->Update(deltaTime);
+}
+
+void Game::Draw()
+{
+    glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+
+    m_pCurrentScene->Draw();
+
+    m_pImGuiManager->EndFrame();
+}
+
+void Game::SetCurrentScene(std::string scene)
+{
+	m_pCurrentScene = m_Scenes[scene];
+
+	if (scene == "Obj")
+	{
+		if (m_backupColor == c_defaultBackground)
+		{
+			m_backgroundColor = Color4f::Black();
+		}
+	}
+	else
+	{
+		m_backgroundColor = m_backupColor;
+	}
+		glClearColor(m_backgroundColor.r, m_backgroundColor.g, m_backgroundColor.b, m_backgroundColor.a);
+}
+
+void Game::ResetBackgroundColor(bool toBlack)
+{
+	m_backupColor = c_defaultBackground;
+
+	if (toBlack)
+	{
+		m_backgroundColor = Color4f::Black();
+	}
+	else
+	{
+		m_backgroundColor = m_backupColor;
+	}
+
+	glClearColor(m_backgroundColor.r, m_backgroundColor.g, m_backgroundColor.b, m_backgroundColor.a);
+}
+
+void Game::BGColorSelect()
+{
+	ImGui::SetNextWindowSize(ImVec2(410, 300), ImGuiCond_Always);
+	if (!ImGui::Begin("Background Color", &m_showBGColorSelect))
+	{
+		ImGui::End();
+		return;
+	}
+
+	static bool alpha_preview = false;
+	static bool alpha_half_preview = false;
+	static bool drag_and_drop = true;
+	static bool options_menu = true;
+	static bool hdr = false;
+	ImGuiColorEditFlags misc_flags = (hdr ? ImGuiColorEditFlags_HDR : 0) | (drag_and_drop ? 0 : ImGuiColorEditFlags_NoDragDrop) | (alpha_half_preview ? ImGuiColorEditFlags_AlphaPreviewHalf : (alpha_preview ? ImGuiColorEditFlags_AlphaPreview : 0)) | (options_menu ? 0 : ImGuiColorEditFlags_NoOptions);
+
+
+	static bool saved_palette_init = true;
+	static fw::Color4f saved_palette[32] = {};
+	if (saved_palette_init)
+	{
+		for (int n = 0; n < IM_ARRAYSIZE(saved_palette); n++)
+		{
+			ImGui::ColorConvertHSVtoRGB(n / 31.0f, 0.8f, 0.8f,
+				saved_palette[n].r, saved_palette[n].g, saved_palette[n].b);
+			saved_palette[n].a = 1.0f; // Alpha
+		}
+		saved_palette_init = false;
+	}
+
+	static fw::Color4f backup_color = m_backgroundColor;
+
+	ImGui::PushItemWidth(200.f);
+	ImGui::ColorPicker4("##picker", (float*)&m_backgroundColor, misc_flags | ImGuiColorEditFlags_NoSidePreview | ImGuiColorEditFlags_NoSmallPreview);
+	ImGui::SameLine();
+
+	ImGui::BeginGroup(); // Lock X position
+	ImGui::Text("Current");
+	ImGui::ColorButton("##current", ImVec4(m_backgroundColor.r, m_backgroundColor.g, m_backgroundColor.b, m_backgroundColor.a), ImGuiColorEditFlags_NoPicker | ImGuiColorEditFlags_AlphaPreviewHalf, ImVec2(60, 40));
+	ImGui::Text("Previous");
+	if (ImGui::ColorButton("##previous", ImVec4(backup_color.r, backup_color.g, backup_color.b, backup_color.a), ImGuiColorEditFlags_NoPicker | ImGuiColorEditFlags_AlphaPreviewHalf, ImVec2(60, 40)))
+		m_backgroundColor = backup_color;
+	ImGui::Separator();
+	ImGui::Text("Palette");
+	for (int n = 0; n < IM_ARRAYSIZE(saved_palette); n++)
+	{
+		ImGui::PushID(n);
+		if ((n % 8) != 0)
+			ImGui::SameLine(0.0f, ImGui::GetStyle().ItemSpacing.y);
+
+		ImGuiColorEditFlags palette_button_flags = ImGuiColorEditFlags_NoAlpha | ImGuiColorEditFlags_NoPicker | ImGuiColorEditFlags_NoTooltip;
+		if (ImGui::ColorButton("##palette", ImVec4(saved_palette[n].r, saved_palette[n].g, saved_palette[n].b, saved_palette[n].a), palette_button_flags, ImVec2(20, 20)))
+			m_backgroundColor = fw::Color4f(saved_palette[n].r, saved_palette[n].g, saved_palette[n].b, m_backgroundColor.a); // Preserve alpha!
+
+		// Allow user to drop colors into each palette entry. Note that ColorButton() is already a
+		// drag source by default, unless specifying the ImGuiColorEditFlags_NoDragDrop flag.
+		if (ImGui::BeginDragDropTarget())
+		{
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(IMGUI_PAYLOAD_TYPE_COLOR_3F))
+				memcpy((float*)&saved_palette[n], payload->Data, sizeof(float) * 3);
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(IMGUI_PAYLOAD_TYPE_COLOR_4F))
+				memcpy((float*)&saved_palette[n], payload->Data, sizeof(float) * 4);
+			ImGui::EndDragDropTarget();
+		}
+
+		ImGui::PopID();
+	}
+	ImGui::EndGroup();
+	HelpMarker("This Window allows you to override the default Background Color.\n");
+
+	if (m_backgroundColor.r != 0.0f && m_backgroundColor.g != 0.0f && m_backgroundColor.b != 0.0f)
+	{
+		m_backupColor = m_backgroundColor;
+	}
+
+	glClearColor(m_backgroundColor.r, m_backgroundColor.g, m_backgroundColor.b, m_backgroundColor.a);
+
+	ImGui::End();
+}
+
+void Game::MainMenu()
+{
 	if (ImGui::BeginMainMenuBar())
 	{
 		if (ImGui::BeginMenu("File"))
@@ -274,7 +316,7 @@ void Game::Update(float deltaTime)
 			if (ImGui::BeginMenu("Options"))
 			{
 				ImGui::MenuItem("Show ImGui Demo", "", &m_showDemo);
-				ImGui::Checkbox("Wireframe", &m_wireframeToggle);
+				ImGui::MenuItem("Enable Wireframe Mode", "", &m_wireframeToggle);
 
 				if (m_wireframeToggle)
 				{
@@ -293,50 +335,17 @@ void Game::Update(float deltaTime)
 		}
 		ImGui::EndMainMenuBar();
 	}
-
- 
-    m_pCurrentScene->Update(deltaTime);
 }
 
-void Game::Draw()
+void Game::HelpMarker(const char* desc)
 {
-    glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-
-    m_pCurrentScene->Draw();
-
-    m_pImGuiManager->EndFrame();
-}
-
-void Game::SetCurrentScene(std::string scene)
-{
-	m_pCurrentScene = m_Scenes[scene];
-
-	if (scene == "Obj")
+	ImGui::TextDisabled("(?)");
+	if (ImGui::IsItemHovered())
 	{
-		if (m_backupColor.r  == 0.0f && m_backupColor.g == 0.0f && m_backupColor.b == 0.2f)
-		{
-			m_backgroundColor = fw::Color4f(0.0f, 0.0f, 0.0f, 1.0f);
-		}
+		ImGui::BeginTooltip();
+		ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
+		ImGui::TextUnformatted(desc);
+		ImGui::PopTextWrapPos();
+		ImGui::EndTooltip();
 	}
-	else
-	{
-		m_backgroundColor = m_backupColor;
-	}
-		glClearColor(m_backgroundColor.r, m_backgroundColor.g, m_backgroundColor.b, m_backgroundColor.a);
-}
-
-void Game::ResetBackgroundColor(bool toBlack)
-{
-	m_backupColor = fw::Color4f(0.0f, 0.0f, 0.2f, 1.0f);
-
-	if (toBlack)
-	{
-		m_backgroundColor = fw::Color4f(0.0f, 0.0f, 0.0f, 1.0f);
-	}
-	else
-	{
-		m_backgroundColor = m_backupColor;
-	}
-
-	glClearColor(m_backgroundColor.r, m_backgroundColor.g, m_backgroundColor.b, m_backgroundColor.a);
 }

@@ -4,18 +4,15 @@
 #include "DataTypes.h"
 #include "GameObjects/PlayerController.h"
 #include "GameObjects/Player.h"
-#include "GameObjects/Cube.h"
 #include "Game.h"
+#include "DefaultSettings.h"
 
 PhysicsScene::PhysicsScene(Game* pGame) : fw::Scene(pGame)
 {
     m_pPhysicsWorld = new fw::PhysicsWorldBox2D(pGame->GetFramework()->GetEventManager());
-    m_pPhysicsWorld->SetGravity(vec2(0.f, -9.8f));
+    m_pPhysicsWorld->SetGravity(c_gravity);
 
-    vec3 centerOfScreen = vec2(1.5f * 10, 1.5f * 10) / 2;
-    vec3 cameraOffset = vec3(0.f, 0.f, -20.f);
-
-    m_pCamera = new fw::Camera(this, centerOfScreen + cameraOffset);
+    m_pCamera = new fw::Camera(this, c_centerOfScreen + c_cameraOffset);
 
     m_pPlayerController = new PlayerController();
 
@@ -25,9 +22,9 @@ PhysicsScene::PhysicsScene(Game* pGame) : fw::Scene(pGame)
     m_Objects.push_back(pPlayer);
 
     m_pCamera->AttachTo(m_Objects.front());
-    m_pCamera->SetThirdPerson(cameraOffset);
+    m_pCamera->SetThirdPerson(c_cameraOffset);
 
-    fw::GameObject* pBox = new fw::GameObject(this, centerOfScreen, vec3());
+    fw::GameObject* pBox = new fw::GameObject(this, c_centerOfScreen, vec3());
     pBox->AddComponent(new fw::MeshComponent(pGame->GetMesh("Cube"), pGame->GetMaterial("Cube")));
     pBox->CreateBody(m_pPhysicsWorld, false, vec3(2.0f, 2.0f, 2.0f), 1.f);
     m_Objects.push_back(pBox);
@@ -54,6 +51,11 @@ void PhysicsScene::Update(float deltaTime)
 {
     Scene::Update(deltaTime);
 
+	ControlsMenu();
+}
+
+void PhysicsScene::ControlsMenu()
+{
 	if (ImGui::BeginMainMenuBar())
 	{
 		if (ImGui::BeginMenu("File"))

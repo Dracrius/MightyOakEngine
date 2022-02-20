@@ -621,11 +621,29 @@ public:
     static const Color4f Cyan()             { return Color4f(0.0f, 1.0f, 1.0f, 1.0f); }
     static const Color4f CornflowerBlue()   { return Color4f(0.39f, 0.05f, 0.92f, 1.0f); }
 
+	inline bool operator ==(const Color4f& o) const { return fequal(this->r, o.r) && fequal(this->g, o.g) && fequal(this->b, o.b) && fequal(this->a, o.a); }
+	inline bool operator !=(const Color4f& o) const { return !fequal(this->r, o.r) || !fequal(this->g, o.g) || !fequal(this->b, o.b) || !fequal(this->a, o.a); }
+
+	inline Color4f operator -() const { return Color4f(-this->r, -this->g, -this->b, -this->a); }
+	inline Color4f operator *(const float o) const { return Color4f(this->r * o, this->g * o, this->b * o, this->a * o); }
+	inline Color4f operator /(const float o) const { return Color4f(this->r / o, this->g / o, this->b / o, this->a / o); }
+	inline Color4f operator +(const float o) const { return Color4f(this->r + o, this->g + o, this->b + o, this->a + o); }
+	inline Color4f operator -(const float o) const { return Color4f(this->r - o, this->g - o, this->b - o, this->a - o); }
+	inline Color4f operator *(const Color4f& o) const { return Color4f(this->r * o.r, this->g * o.g, this->b * o.b, this->a * o.a); }
+	inline Color4f operator /(const Color4f& o) const { return Color4f(this->r / o.r, this->g / o.g, this->b / o.b, this->a / o.a); }
+	inline Color4f operator +(const Color4f& o) const { return Color4f(this->r + o.r, this->g + o.g, this->b + o.b, this->a + o.a); }
+	inline Color4f operator -(const Color4f& o) const { return Color4f(this->r - o.r, this->g - o.g, this->b - o.b, this->a - o.a); }
+
 public:
     float r = 1.0f;
     float g = 1.0f;
     float b = 1.0f;
     float a = 1.0f;
 };
+
+inline Color4f operator *(float scalar, const Color4f& vec) { return Color4f(scalar * vec.r, scalar * vec.g, scalar * vec.b, scalar * vec.a); }
+inline Color4f operator /(float scalar, const Color4f& vec) { return Color4f(scalar / vec.r, scalar / vec.g, scalar / vec.b, scalar / vec.a); }
+inline Color4f operator +(float scalar, const Color4f& vec) { return Color4f(scalar + vec.r, scalar + vec.g, scalar + vec.b, scalar + vec.a); }
+inline Color4f operator -(float scalar, const Color4f& vec) { return Color4f(scalar - vec.r, scalar - vec.g, scalar - vec.b, scalar - vec.a); }
 
 }

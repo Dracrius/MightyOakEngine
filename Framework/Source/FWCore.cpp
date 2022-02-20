@@ -150,6 +150,21 @@ void FWCore::SetWindowSize(int width, int height)
     ResizeWindow( width, height );
 }
 
+void FWCore::SetWindowTitle(char* title)
+{
+	SetWindowTextA(m_hWnd, title);
+}
+
+void FWCore::SetIcon(char* icon)
+{
+	HICON hIcon = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(icon));
+	if (hIcon)
+	{
+		SendMessage(m_hWnd, WM_SETICON, ICON_BIG, (LPARAM)hIcon);
+		DestroyIcon(hIcon);
+	}
+}
+
 bool FWCore::IsKeyDown(int value)
 {
     assert( value >= 0 && value < 256 );

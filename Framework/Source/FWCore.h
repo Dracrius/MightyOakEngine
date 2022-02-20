@@ -17,6 +17,8 @@ public:
     void Shutdown();
 
     void SetWindowSize(int width, int height);
+	void SetWindowTitle(char* title);
+	void SetIcon(char* icon);
 
     bool IsKeyDown(int value);
     bool IsMouseButtonDown(int id);

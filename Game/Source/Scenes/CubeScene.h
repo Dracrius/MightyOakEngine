@@ -7,7 +7,7 @@ class CubeScene : public fw::Scene
 protected:
 	int m_rotationSpeed = 8;
 	bool m_autoRotate = true;
-	bool m_showSlider = false;
+	bool m_showSliders = false;
 
 	float m_openRot[3] = { 0.f, 0.f, 0.f };
 public:
@@ -19,5 +19,9 @@ public:
     virtual void OnEvent(fw::Event* pEvent) override;
 
     virtual void Update(float deltaTime) override;
+
+protected:
+	void Sliders();
+	void SettingsMenu();
 };
 

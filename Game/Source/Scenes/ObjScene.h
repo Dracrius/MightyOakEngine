@@ -29,5 +29,11 @@ public:
     virtual void OnEvent(fw::Event* pEvent) override;
 
     virtual void Update(float deltaTime) override;
+
+protected:
+	void Slider(float& rot);
+	void OpenObj();
+	void OpenRecent();
+	void SettingsMenu();
 };
 

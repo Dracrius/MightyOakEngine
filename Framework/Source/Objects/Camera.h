@@ -22,6 +22,9 @@ public:
     void SetFPS() { m_offset = 0.f; }
     void SetThirdPerson(vec3 offset) { m_offset = offset; }
 
+	void TogglePerspective() { m_perspectiveMode = !m_perspectiveMode; }
+	void SetPerspective(bool perspectiveMode) { m_perspectiveMode = perspectiveMode; }
+
     void AttachTo(GameObject* pObj) { m_pCameraOperator = pObj; }
     void ClearAttachment() { m_pCameraOperator = nullptr; }
     void LockViewToPos(vec3 pos) { m_lookAtPos = pos; m_lockView = true; }
@@ -40,6 +43,7 @@ protected:
     vec3 m_offset;
 
     bool m_lockView = false;
+	bool m_perspectiveMode = true;
 };
 
 } // namespace fw

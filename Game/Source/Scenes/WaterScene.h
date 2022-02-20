@@ -18,5 +18,9 @@ public:
     virtual void OnEvent(fw::Event* pEvent) override;
 
     virtual void Update(float deltaTime) override;
+
+protected:
+	void Sliders();
+	void SettingsMenu();
 };
 

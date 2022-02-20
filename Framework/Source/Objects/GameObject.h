@@ -31,6 +31,19 @@ public:
     void RemoveComponent(Component* pComponent);
 	Component* GetComponent(const char* component);
 
+	template <class Type> Type* GetComponent()
+	{
+		for (Component* pComponent : m_pComponents)
+		{
+			if (pComponent->GetType() == Type::GetStaticType())
+			{
+				return static_cast<Type*>(pComponent);
+			}
+		}
+
+		return nullptr;
+	}
+
     // Getters.
     const matrix& GetWorldTransform();
     vec3 GetPosition() { return m_Position; }
