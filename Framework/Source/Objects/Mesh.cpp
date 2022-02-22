@@ -99,11 +99,19 @@ void Mesh::Draw(Camera* pCamera, Material* pMaterial, const matrix& worldMat, ve
 
     SetupUniform(pShader, "u_MaterialColor", vec4(pMaterial->GetColor().r, pMaterial->GetColor().g, pMaterial->GetColor().b, pMaterial->GetColor().a));
 
+    GLint hasTexture = glGetUniformLocation(pShader->GetProgram(), "u_HasTexture");
+
     // Setup textures.
     if (pTexture)
     {
+        glUniform1i(hasTexture, true);
+
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, pTexture->GetTextureID());
+    }
+    else
+    {
+        glUniform1i(hasTexture, false);
     }
 
     // Draw the primitive.

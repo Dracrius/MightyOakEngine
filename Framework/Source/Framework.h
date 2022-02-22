@@ -22,6 +22,7 @@
 #include "Objects/Camera.h"
 #include "Objects/GameObject.h"
 #include "Objects/Mesh.h"
+#include "Objects/ResourceManager.h"
 #include "Objects/Scene.h"
 #include "Objects/ShaderProgram.h"
 #include "Objects/SpriteSheet.h"

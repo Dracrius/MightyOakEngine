@@ -3,7 +3,7 @@
 #include "DataTypes.h"
 
 //Default Settings
-const ivec2 c_windowSize = ivec2(896, 896);
+const ivec2 c_windowSize = ivec2(600, 600);
 
 const std::string c_defaultScene = "Obj";
 //List of Scenes: ["Physics"], ["Cube"], ["Water"], ["Obj"]
@@ -20,7 +20,7 @@ const Color4f c_defaultObjColor = Color4f::Grey();
 const Color4f c_defaultWaterColor = Color4f(15.f / 255, 103.f / 255, 227.f / 255, 1.f);
 
 //Player
-const vec2 c_playerCollider = vec2(0.7f, 0.7f);
+const vec2 c_playerCollider = vec2(0.83f, 0.83f);
 const float c_playerSpeed = 250.f;
 const float c_jumpTimer = 0.5f;
 

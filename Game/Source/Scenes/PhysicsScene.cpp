@@ -16,16 +16,16 @@ PhysicsScene::PhysicsScene(Game* pGame) : fw::Scene(pGame)
 
     m_pPlayerController = new PlayerController();
 
-    Player* pPlayer = new Player(this, pGame->GetMesh("Sprite"), pGame->GetMaterial("Sokoban"), vec2(7.5f, 12.0f), m_pPlayerController);
-    pPlayer->SetSpriteSheet(pGame->GetSpriteSheet("Sprites"));
-    pPlayer->CreateBody(m_pPhysicsWorld, true, 1.f);
+    Player* pPlayer = new Player(this, m_pResourceManager->GetMesh("Sprite"), m_pResourceManager->GetMaterial("Sokoban"), vec2(7.5f, 12.0f), m_pPlayerController);
+    pPlayer->SetSpriteSheet(m_pResourceManager->GetSpriteSheet("Sprites"));
+    pPlayer->CreateBody(m_pPhysicsWorld, true, vec3(c_playerCollider.x, c_playerCollider.y, c_playerCollider.y), 1.f);
     m_Objects.push_back(pPlayer);
 
     m_pCamera->AttachTo(m_Objects.front());
     m_pCamera->SetThirdPerson(c_cameraOffset);
 
     fw::GameObject* pBox = new fw::GameObject(this, c_centerOfScreen, vec3());
-    pBox->AddComponent(new fw::MeshComponent(pGame->GetMesh("Cube"), pGame->GetMaterial("Cube")));
+    pBox->AddComponent(new fw::MeshComponent(m_pResourceManager->GetMesh("Cube"), m_pResourceManager->GetMaterial("Cube")));
     pBox->CreateBody(m_pPhysicsWorld, false, vec3(2.0f, 2.0f, 2.0f), 1.f);
     m_Objects.push_back(pBox);
 }

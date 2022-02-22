@@ -18,7 +18,7 @@ WaterScene::WaterScene(Game* pGame) : fw::Scene(pGame)
     vec3 pos = c_centerOfScreen + vec3(0.f,-1.f,0.f);
 
     fw::GameObject* pPlane = new fw::GameObject(this, pos, rot);
-    pPlane->AddComponent(new fw::MeshComponent(pGame->GetMesh("Plane"), pGame->GetMaterial("Water")));
+    pPlane->AddComponent(new fw::MeshComponent(m_pResourceManager->GetMesh("Plane"), m_pResourceManager->GetMaterial("Water")));
     m_Objects.push_back(pPlane);
 }
 
@@ -63,9 +63,7 @@ void WaterScene::Sliders()
 
 	if (m_planeSize[0] != lastSize[0] || m_planeSize[1] != lastSize[1] || m_planeVertRes[0] != lastVertRes[0] || m_planeVertRes[1] != lastVertRes[1])
 	{
-		Game* pGame = static_cast<Game*>(m_pGame);
-
-		pGame->GetMesh("Plane")->CreatePlane(vec2(m_planeSize[0], m_planeSize[1]), ivec2(m_planeVertRes[0], m_planeVertRes[1]));
+		m_pResourceManager->GetMesh("Plane")->CreatePlane(vec2(m_planeSize[0], m_planeSize[1]), ivec2(m_planeVertRes[0], m_planeVertRes[1]));
 	}
 	ImGui::End();
 }

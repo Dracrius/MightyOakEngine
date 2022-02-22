@@ -8,11 +8,13 @@ class GameCore;
 class GameObject;
 class PhysicsWorld;
 class ComponentManager;
+class ResourceManager;
 
 class Scene
 {
 protected:
     GameCore* m_pGame = nullptr;
+	ResourceManager* m_pResourceManager = nullptr;
 
     Camera* m_pCamera = nullptr;
     PhysicsWorld* m_pPhysicsWorld = nullptr;

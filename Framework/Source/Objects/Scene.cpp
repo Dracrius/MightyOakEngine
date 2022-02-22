@@ -12,6 +12,7 @@ namespace fw {
 Scene::Scene(GameCore* pGameCore) : m_pGame(pGameCore)
 {
     m_pComponentManager = new ComponentManager();
+	m_pResourceManager = pGameCore->GetResourceManager();
 }
 
 Scene::~Scene()

@@ -32,6 +32,8 @@ add_subdirectory(Framework/Libraries/box2d/src)
 file( GLOB_RECURSE FrameworkSourceFiles
 	Framework/Source/*.cpp
 	Framework/Source/*.h
+	Framework/Data/Shaders/**.vert
+	Framework/Data/Shaders/**.frag
 	Framework/Libraries/imgui/*.cpp
 	Framework/Libraries/imgui/*.h
 	Framework/Libraries/stb/*.h

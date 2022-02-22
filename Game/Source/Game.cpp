@@ -19,32 +19,7 @@ Game::Game(fw::FWCore& fwCore)
 
 Game::~Game()
 {
-    for( auto& it : m_Meshes )
-    {
-        delete it.second;
-    }
-
-    for( auto& it : m_Shaders )
-    {
-        delete it.second;
-    }
-
-    for( auto& it : m_Textures )
-    {
-        delete it.second;
-    }
-
-    for (auto& it : m_Materials)
-    {
-        delete it.second;
-    }
-
-    for( auto& it : m_SpriteSheets )
-    {
-        delete it.second;
-    }
-
-    for (auto& it : m_Scenes)
+	for (auto& it : m_Scenes)
     {
         delete it.second;
     }
@@ -67,36 +42,36 @@ void Game::Init()
     glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
     glFrontFace(GL_CW);
 
-    // Setup Meshes
-    m_Meshes["Sprite"] = new fw::Mesh(GL_TRIANGLES, g_SpriteVerts, g_SpriteIndices);
-    m_Meshes["Cube"] = new fw::Mesh(GL_TRIANGLES, g_CubeVerts);
-    m_Meshes["Plane"] = new fw::Mesh();
-    m_Meshes["Plane"]->CreatePlane(vec2(100.f, 100.f), ivec2(1000, 1000));
-    m_Meshes["Obj"] = new fw::Mesh();
+    // Setup Meshes 
+	m_pResourceManager->CreateMesh("Sprite", GL_TRIANGLES, g_SpriteVerts, g_SpriteIndices);
+    m_pResourceManager->CreateMesh("Cube", GL_TRIANGLES, g_CubeVerts);
+	m_pResourceManager->CreateMesh("Plane");
+	m_pResourceManager->GetMesh("Plane")->CreatePlane(vec2(100.f, 100.f), ivec2(1000, 1000));
+	m_pResourceManager->CreateMesh("Obj");
 
 
     // Setup Shaders
-    m_Shaders["Basic"] = new fw::ShaderProgram( "Data/Shaders/Basic.vert", "Data/Shaders/Basic.frag" );
-    m_Shaders["Water"] = new fw::ShaderProgram("Data/Shaders/Water.vert", "Data/Shaders/Water.frag");
-    m_Shaders["SolidColor"] = new fw::ShaderProgram("Data/Shaders/SolidColor.vert", "Data/Shaders/SolidColor.frag");
+	m_pResourceManager->CreateShader("Basic", "Data/Shaders/Basic.vert", "Data/Shaders/Basic.frag");
+	m_pResourceManager->CreateShader("Water", "Data/Shaders/Water.vert", "Data/Shaders/Water.frag");
+	m_pResourceManager->CreateShader("SolidColor", "Data/Shaders/SolidColor.vert", "Data/Shaders/SolidColor.frag");
 
     // Setup Textures
-    m_Textures["Sprites"] = new fw::Texture( "Data/Textures/Sprites.png" );
-    m_Textures["Cube"] = new fw::Texture("Data/Textures/CubeTexture.png");
-    m_Textures["Water"] = new fw::Texture("Data/Textures/WaterTile.png");
-    m_Textures["Arcade_Cabinet"] = new fw::Texture("Data/Textures/Arcade_Cabinet.png");
-    m_Textures["Arcade_Floor"] = new fw::Texture("Data/Textures/Arcade_Cabinet_Floor_Low_Light.png");
+	m_pResourceManager->CreateTexture("Sprites", "Data/Textures/Sprites.png");
+	m_pResourceManager->CreateTexture("Cube", "Data/Textures/CubeTexture.png");
+	m_pResourceManager->CreateTexture("Water", "Data/Textures/WaterTile.png");
+	m_pResourceManager->CreateTexture("Arcade_Cabinet", "Data/Textures/Arcade_Cabinet.png");
+	m_pResourceManager->CreateTexture("Arcade_Floor", "Data/Textures/Arcade_Cabinet_Floor_Low_Light.png");
 
     // Setup Sprite Sheets
-    m_SpriteSheets["Sprites"] = new fw::SpriteSheet( "Data/Textures/Sprites.json", m_Textures["Sprites"] );
+	m_pResourceManager->CreateSpriteSheet("Sprites", "Data/Textures/Sprites.json", m_pResourceManager->GetTexture("Sprites"));
 
     // Setup Materials
-    m_Materials["Sokoban"] = new fw::Material(m_Shaders["Basic"], m_Textures["Sprites"], fw::Color4f::Red());
-    m_Materials["Cube"] = new fw::Material(m_Shaders["Basic"], m_Textures["Cube"], fw::Color4f::Green());
-    m_Materials["Water"] = new fw::Material(m_Shaders["Water"], m_Textures["Water"], c_defaultWaterColor);
-    m_Materials["SolidColor"] = new fw::Material(m_Shaders["SolidColor"], c_defaultObjColor);
-    m_Materials["Arcade_Cabinet"] = new fw::Material(m_Shaders["Basic"], m_Textures["Arcade_Cabinet"], c_defaultObjColor);
-    m_Materials["Arcade_Floor"] = new fw::Material(m_Shaders["Basic"], m_Textures["Arcade_Floor"], c_defaultObjColor);
+	m_pResourceManager->CreateMaterial("Sokoban", m_pResourceManager->GetShader("Basic"), m_pResourceManager->GetTexture("Sprites"), fw::Color4f::Red());
+	m_pResourceManager->CreateMaterial("Cube", m_pResourceManager->GetShader("Basic"), m_pResourceManager->GetTexture("Cube"), fw::Color4f::Green());
+	m_pResourceManager->CreateMaterial("Water", m_pResourceManager->GetShader("Water"), m_pResourceManager->GetTexture("Water"), c_defaultWaterColor);
+	m_pResourceManager->CreateMaterial("SolidColor", m_pResourceManager->GetShader("SolidColor"), c_defaultObjColor);
+	m_pResourceManager->CreateMaterial("Arcade_Cabinet", m_pResourceManager->GetShader("Basic"), m_pResourceManager->GetTexture("Arcade_Cabinet"), c_defaultObjColor);
+	m_pResourceManager->CreateMaterial("Arcade_Floor", m_pResourceManager->GetShader("Basic"), m_pResourceManager->GetTexture("Arcade_Floor"), c_defaultObjColor);
 
     // Setup Scenes
     m_Scenes["Physics"] = new PhysicsScene(this);
