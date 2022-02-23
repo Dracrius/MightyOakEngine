@@ -5,7 +5,7 @@
 //Default Settings
 const ivec2 c_windowSize = ivec2(600, 600);
 
-const std::string c_defaultScene = "Obj";
+const std::string c_defaultScene = "Physics";
 //List of Scenes: ["Physics"], ["Cube"], ["Water"], ["Obj"]
 
 const float c_animationLength = 0.12f;

@@ -4,6 +4,7 @@
 #include "Objects/GameObject.h"
 #include "Events/EventManager.h"
 #include "Events/Event.h"
+#include "DebugDrawBox2D.h"
 
 namespace fw {
 
@@ -39,12 +40,17 @@ PhysicsWorldBox2D::PhysicsWorldBox2D(EventManager* pEventManager) : PhysicsWorld
 	m_pWorld = new b2World(c_defaultGravity);
 
 	m_pContactListener = new ContactListenerBox2D(pEventManager);
+	m_pDebugDraw = new DebugDrawBox2D();
 
 	m_pWorld->SetContactListener(m_pContactListener);
+	m_pDebugDraw->SetFlags(b2Draw::e_shapeBit);
+	m_pWorld->SetDebugDraw(m_pDebugDraw);
+	//m_pWorld->Debug
 }
 
 PhysicsWorldBox2D::~PhysicsWorldBox2D()
 {
+	delete m_pDebugDraw;
 	delete m_pContactListener;
 	delete m_pWorld;
 }
@@ -52,6 +58,12 @@ PhysicsWorldBox2D::~PhysicsWorldBox2D()
 void PhysicsWorldBox2D::Update(float deltaTime)
 {
 	m_pWorld->Step(deltaTime, 8, 3);
+}
+
+void PhysicsWorldBox2D::DebugDraw(Camera* pCamera, Material* pMaterial)
+{
+	m_pWorld->DebugDraw();
+	m_pDebugDraw->Draw(pCamera, pMaterial);
 }
 
 void PhysicsWorldBox2D::SetGravity(vec3 gravity)

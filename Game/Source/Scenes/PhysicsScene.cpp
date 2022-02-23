@@ -72,6 +72,12 @@ void PhysicsScene::ControlsMenu()
 			}
 			ImGui::EndMenu();
 		}
+		if (ImGui::BeginMenu("Settings"))
+		{
+			if (ImGui::MenuItem("Enable Debug Draw", "", &m_debugDraw)) {}
+
+			ImGui::EndMenu();
+		}
 		if (ImGui::BeginMenu("Controls"))
 		{
 			ImGui::Text("Left = <- or A");

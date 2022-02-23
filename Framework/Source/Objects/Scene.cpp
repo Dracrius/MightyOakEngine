@@ -43,7 +43,10 @@ void Scene::OnEvent(Event* pEvent)
 }
 void Scene::Update(float deltaTime)
 {
-    m_pPhysicsWorld->Update(deltaTime);
+	if (m_pPhysicsWorld)
+	{
+		m_pPhysicsWorld->Update(deltaTime);
+	}
 
     for (auto it = m_Objects.begin(); it != m_Objects.end(); it++)
     {
@@ -56,5 +59,10 @@ void Scene::Update(float deltaTime)
 void Scene::Draw()
 {
     m_pComponentManager->Draw(m_pCamera);
+
+	if (m_debugDraw)
+	{
+		m_pPhysicsWorld->DebugDraw(m_pCamera, m_pResourceManager->GetMaterial("Default"));
+	}
 }
 } // namespace fw

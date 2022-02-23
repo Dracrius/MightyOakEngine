@@ -9,6 +9,9 @@ namespace fw {
 
 class EventManager;
 class GameObject;
+class DebugDrawBox2D;
+class Camera;
+class Material;
 
 class ContactListenerBox2D : public b2ContactListener
 {
@@ -30,12 +33,15 @@ class PhysicsWorldBox2D : public PhysicsWorld
 protected:
     b2World* m_pWorld = nullptr;
 	b2ContactListener* m_pContactListener = nullptr;
+	DebugDrawBox2D* m_pDebugDraw = nullptr;
 
 public:
     PhysicsWorldBox2D(EventManager* pEventManager);
     virtual ~PhysicsWorldBox2D();
 
     virtual void Update(float deltaTime) override;
+
+	virtual void DebugDraw(Camera* pCamera, Material* pMaterial) override;
 
     virtual void SetGravity(vec3 gravity) override;
     

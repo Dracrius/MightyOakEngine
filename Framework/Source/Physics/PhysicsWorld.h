@@ -7,6 +7,8 @@ namespace fw {
 class PhysicsBody;
 class EventManager;
 class GameObject;
+class Camera;
+class Material;
 
 class PhysicsWorld
 {
@@ -19,6 +21,8 @@ public:
     virtual ~PhysicsWorld() = 0 {}
 
     virtual void Update(float deltaTime) = 0;
+
+	virtual void DebugDraw(Camera* pCamera, Material* pMaterial) = 0;
 
     virtual void SetGravity(vec3 gravity) = 0;
 
