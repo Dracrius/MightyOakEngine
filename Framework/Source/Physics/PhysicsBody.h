@@ -23,6 +23,8 @@ public:
     virtual void ApplyLinearImpulse(const vec3 &impulse, const vec3 point, bool wake) = 0;
 
     virtual void ApplyTorque(const vec3 &torque, bool wake) = 0;
+
+	virtual void Editor_OutputBodyDetails() = 0;
 };
 
 } // namespace fw

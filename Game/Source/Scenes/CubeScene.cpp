@@ -14,6 +14,7 @@ CubeScene::CubeScene(Game* pGame) : fw::Scene(pGame)
 
     fw::GameObject* pCube = new fw::GameObject(this, c_centerOfScreen, vec3());
     pCube->AddComponent(new fw::MeshComponent(m_pResourceManager->GetMesh("Cube"), m_pResourceManager->GetMaterial("Cube")));
+	pCube->SetName("Numbered Cube");
     m_Objects.push_back(pCube);
 }
 

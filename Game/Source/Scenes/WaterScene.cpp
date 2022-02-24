@@ -19,6 +19,7 @@ WaterScene::WaterScene(Game* pGame) : fw::Scene(pGame)
 
     fw::GameObject* pPlane = new fw::GameObject(this, pos, rot);
     pPlane->AddComponent(new fw::MeshComponent(m_pResourceManager->GetMesh("Plane"), m_pResourceManager->GetMaterial("Water")));
+	pPlane->SetName("Water");
     m_Objects.push_back(pPlane);
 }
 

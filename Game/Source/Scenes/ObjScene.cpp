@@ -32,13 +32,15 @@ ObjScene::ObjScene(Game* pGame) : fw::Scene(pGame)
 
     fw::GameObject* pObj= new fw::GameObject(this, pos, vec3());
     pObj->AddComponent(new fw::MeshComponent(m_pResourceManager->GetMesh("Obj"), m_pResourceManager->GetMaterial("Arcade_Cabinet")));
+	pObj->SetName("Loaded Obj");
     m_Objects.push_back(pObj);
 
-    m_pResourceManager->GetMesh("Obj")->LoadObj(m_lastObj, true);
+    m_pResourceManager->GetMesh("Obj")->LoadObj(m_lastObj.c_str(), true);
 
     fw::GameObject* pFloor = new fw::GameObject(this, pos, rot);
     pFloor->AddComponent(new fw::MeshComponent(m_pResourceManager->GetMesh("Sprite"), m_pResourceManager->GetMaterial("Arcade_Floor")));
     pFloor->SetScale(vec3(28.f));
+	pFloor->SetName("Floor");
     m_Objects.push_back(pFloor);
 }
 
@@ -239,18 +241,18 @@ void ObjScene::OpenRecent()
 			m_pResourceManager->GetMesh("Obj")->LoadObj("Data/Models/cube.obj", true);
 			pMeshComponent->SetMaterial(m_pResourceManager->GetMaterial("SolidColor"));
 		}
-		if (ImGui::MenuItem(m_lastObj))
+		if (ImGui::MenuItem(m_lastObj.c_str()))
 		{
 			if (m_textureName != nullptr)
 			{
 				pMeshComponent->SetMaterial(m_pResourceManager->GetMaterial("Arcade_Cabinet"));
-				m_pResourceManager->GetMaterial("Arcade_Cabinet")->GetTexture()->SetTexture(m_lastTexture);
+				m_pResourceManager->GetMaterial("Arcade_Cabinet")->GetTexture()->SetTexture(m_lastTexture.c_str());
 			}
 			else
 			{
 				pMeshComponent->SetMaterial(m_pResourceManager->GetMaterial("SolidColor"));
 			}
-			m_pResourceManager->GetMesh("Obj")->LoadObj(m_lastObj, true);
+			m_pResourceManager->GetMesh("Obj")->LoadObj(m_lastObj.c_str(), true);
 		}
 		ImGui::EndMenu();
 	}

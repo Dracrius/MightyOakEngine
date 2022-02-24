@@ -208,11 +208,11 @@ void Mesh::CreatePlane(vec2 size, ivec2 vertRes)
     Rebuild(GL_TRIANGLES, verts, indices);
 }
 
-void Mesh::LoadObj(char* filename)
+void Mesh::LoadObj(const char* filename)
 {
     LoadObj(filename, false);
 }
-void Mesh::LoadObj(char* filename, bool righthanded)
+void Mesh::LoadObj(const char* filename, bool righthanded)
 {
     //CreatePlane(vec2(10.f,10.f), ivec2(2,2));
     std::vector<vec3> positions;

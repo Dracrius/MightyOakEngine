@@ -16,17 +16,28 @@ PhysicsScene::PhysicsScene(Game* pGame) : fw::Scene(pGame)
 
     m_pPlayerController = new PlayerController();
 
+	vec3 pos = c_centerOfScreen + vec3(0.f, 0.f, 2.f);
+	vec3 rot = vec3(0.f, 0.f, 0.f);
+
+	fw::GameObject* pBackground = new fw::GameObject(this, pos, rot);
+	pBackground->AddComponent(new fw::MeshComponent(m_pResourceManager->GetMesh("Sprite"), m_pResourceManager->GetMaterial("Background")));
+	pBackground->SetScale(vec3(20.f));
+	pBackground->SetName("Background");
+	m_Objects.push_back(pBackground);
+
     Player* pPlayer = new Player(this, m_pResourceManager->GetMesh("Sprite"), m_pResourceManager->GetMaterial("Sokoban"), vec2(7.5f, 12.0f), m_pPlayerController);
     pPlayer->SetSpriteSheet(m_pResourceManager->GetSpriteSheet("Sprites"));
     pPlayer->CreateBody(m_pPhysicsWorld, true, vec3(c_playerCollider.x, c_playerCollider.y, c_playerCollider.y), 1.f);
+	pPlayer->SetName("Player");
     m_Objects.push_back(pPlayer);
 
-    m_pCamera->AttachTo(m_Objects.front());
+    m_pCamera->AttachTo(m_Objects[1]);
     m_pCamera->SetThirdPerson(c_cameraOffset);
 
     fw::GameObject* pBox = new fw::GameObject(this, c_centerOfScreen, vec3());
     pBox->AddComponent(new fw::MeshComponent(m_pResourceManager->GetMesh("Cube"), m_pResourceManager->GetMaterial("Cube")));
     pBox->CreateBody(m_pPhysicsWorld, false, vec3(2.0f, 2.0f, 2.0f), 1.f);
+	pBox->SetName("Box Platform");
     m_Objects.push_back(pBox);
 }
 

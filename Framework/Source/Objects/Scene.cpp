@@ -55,6 +55,16 @@ void Scene::Update(float deltaTime)
     }
 
     m_pCamera->Update(deltaTime);
+
+	if (m_showObjectList)
+	{
+		Editor_ShowObjectList();
+
+		if (m_showObjectDetails)
+		{
+			Editor_ShowObjectDetails();
+		}
+	}
 }
 void Scene::Draw()
 {
@@ -64,5 +74,53 @@ void Scene::Draw()
 	{
 		m_pPhysicsWorld->DebugDraw(m_pCamera, m_pResourceManager->GetMaterial("Default"));
 	}
+}
+void Scene::Editor_ShowObjectList()
+{
+	if (ImGui::BeginMainMenuBar())
+	{
+		if (ImGui::BeginMenu("Settings"))
+		{
+			if(ImGui::BeginMenu("List Scene Objects")) //, "", &m_showObjectList
+			{
+				for (GameObject* pObject : m_Objects)
+				{
+					char name[30];
+					sprintf_s(name, 30, "%s", pObject->GetName().c_str());
+
+					if (ImGui::MenuItem(name, "", &m_showObjectDetails))
+					{
+						m_pEditor_SelectedObject = pObject;
+
+						if (!m_showObjectDetails)
+						{
+							m_showObjectDetails = !m_showObjectDetails;
+						}
+					}
+				}
+				ImGui::EndMenu();
+			}
+			ImGui::EndMenu();
+			ImGui::Separator();
+		}
+
+		ImGui::EndMainMenuBar();
+	}
+}
+void Scene::Editor_ShowObjectDetails()
+{
+	//ImGui::SetNextWindowSize(ImVec2(260, 250), ImGuiCond_Always);
+
+	char name[30];
+	sprintf_s(name, 30, "%s Details", m_pEditor_SelectedObject->GetName().c_str());
+
+	if (!ImGui::Begin(name, &m_showObjectDetails))
+	{
+		ImGui::End();
+		return;
+	}
+	m_pEditor_SelectedObject->Editor_OutputObjectDetails();
+
+	ImGui::End();
 }
 } // namespace fw

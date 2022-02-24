@@ -3,7 +3,8 @@
 #include "DataTypes.h"
 
 //Default Settings
-const ivec2 c_windowSize = ivec2(600, 600);
+const ivec2 c_windowSize = ivec2(1200, 700);
+const ivec2 c_glRenderSize = ivec2(600, 600);
 
 const std::string c_defaultScene = "Physics";
 //List of Scenes: ["Physics"], ["Cube"], ["Water"], ["Obj"]

@@ -32,6 +32,8 @@ void Game::Init()
     m_pImGuiManager = new fw::ImGuiManager( &m_FWCore );
 
     // OpenGL settings.
+	glViewport((c_windowSize.x - c_glRenderSize.x) / 2, (c_windowSize.y - c_glRenderSize.y) / 2, c_glRenderSize.x, c_glRenderSize.y);
+
     glPointSize( 10 );
     //glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
@@ -61,6 +63,7 @@ void Game::Init()
 	m_pResourceManager->CreateTexture("Water", "Data/Textures/WaterTile.png");
 	m_pResourceManager->CreateTexture("Arcade_Cabinet", "Data/Textures/Arcade_Cabinet.png");
 	m_pResourceManager->CreateTexture("Arcade_Floor", "Data/Textures/Arcade_Cabinet_Floor_Low_Light.png");
+	m_pResourceManager->CreateTexture("Background", "Data/Textures/BG.png");
 
     // Setup Sprite Sheets
 	m_pResourceManager->CreateSpriteSheet("Sprites", "Data/Textures/Sprites.json", m_pResourceManager->GetTexture("Sprites"));
@@ -72,6 +75,7 @@ void Game::Init()
 	m_pResourceManager->CreateMaterial("SolidColor", m_pResourceManager->GetShader("SolidColor"), c_defaultObjColor);
 	m_pResourceManager->CreateMaterial("Arcade_Cabinet", m_pResourceManager->GetShader("Basic"), m_pResourceManager->GetTexture("Arcade_Cabinet"), c_defaultObjColor);
 	m_pResourceManager->CreateMaterial("Arcade_Floor", m_pResourceManager->GetShader("Basic"), m_pResourceManager->GetTexture("Arcade_Floor"), c_defaultObjColor);
+	m_pResourceManager->CreateMaterial("Background", m_pResourceManager->GetShader("Basic"), m_pResourceManager->GetTexture("Background"), c_defaultWaterColor);
 
     // Setup Scenes
     m_Scenes["Physics"] = new PhysicsScene(this);

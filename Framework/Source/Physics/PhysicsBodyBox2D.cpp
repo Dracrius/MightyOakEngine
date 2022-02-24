@@ -1,5 +1,6 @@
 #include "CoreHeaders.h"
 #include "PhysicsBodyBox2D.h"
+#include "../Libraries/imgui/imgui.h"
 
 namespace fw {
 
@@ -92,6 +93,16 @@ void PhysicsBodyBox2D::ApplyLinearImpulse(const vec3& impulse, const vec3 point,
 void PhysicsBodyBox2D::ApplyTorque(const vec3& torque, bool wake)
 {
     m_pBody->ApplyTorque(torque.z, wake);
+}
+
+void PhysicsBodyBox2D::Editor_OutputBodyDetails()
+{
+	bool fixed = m_pBody->IsFixedRotation();
+
+	if (ImGui::Checkbox("Fixed Rotation", &fixed))
+	{
+		m_pBody->SetFixedRotation(fixed);
+	}
 }
 
 } // namespace fw

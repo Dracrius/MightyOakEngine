@@ -37,8 +37,8 @@ public:
 
     void CreatePlane(vec2 size, ivec2 vertRes);
 
-    void LoadObj(char* filename);
-    void LoadObj(char* filename, bool righthanded);
+    void LoadObj(const char* filename);
+    void LoadObj(const char* filename, bool righthanded);
 
 protected:
     GLuint m_VBO = 0;

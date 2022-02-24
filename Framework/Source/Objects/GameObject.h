@@ -46,6 +46,9 @@ public:
 
     // Getters.
     const matrix& GetWorldTransform();
+
+	std::string GetName() { return m_name; }
+
     vec3 GetPosition() { return m_Position; }
     vec3 GetRotation() { return m_Rotation; }
     vec3 GetScale() { return m_Scale; }
@@ -53,11 +56,16 @@ public:
     // Setters.
     //void SetMaterial(Material* pMaterial) { m_pMaterial = pMaterial; }
 
+	void SetName(std::string name) { m_name = name; }
+
     void SetPosition(vec3 pos) { m_Position = pos; }
     void SetRotation(vec3 rot) { m_Rotation = rot; }
     void SetScale(vec3 scale) { m_Scale = scale; }
 
+	void Editor_OutputObjectDetails();
+
 protected:
+	std::string m_name;
     Scene* m_pScene = nullptr;
 
     //Physics Comp

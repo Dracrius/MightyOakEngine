@@ -8,9 +8,9 @@ protected:
     int m_rotationSpeed = 8;
     bool m_autoRotate = true;
 	bool m_showOpenObj = false;
-	char* m_lastObj;
+	std::string m_lastObj;
 	bool m_hasTexture = true;
-	char* m_lastTexture;
+	std::string m_lastTexture;
 	bool m_showSlider = false;
 
 	char m_filename[260];

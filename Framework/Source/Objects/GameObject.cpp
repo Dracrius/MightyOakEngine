@@ -83,4 +83,51 @@ const matrix& GameObject::GetWorldTransform()
     return m_WorldTransform;
 }
 
+void GameObject::Editor_OutputObjectDetails()
+{
+	vec3 pos = m_Position;
+	vec3 rot = m_Rotation;
+	vec3 scale = m_Scale;
+	bool hasPhysBody = m_pPhysicsBody ? true : false;
+
+	ImGui::Text("Name: %s", m_name.c_str());
+	ImGui::Separator();
+	ImGui::DragFloat3("Position", &pos.x, 0.01f);
+	if (hasPhysBody)
+	{
+		ImGui::DragFloat("Rotation", &rot.z, 0.01f);
+		//ImGui::DragFloat2("Scale", &scale.x, 0.01f;
+	}
+	else
+	{
+		ImGui::DragFloat3("Rotation", &rot.x, 0.01f);
+		ImGui::DragFloat2("Scale", &scale.x, 0.01f);
+	}
+	ImGui::Separator();
+
+
+	ImGui::Checkbox("Has Physics Body", &hasPhysBody);
+
+	if (m_pPhysicsBody)
+	{
+		m_pPhysicsBody->Editor_OutputBodyDetails();
+
+		if (pos != m_Position)
+		{
+			m_pPhysicsBody->SetPosition(pos);
+		}
+		if (rot != m_Rotation)
+		{
+			m_pPhysicsBody->SetTransform(pos, rot);
+		}
+	}
+	else
+	{
+		m_Position = pos;
+		m_Rotation = rot;
+		m_Scale = scale;
+	}
+
+}
+
 } // namespace fw
