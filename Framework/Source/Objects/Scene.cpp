@@ -81,7 +81,7 @@ void Scene::Editor_ShowObjectList()
 	{
 		if (ImGui::BeginMenu("Settings"))
 		{
-			if(ImGui::BeginMenu("List Scene Objects")) //, "", &m_showObjectList
+			if(ImGui::BeginMenu("Scene Objects")) //, "", &m_showObjectList
 			{
 				for (GameObject* pObject : m_Objects)
 				{
@@ -100,8 +100,8 @@ void Scene::Editor_ShowObjectList()
 				}
 				ImGui::EndMenu();
 			}
-			ImGui::EndMenu();
 			ImGui::Separator();
+			ImGui::EndMenu();
 		}
 
 		ImGui::EndMainMenuBar();
