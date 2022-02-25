@@ -13,6 +13,7 @@ WaterScene::WaterScene(Game* pGame) : fw::Scene(pGame)
     m_pPhysicsWorld->SetGravity(c_gravity);
 
     m_pCamera = new fw::Camera(this, c_centerOfScreen + c_cameraOffset);
+	m_pCamera->SetAspectRatio(c_aspectRatio);
 
     vec3 rot = vec3();
     vec3 pos = c_centerOfScreen + vec3(0.f,-1.f,0.f);

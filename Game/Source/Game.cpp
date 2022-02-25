@@ -46,6 +46,7 @@ void Game::Init()
 
     // Setup Meshes 
 	m_pResourceManager->CreateMesh("Sprite", GL_TRIANGLES, g_SpriteVerts, g_SpriteIndices);
+	m_pResourceManager->CreateMesh("Background", GL_TRIANGLES, g_BackgroundVerts, g_BackgroundIndices);
     m_pResourceManager->CreateMesh("Cube", GL_TRIANGLES, g_CubeVerts);
 	m_pResourceManager->CreateMesh("Plane");
 	m_pResourceManager->GetMesh("Plane")->CreatePlane(vec2(100.f, 100.f), ivec2(1000, 1000));
@@ -63,10 +64,12 @@ void Game::Init()
 	m_pResourceManager->CreateTexture("Water", "Data/Textures/WaterTile.png");
 	m_pResourceManager->CreateTexture("Arcade_Cabinet", "Data/Textures/Arcade_Cabinet.png");
 	m_pResourceManager->CreateTexture("Arcade_Floor", "Data/Textures/Arcade_Cabinet_Floor_Low_Light.png");
-	m_pResourceManager->CreateTexture("Background", "Data/Textures/BG.png");
+	m_pResourceManager->CreateTexture("Background", "Data/Textures/mayclover_meadow.png");
+	m_pResourceManager->CreateTexture("NiceDaysWalk", "Data/Textures/NiceDaysWalk.png");
 
     // Setup Sprite Sheets
 	m_pResourceManager->CreateSpriteSheet("Sprites", "Data/Textures/Sprites.json", m_pResourceManager->GetTexture("Sprites"));
+	m_pResourceManager->CreateSpriteSheet("Sprites", "Data/Textures/NiceDaysWalk.json", m_pResourceManager->GetTexture("NiceDaysWalk"));
 
     // Setup Materials
 	m_pResourceManager->CreateMaterial("Sokoban", m_pResourceManager->GetShader("Basic"), m_pResourceManager->GetTexture("Sprites"), fw::Color4f::Red());

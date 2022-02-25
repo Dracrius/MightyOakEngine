@@ -17,10 +17,12 @@ public:
     // Getters.
     matrix GetViewMatrix();
     matrix GetProjecMatrix();
+	float GetAspectRatio() { return m_aspectRatio; }
 
     // Setters.
     void SetFPS() { m_offset = 0.f; }
     void SetThirdPerson(vec3 offset) { m_offset = offset; }
+	void SetAspectRatio(float aspectRatio) { m_aspectRatio = aspectRatio; }
 
 	void TogglePerspective() { m_perspectiveMode = !m_perspectiveMode; }
 	void SetPerspective(bool perspectiveMode) { m_perspectiveMode = perspectiveMode; }
@@ -41,6 +43,8 @@ protected:
 
     vec3 m_lookAtPos;
     vec3 m_offset;
+
+	float m_aspectRatio = 1.f;
 
     bool m_lockView = false;
 	bool m_perspectiveMode = true;

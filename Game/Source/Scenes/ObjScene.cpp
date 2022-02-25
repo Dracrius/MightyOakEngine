@@ -18,6 +18,7 @@ ObjScene::ObjScene(Game* pGame) : fw::Scene(pGame)
 	m_openPos[2] = c_centerOfScreen.z;
 
     m_pCamera = new fw::Camera(this, c_centerOfScreen + cameraOffset);
+	m_pCamera->SetAspectRatio(c_aspectRatio);
 
 	char filename[260] = "Data/Models/Arcade_Cabinet.obj";
 	strcpy_s(m_filename, filename);
@@ -92,7 +93,7 @@ void ObjScene::Update(float deltaTime)
         offset = m_rotationSpeed * deltaTime;
     }
 
-    m_Objects[0]->SetRotation(vec3(0.f, rot + offset, 0.f));
+    m_Objects[0]->SetRotation(vec3(m_Objects[0]->GetRotation().x, rot + offset, m_Objects[0]->GetRotation().z));
     m_Objects[1]->SetRotation(vec3(-90.f, rot + offset, 0.f));
 
 }
@@ -188,6 +189,7 @@ void ObjScene::OpenObj()
 		else
 		{
 			pMeshComponent->SetMaterial(m_pResourceManager->GetMaterial("SolidColor"));
+			m_lastTexture = "";
 		}
 
 		m_Objects[0]->SetPosition(vec3(m_openPos[0], m_openPos[1], m_openPos[2]));
@@ -215,7 +217,7 @@ void ObjScene::OpenRecent()
 
 		if (ImGui::MenuItem("Arcade_Cabinet.obj"))
 		{
-			m_Objects[0]->SetPosition(c_centerOfScreen + vec3(0.f, -3.5f, 0.f));
+			m_Objects[0]->SetPosition(pos);
 			m_Objects[0]->SetRotation(vec3());
 			m_Objects[0]->SetScale(vec3(1.f, 1.f, 1.f));
 
@@ -225,16 +227,16 @@ void ObjScene::OpenRecent()
 		}
 		if (ImGui::MenuItem("Chibi_Facehugger.obj"))
 		{
-			m_Objects[0]->SetPosition(c_centerOfScreen + vec3(0.f, -3.5f, 0.f));
-			m_Objects[0]->SetRotation(vec3());
-			m_Objects[0]->SetScale(vec3(0.25f, 0.25f, 0.25f));
+			m_Objects[0]->SetPosition(pos);
+			m_Objects[0]->SetRotation(vec3(-90.f, 0.f, 0.f));
+			m_Objects[0]->SetScale(vec3(0.1f, 0.1f, 0.1f));
 
 			m_pResourceManager->GetMesh("Obj")->LoadObj("Data/Models/Chibi_Facehugger.obj", true);
 			pMeshComponent->SetMaterial(m_pResourceManager->GetMaterial("SolidColor"));
 		}
 		if (ImGui::MenuItem("cube.obj"))
 		{
-			m_Objects[0]->SetPosition(c_centerOfScreen + vec3(0.f, -3.5f, 0.f));
+			m_Objects[0]->SetPosition(c_centerOfScreen + vec3(0.f, -2.5f, 0.f));
 			m_Objects[0]->SetRotation(vec3());
 			m_Objects[0]->SetScale(vec3(1.f, 1.f, 1.f));
 
@@ -243,7 +245,7 @@ void ObjScene::OpenRecent()
 		}
 		if (ImGui::MenuItem(m_lastObj.c_str()))
 		{
-			if (m_textureName != nullptr)
+			if (m_textureName != nullptr && m_lastTexture != "")
 			{
 				pMeshComponent->SetMaterial(m_pResourceManager->GetMaterial("Arcade_Cabinet"));
 				m_pResourceManager->GetMaterial("Arcade_Cabinet")->GetTexture()->SetTexture(m_lastTexture.c_str());
@@ -252,6 +254,11 @@ void ObjScene::OpenRecent()
 			{
 				pMeshComponent->SetMaterial(m_pResourceManager->GetMaterial("SolidColor"));
 			}
+
+			m_Objects[0]->SetPosition(pos);
+			m_Objects[0]->SetRotation(vec3());
+			m_Objects[0]->SetScale(vec3(1.f, 1.f, 1.f));
+
 			m_pResourceManager->GetMesh("Obj")->LoadObj(m_lastObj.c_str(), true);
 		}
 		ImGui::EndMenu();

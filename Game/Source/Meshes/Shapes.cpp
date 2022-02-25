@@ -16,6 +16,19 @@ const std::vector<unsigned int> g_SpriteIndices =
     0, 1, 2, 2, 1, 3,
 };
 
+const std::vector<fw::VertexFormat> g_BackgroundVerts =
+{
+	{ vec3(-0.5f,-0.5f,0.f),  255,255,255,255,  vec2(0.0f,0.0f) }, // bottom left
+	{ vec3(-0.5f,0.5f,0.f),  255,255,255,255,  vec2(0.0f,1.0f) }, // top left
+	{ vec3(0.5f,-0.5f,0.f),  255,255,255,255,  vec2(10.0f,0.0f) }, // bottom right
+	{ vec3(0.5f,0.5f,0.f),  255,255,255,255,  vec2(10.0f,1.0f) }, // top right
+};
+
+const std::vector<unsigned int> g_BackgroundIndices =
+{
+	0, 1, 2, 2, 1, 3,
+};
+
 const std::vector<fw::VertexFormat> g_CubeVerts =
 {   
     //Side 1

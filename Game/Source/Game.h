@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Framework.h"
+#include "DefaultSettings.h"
 
 class Enemy;
 class Player;
@@ -19,8 +20,8 @@ protected:
 	bool m_showDemo = false;
 	bool m_showBGColorSelect = false;
 	bool m_wireframeToggle = false;
-	fw::Color4f m_backgroundColor = fw::Color4f(0.0f, 0.0f, 0.0f, 1.0f);
-	fw::Color4f m_backupColor = fw::Color4f(0.0f, 0.0f, 0.2f, 1.0f);
+	fw::Color4f m_backgroundColor = fw::Color4f::Black();
+	fw::Color4f m_backupColor = c_defaultBackground;
 public:
     Game(fw::FWCore& fwCore);
     virtual ~Game() override;

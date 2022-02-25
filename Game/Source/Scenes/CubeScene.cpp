@@ -11,6 +11,7 @@ CubeScene::CubeScene(Game* pGame) : fw::Scene(pGame)
     m_pPhysicsWorld->SetGravity(c_gravity);
 
     m_pCamera = new fw::Camera(this, c_centerOfScreen + c_cameraOffset);
+	m_pCamera->SetAspectRatio(c_aspectRatio);
 
     fw::GameObject* pCube = new fw::GameObject(this, c_centerOfScreen, vec3());
     pCube->AddComponent(new fw::MeshComponent(m_pResourceManager->GetMesh("Cube"), m_pResourceManager->GetMaterial("Cube")));
