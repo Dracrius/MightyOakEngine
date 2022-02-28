@@ -46,6 +46,7 @@ public:
     virtual void SetGravity(vec3 gravity) override;
     
     virtual PhysicsBody* CreateBody(GameObject* owner, bool isDynamic, vec3 size, float density, vec3 pos, vec3 rot) override;
+	virtual PhysicsBody* CreateBody(GameObject* owner, bool isDynamic, float radius, float density, vec3 pos, vec3 rot) override;
 
     b2World* Getb2World() { return m_pWorld; }
 };

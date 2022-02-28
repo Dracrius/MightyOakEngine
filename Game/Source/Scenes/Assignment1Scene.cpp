@@ -4,6 +4,7 @@
 #include "DataTypes.h"
 #include "GameObjects/PlayerController.h"
 #include "GameObjects/Shaun.h"
+#include "GameObjects/Meteor.h"
 #include "Game.h"
 #include "DefaultSettings.h"
 
@@ -40,7 +41,7 @@ Assignment1Scene::Assignment1Scene(Game* pGame) : fw::Scene(pGame)
 		pPlatform->SetName("Platform");
 		m_Objects.push_back(pPlatform);
 
-		fw::GameObject* pLeftEdge = new fw::GameObject(this, c_centerOfScreen + vec3(-10.f, -4.5f, 0.f), vec3());
+		fw::GameObject* pLeftEdge = new fw::GameObject(this, c_centerOfScreen + vec3(-10.9f, -4.5f, 0.f), vec3());
 
 		fw::MeshComponent* pLeftEdgeMesh = new fw::MeshComponent(m_pResourceManager->GetMesh("Sprite"), m_pResourceManager->GetMaterial("NiceDaysWalk"));
 
@@ -52,7 +53,7 @@ Assignment1Scene::Assignment1Scene(Game* pGame) : fw::Scene(pGame)
 		pLeftEdge->SetName("Platform Left Edge");
 		m_Objects.push_back(pLeftEdge);
 
-		fw::GameObject* pRightEdge = new fw::GameObject(this, c_centerOfScreen + vec3(10.f, -4.5f, 0.f), vec3());
+		fw::GameObject* pRightEdge = new fw::GameObject(this, c_centerOfScreen + vec3(10.9f, -4.5f, 0.f), vec3());
 
 		fw::MeshComponent* pRightEdgeMesh = new fw::MeshComponent(m_pResourceManager->GetMesh("Sprite"), m_pResourceManager->GetMaterial("NiceDaysWalk"));
 
@@ -63,6 +64,14 @@ Assignment1Scene::Assignment1Scene(Game* pGame) : fw::Scene(pGame)
 		pRightEdge->CreateBody(m_pPhysicsWorld, false, vec3(2.0f, 2.0f, 2.0f), 1.f);
 		pRightEdge->SetName("Platform Left Edge");
 		m_Objects.push_back(pRightEdge);
+	}
+
+	//Meteors
+	{
+		Meteor* pMeteor = new Meteor(this, m_pResourceManager->GetMesh("Sprite"), m_pResourceManager->GetMaterial("NiceDaysWalk"), m_pResourceManager->GetSpriteSheet("NiceDaysWalk"), vec2(c_centerOfScreen.x, c_centerOfScreen.y), vec3());
+		pMeteor->CreateBody(m_pPhysicsWorld, true, 1.f);
+		pMeteor->SetName("Meteor");
+		m_Objects.push_back(pMeteor);
 	}
 
 	Shaun* pShaun = new Shaun(this, m_pResourceManager->GetMesh("Sprite"), m_pResourceManager->GetMaterial("NiceDaysWalk"), vec2(7.5f, 12.0f), m_pPlayerController);

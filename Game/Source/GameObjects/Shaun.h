@@ -33,20 +33,6 @@ class Tilemap;
 
 class Shaun : public fw::GameObject
 {
-public:
-	Shaun(fw::Scene* pScene, fw::Mesh* pMesh, fw::Material* pMaterial, vec2 pos, PlayerController* pController);
-    virtual ~Shaun();
-
-    virtual void Update(float deltaTime) override;
-    //virtual void Draw() override;
-
-    // Setters.
-    void SetSpriteSheet(fw::SpriteSheet* pSpriteSheet) { m_pSpriteSheet = pSpriteSheet; SetAnimations(); }
-    void SetTilemap(Tilemap* pTilemap) { m_pTilemap = pTilemap; }
-    void SetAnimations();
-
-    void CycleAnimFrames();
-
 protected:
     PlayerController* m_pPlayerController = nullptr;
 
@@ -65,4 +51,18 @@ protected:
 
     fw::SpriteSheet* m_pSpriteSheet = nullptr;
     Tilemap* m_pTilemap = nullptr;
+
+public:
+	Shaun(fw::Scene* pScene, fw::Mesh* pMesh, fw::Material* pMaterial, vec2 pos, PlayerController* pController);
+    virtual ~Shaun();
+
+    virtual void Update(float deltaTime) override;
+    //virtual void Draw() override;
+
+    // Setters.
+    void SetSpriteSheet(fw::SpriteSheet* pSpriteSheet) { m_pSpriteSheet = pSpriteSheet; SetAnimations(); }
+    void SetTilemap(Tilemap* pTilemap) { m_pTilemap = pTilemap; }
+    void SetAnimations();
+
+    void CycleAnimFrames();
 };

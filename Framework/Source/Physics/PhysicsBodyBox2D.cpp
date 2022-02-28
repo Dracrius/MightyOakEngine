@@ -60,6 +60,11 @@ void PhysicsBodyBox2D::SetVelocity(vec3 vel)
     m_pBody->SetLinearVelocity(b2Vec2(vel.x, vel.y));
 }
 
+void PhysicsBodyBox2D::SetState(bool isEnabled)
+{
+	m_pBody->SetEnabled(isEnabled);
+}
+
 void PhysicsBodyBox2D::ApplyForce(const vec3& force, bool wake)
 {
     b2Vec2 twoDForce = b2Vec2(force.x, force.y);

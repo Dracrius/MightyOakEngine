@@ -43,26 +43,77 @@ void GameObject::Update(float deltaTime)
     }
 }
 
+void GameObject::SetState(bool isEnabled)
+{
+	if (isEnabled != m_enabled)
+	{
+		if (m_pPhysicsBody)
+		{
+			m_pPhysicsBody->SetState(isEnabled);
+		}
+
+		MeshComponent* pMesh = GetComponent<fw::MeshComponent>();
+
+		if (pMesh)
+		{
+			if (isEnabled)
+			{
+				AddCompFromManager(pMesh);
+			}
+			else
+			{
+				RemoveCompFromManager(pMesh);
+			}
+		}
+	}
+
+	m_enabled = isEnabled;
+}
+
 void GameObject::CreateBody(PhysicsWorld* pWorld, bool isDynamic, float density)
 {
-    m_pPhysicsBody = pWorld->CreateBody(this, isDynamic, m_Scale, density, m_Position, m_Rotation);
+    CreateBody(pWorld, isDynamic, m_Scale, density);
 }
 
 void GameObject::CreateBody(PhysicsWorld* pWorld, bool isDynamic, vec3 size, float density)
 {
     m_pPhysicsBody = pWorld->CreateBody(this, isDynamic, size, density, m_Position, m_Rotation);
+
+	if (!m_enabled)
+	{
+		m_pPhysicsBody->SetState(false);
+	}
+}
+
+void GameObject::CreateBody(PhysicsWorld* pWorld, bool isDynamic, float radius, float density)
+{
+	m_pPhysicsBody = pWorld->CreateBody(this, isDynamic, radius, density, m_Position, m_Rotation);
+
+	if (!m_enabled)
+	{
+		m_pPhysicsBody->SetState(false);
+	}
 }
 
 void GameObject::AddComponent(Component* pComponent)
 {
     pComponent->SetGameObject(this);
-    m_pScene->GetComponentManager()->AddComponent(pComponent);
+	if (m_enabled)
+	{
+		m_pScene->GetComponentManager()->AddComponent(pComponent);
+	}
 
     m_pComponents.push_back(pComponent);
 }
 
-void GameObject::RemoveComponent(Component* pComponent)
+void GameObject::AddCompFromManager(Component* pComponent)
 {
+	m_pScene->GetComponentManager()->AddComponent(pComponent);
+}
+
+void GameObject::RemoveCompFromManager(Component* pComponent)
+{
+	m_pScene->GetComponentManager()->RemoveComponent(pComponent);
 }
 
 Component* GameObject::GetComponent(const char* component)

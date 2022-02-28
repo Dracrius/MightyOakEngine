@@ -20,6 +20,8 @@ public:
     virtual void SetTransform(vec3 pos, vec3 rot) override;
     virtual void SetVelocity(vec3 vel) override;
 
+	virtual void SetState(bool isEnabled) override;
+
     virtual void ApplyForce(const vec3& force, bool wake) override;
     virtual void ApplyForce(const vec3& force, const vec3 point, bool wake) override;
 

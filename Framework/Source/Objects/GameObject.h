@@ -24,11 +24,15 @@ public:
 
     virtual void Update(float deltaTime);
 
-    void CreateBody(PhysicsWorld* pWorld, bool isDynamic, float density);
-    void CreateBody(PhysicsWorld* pWorld, bool isDynamic, vec3 size, float density);
+	void SetState(bool isEnabled);
+
+	virtual void CreateBody(PhysicsWorld* pWorld, bool isDynamic, float density);
+	virtual void CreateBody(PhysicsWorld* pWorld, bool isDynamic, float radius, float density);
+	virtual void CreateBody(PhysicsWorld* pWorld, bool isDynamic, vec3 size, float density);
 
     void AddComponent(Component* pComponent);
-    void RemoveComponent(Component* pComponent);
+	void AddCompFromManager(Component* pComponent);
+    void RemoveCompFromManager(Component* pComponent);
 	Component* GetComponent(const char* component);
 
 	template <class Type> Type* GetComponent()
@@ -79,6 +83,8 @@ protected:
     vec3 m_Position = vec3( 0, 0, 0 );
     vec3 m_Rotation = vec3(0, 0, 0);
     vec3 m_Scale = vec3(1, 1, 1);
+
+	bool m_enabled = true;
 };
 
 } // namespace fw

@@ -103,4 +103,36 @@ PhysicsBody* PhysicsWorldBox2D::CreateBody(GameObject* owner, bool isDynamic, ve
     return physicsBody;
 }
 
+PhysicsBody* PhysicsWorldBox2D::CreateBody(GameObject* owner, bool isDynamic, float radius, float density, vec3 pos, vec3 rot)
+{
+	b2BodyDef bodydef;
+	bodydef.position = b2Vec2(pos.x, pos.y);
+	bodydef.angle = rot.z;
+
+	if (isDynamic)
+	{
+		bodydef.type = b2_dynamicBody;
+	}
+	else
+	{
+		bodydef.type = b2_staticBody;
+	}
+
+	bodydef.userData.pointer = reinterpret_cast<uintptr_t>(owner);
+
+	b2CircleShape shape;
+	shape.m_radius = radius;
+
+	b2FixtureDef fixtureDef;
+	fixtureDef.shape = &shape;
+	fixtureDef.density = density;
+
+	b2Body* body = m_pWorld->CreateBody(&bodydef);
+	body->CreateFixture(&fixtureDef);
+
+	PhysicsBody* physicsBody = new PhysicsBodyBox2D(body);
+
+	return physicsBody;
+}
+
 } // namespace fw
