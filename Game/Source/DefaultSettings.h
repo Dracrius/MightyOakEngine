@@ -13,6 +13,7 @@ const std::string c_defaultScene = "Assignment1";
 
 const float c_animationLength = 0.12f;
 const float c_shaunAnimationLength = 0.1f;
+const float c_shaunIdleLength = 0.3f;
 const vec2 c_gravity = vec2(0.f, -9.8f);
 
 const vec3 c_centerOfScreen = vec2(1.5f * 10, 1.5f * 10) / 2;
@@ -25,8 +26,9 @@ const Color4f c_defaultWaterColor = Color4f(15.f / 255, 103.f / 255, 227.f / 255
 
 //Player
 const vec2 c_playerCollider = vec2(0.83f, 0.83f);
-const vec2 c_shaunCollider = vec2(0.97f, 0.66f);
+const vec2 c_shaunCollider = vec2(0.97f, 0.64f);
 const float c_playerSpeed = 250.f;
+const float c_shaunSpeed = 10.f;
 const float c_jumpTimer = 0.5f;
 
 //Astroids

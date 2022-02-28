@@ -68,7 +68,7 @@ Assignment1Scene::Assignment1Scene(Game* pGame) : fw::Scene(pGame)
 	Shaun* pShaun = new Shaun(this, m_pResourceManager->GetMesh("Sprite"), m_pResourceManager->GetMaterial("NiceDaysWalk"), vec2(7.5f, 12.0f), m_pPlayerController);
 	pShaun->SetSpriteSheet(m_pResourceManager->GetSpriteSheet("NiceDaysWalk"));
 	pShaun->SetScale(vec3(2.f, 2.f, 0.f));
-	pShaun->CreateBody(m_pPhysicsWorld, true, vec3(c_playerCollider.x, c_playerCollider.y, c_playerCollider.y), 1.f);
+	pShaun->CreateBody(m_pPhysicsWorld, true, vec3(c_shaunCollider.x, c_shaunCollider.y, c_shaunCollider.y) * 2, 1.f);
 	pShaun->SetName("Shaun the Sheep");
 	m_Objects.push_back(pShaun);
 

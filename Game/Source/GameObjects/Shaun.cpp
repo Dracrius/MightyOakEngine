@@ -42,7 +42,7 @@ void Shaun::Update(float deltaTime)
 	//Jump
     if( m_pPlayerController->WasPressed( PlayerController::Action::Up ) && m_jumpTimer <= 0.f )
     {
-        m_pPhysicsBody->ApplyLinearImpulse(vec3(0.f, c_playerSpeed * deltaTime, 0.f), true);
+        m_pPhysicsBody->ApplyLinearImpulse(vec3(0.f, c_shaunSpeed, 0.f), true);
 
         m_jumpTimer = c_jumpTimer;
 
@@ -72,12 +72,12 @@ void Shaun::Update(float deltaTime)
 	//Move Left & Right
     if( m_pPlayerController->IsHeld( PlayerController::Action::Left ) )
     {
-        m_pPhysicsBody->ApplyForce(vec3(-(c_playerSpeed * deltaTime), 0.f, 0.f), true);
+        m_pPhysicsBody->ApplyForce(vec3(-(c_shaunSpeed), 0.f, 0.f), true);
 		m_playersCurrentAction = WalkLeft;
     }
     if( m_pPlayerController->IsHeld( PlayerController::Action::Right ) )
     {
-        m_pPhysicsBody->ApplyForce(vec3((c_playerSpeed * deltaTime), 0.f, 0.f), true);
+        m_pPhysicsBody->ApplyForce(vec3((c_shaunSpeed), 0.f, 0.f), true);
 		m_playersCurrentAction = WalkRight;
     }
 
@@ -162,7 +162,7 @@ void Shaun::CycleAnimFrames()
 	if (m_playersCurrentAction == IdleRight || m_playersCurrentAction == IdleLeft)
 	{
 		numFrames = 2;
-		/*if (m_animationTime > 9.f)
+		if (m_animationTime > 9.f)
 		{
 			m_animationTime = 0.f;
 		}
@@ -174,7 +174,7 @@ void Shaun::CycleAnimFrames()
 		else
 		{
 			numFrames = 2;
-		}*/
+		}
 	}
 	if (m_playersCurrentAction == CrouchRight || m_playersCurrentAction == CrouchLeft)
 	{
@@ -188,24 +188,15 @@ void Shaun::CycleAnimFrames()
     if (m_animFrame > numFrames - 1)
     {
 		m_animFrame = 0;
-		/*if ((m_playersCurrentAction == IdleRight || m_playersCurrentAction == IdleLeft) && m_animationTime > 5.f)
+		if ((m_playersCurrentAction == IdleRight || m_playersCurrentAction == IdleLeft) && m_animationTime > 5.f)
 		{
 			m_animFrame = 2;
 		}
 		else
 		{
 			m_animFrame = 0;
-		}*/
+		}
     }
-
-    if (m_animationFrameTimer > c_shaunAnimationLength)
-    {
-		m_animFrame++;
-
-		m_animationFrameTimer = 0.f;
-
-    }
-
 
 	fw::MeshComponent* pMesh = GetComponent<fw::MeshComponent>();
 
@@ -292,6 +283,25 @@ void Shaun::CycleAnimFrames()
 			}
 			pMesh->SetUVScale(m_shaunFrames.walkLeft[m_animFrame]->uvScale);
 			pMesh->SetUVOffset(m_shaunFrames.walkLeft[m_animFrame]->uvOffset);
+		}
+	}
+
+	if (m_playersCurrentAction == IdleLeft || m_playersCurrentAction == IdleRight)
+	{
+		if (m_animationFrameTimer > c_shaunIdleLength)
+		{
+			m_animFrame++;
+
+			m_animationFrameTimer = 0.f;
+		}
+	}
+	else
+	{
+		if (m_animationFrameTimer > c_shaunAnimationLength)
+		{
+			m_animFrame++;
+
+			m_animationFrameTimer = 0.f;
 		}
 	}
 }
