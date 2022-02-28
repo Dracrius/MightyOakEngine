@@ -9,6 +9,7 @@
 #include "Scenes/CubeScene.h"
 #include "Scenes/WaterScene.h"
 #include "Scenes/ObjScene.h"
+#include "Scenes/Assignment1Scene.h"
 #include "DefaultSettings.h"
 
 Game::Game(fw::FWCore& fwCore)
@@ -46,7 +47,9 @@ void Game::Init()
 
     // Setup Meshes 
 	m_pResourceManager->CreateMesh("Sprite", GL_TRIANGLES, g_SpriteVerts, g_SpriteIndices);
-	m_pResourceManager->CreateMesh("Background", GL_TRIANGLES, g_BackgroundVerts, g_BackgroundIndices);
+	m_pResourceManager->CreateMesh("Background");
+	m_pResourceManager->GetMesh("Background")->CreatePlane(vec2(10.f, 2.f), ivec2(2, 2));
+	m_pResourceManager->CreateMesh("Platform", GL_TRIANGLES, g_BackgroundVerts, g_BackgroundIndices);
     m_pResourceManager->CreateMesh("Cube", GL_TRIANGLES, g_CubeVerts);
 	m_pResourceManager->CreateMesh("Plane");
 	m_pResourceManager->GetMesh("Plane")->CreatePlane(vec2(100.f, 100.f), ivec2(1000, 1000));
@@ -66,10 +69,11 @@ void Game::Init()
 	m_pResourceManager->CreateTexture("Arcade_Floor", "Data/Textures/Arcade_Cabinet_Floor_Low_Light.png");
 	m_pResourceManager->CreateTexture("Background", "Data/Textures/mayclover_meadow.png");
 	m_pResourceManager->CreateTexture("NiceDaysWalk", "Data/Textures/NiceDaysWalk.png");
+	m_pResourceManager->CreateTexture("PlatformCenter", "Data/Textures/Ground_02.png");
 
     // Setup Sprite Sheets
 	m_pResourceManager->CreateSpriteSheet("Sprites", "Data/Textures/Sprites.json", m_pResourceManager->GetTexture("Sprites"));
-	m_pResourceManager->CreateSpriteSheet("Sprites", "Data/Textures/NiceDaysWalk.json", m_pResourceManager->GetTexture("NiceDaysWalk"));
+	m_pResourceManager->CreateSpriteSheet("NiceDaysWalk", "Data/Textures/NiceDaysWalk.json", m_pResourceManager->GetTexture("NiceDaysWalk"));
 
     // Setup Materials
 	m_pResourceManager->CreateMaterial("Sokoban", m_pResourceManager->GetShader("Basic"), m_pResourceManager->GetTexture("Sprites"), fw::Color4f::Red());
@@ -79,12 +83,15 @@ void Game::Init()
 	m_pResourceManager->CreateMaterial("Arcade_Cabinet", m_pResourceManager->GetShader("Basic"), m_pResourceManager->GetTexture("Arcade_Cabinet"), c_defaultObjColor);
 	m_pResourceManager->CreateMaterial("Arcade_Floor", m_pResourceManager->GetShader("Basic"), m_pResourceManager->GetTexture("Arcade_Floor"), c_defaultObjColor);
 	m_pResourceManager->CreateMaterial("Background", m_pResourceManager->GetShader("Basic"), m_pResourceManager->GetTexture("Background"), c_defaultWaterColor);
+	m_pResourceManager->CreateMaterial("NiceDaysWalk", m_pResourceManager->GetShader("Basic"), m_pResourceManager->GetTexture("NiceDaysWalk"), fw::Color4f::Red());
+	m_pResourceManager->CreateMaterial("PlatformCenter", m_pResourceManager->GetShader("Basic"), m_pResourceManager->GetTexture("PlatformCenter"), fw::Color4f::Red());
 
     // Setup Scenes
     m_Scenes["Physics"] = new PhysicsScene(this);
     m_Scenes["Cube"] = new CubeScene(this);
     m_Scenes["Water"] = new WaterScene(this);
     m_Scenes["Obj"] = new ObjScene(this);
+	m_Scenes["Assignment1"] = new Assignment1Scene(this);
 
     SetCurrentScene(c_defaultScene);
 }
@@ -267,6 +274,12 @@ void Game::MainMenu()
 		{
 			if (ImGui::BeginMenu("Load Scene"))
 			{
+				if (ImGui::MenuItem("Assignment 1", "Ctrl+A"))
+				{
+					SceneChangeEvent* pSceneChange = new SceneChangeEvent("Assignment1");
+					m_FWCore.GetEventManager()->AddEvent(pSceneChange);
+				}
+
 				if (ImGui::MenuItem("Cube", "Ctrl+C"))
 				{
 					SceneChangeEvent* pSceneChange = new SceneChangeEvent("Cube");

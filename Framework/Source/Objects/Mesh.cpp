@@ -157,6 +157,14 @@ void Mesh::Rebuild(GLenum primitiveType, const std::vector<VertexFormat>& verts,
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * m_NumIndices, &indices[0], GL_STATIC_DRAW);
 }
 
+//void Mesh::CreateSprite(vec2 size, ivec2 numTiles)
+//{
+//	{ vec3(-0.5f,-0.5f,0.f),  255,255,255,255,  vec2(0.0f,0.0f) }, // bottom left
+//	{ vec3(-0.5f,0.5f,0.f),  255,255,255,255,  vec2(0.0f,1.0f) }, // top left
+//	{ vec3(0.5f,-0.5f,0.f),  255,255,255,255,  vec2(1.0f,0.0f) }, // bottom right
+//	{ vec3(0.5f,0.5f,0.f),  255,255,255,255,  vec2(1.0f,1.0f) }, // top right
+//}
+
 void Mesh::CreatePlane(vec2 size, ivec2 vertRes)
 {
     vec2 stepSize = vec2(size.x / (vertRes.x - 1), size.y / (vertRes.y - 1));

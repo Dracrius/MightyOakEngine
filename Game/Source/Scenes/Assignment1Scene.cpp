@@ -1,13 +1,13 @@
 #include "Framework.h"
 
-#include "PhysicsScene.h"
+#include "Assignment1Scene.h"
 #include "DataTypes.h"
 #include "GameObjects/PlayerController.h"
-#include "GameObjects/Player.h"
+#include "GameObjects/Shaun.h"
 #include "Game.h"
 #include "DefaultSettings.h"
 
-PhysicsScene::PhysicsScene(Game* pGame) : fw::Scene(pGame)
+Assignment1Scene::Assignment1Scene(Game* pGame) : fw::Scene(pGame)
 {
 	m_pPhysicsWorld = new fw::PhysicsWorldBox2D(pGame->GetFramework()->GetEventManager());
 	m_pPhysicsWorld->SetGravity(c_gravity);
@@ -24,32 +24,6 @@ PhysicsScene::PhysicsScene(Game* pGame) : fw::Scene(pGame)
 	pBackground->SetScale(vec3(18.8f, 0.f, 10.f));
 	pBackground->SetName("Background");
 	m_Objects.push_back(pBackground);
-
-	for (int i = 0; i < 6; i++)
-	{
-		vec3 pos = c_centerOfScreen;
-		if (i < 3)
-		{
-			pos += vec3(1.f - (float)i, 0.f, 0.f);
-		}
-		else if (i >= 3 && i < 5)
-		{
-			pos += vec3(3.5f - (float)i, 1.f, 0.f);
-		}
-		else
-		{
-			pos += vec3(0.f, 2.f, 0.f);
-		}
-
-		std::string name = "Numbered Box " + i;
-		fw::GameObject* pBox = new fw::GameObject(this, pos, vec3());
-		pBox->AddComponent(new fw::MeshComponent(m_pResourceManager->GetMesh("Cube"), m_pResourceManager->GetMaterial("Cube")));
-		pBox->SetScale(vec3(0.5f, 0.5f, 0.5f));
-		pBox->CreateBody(m_pPhysicsWorld, true, vec3(1.0f, 1.0f, 1.0f), 1.f);
-		pBox->SetName(name);
-		m_Objects.push_back(pBox);
-	}
-
 
 	//Platform
 	{
@@ -91,42 +65,43 @@ PhysicsScene::PhysicsScene(Game* pGame) : fw::Scene(pGame)
 		m_Objects.push_back(pRightEdge);
 	}
 
-	Player* pPlayer = new Player(this, m_pResourceManager->GetMesh("Sprite"), m_pResourceManager->GetMaterial("Sokoban"), vec2(7.5f, 12.0f), m_pPlayerController);
-	pPlayer->SetSpriteSheet(m_pResourceManager->GetSpriteSheet("Sprites"));
-	pPlayer->CreateBody(m_pPhysicsWorld, true, vec3(c_playerCollider.x, c_playerCollider.y, c_playerCollider.y), 1.f);
-	pPlayer->SetName("Player");
-	m_Objects.push_back(pPlayer);
+	Shaun* pShaun = new Shaun(this, m_pResourceManager->GetMesh("Sprite"), m_pResourceManager->GetMaterial("NiceDaysWalk"), vec2(7.5f, 12.0f), m_pPlayerController);
+	pShaun->SetSpriteSheet(m_pResourceManager->GetSpriteSheet("NiceDaysWalk"));
+	pShaun->SetScale(vec3(2.f, 2.f, 0.f));
+	pShaun->CreateBody(m_pPhysicsWorld, true, vec3(c_playerCollider.x, c_playerCollider.y, c_playerCollider.y), 1.f);
+	pShaun->SetName("Shaun the Sheep");
+	m_Objects.push_back(pShaun);
 
 	m_pCamera->AttachTo(m_Objects.back());
 	m_pCamera->SetThirdPerson(c_cameraOffset + vec3(0.f, 4.5f, 0.f));
 	m_pCamera->SetAspectRatio(c_aspectRatio);
 }
 
-PhysicsScene::~PhysicsScene()
+Assignment1Scene::~Assignment1Scene()
 {
     delete m_pPlayerController;
 }
 
-void PhysicsScene::StartFrame(float deltaTime)
+void Assignment1Scene::StartFrame(float deltaTime)
 {
     m_pPlayerController->StartFrame();
 }
 
-void PhysicsScene::OnEvent(fw::Event* pEvent)
+void Assignment1Scene::OnEvent(fw::Event* pEvent)
 {
     m_pPlayerController->OnEvent(pEvent);
 
     fw::Scene::OnEvent(pEvent);
 }
 
-void PhysicsScene::Update(float deltaTime)
+void Assignment1Scene::Update(float deltaTime)
 {
     Scene::Update(deltaTime);
 
 	ControlsMenu();
 }
 
-void PhysicsScene::ControlsMenu()
+void Assignment1Scene::ControlsMenu()
 {
 	if (ImGui::BeginMainMenuBar())
 	{
@@ -159,7 +134,7 @@ void PhysicsScene::ControlsMenu()
 
 			ImGui::EndMenu();
 		}
-		ImGui::MenuItem("Physics Scene", NULL, false, false);
+		ImGui::MenuItem("Assignment 1 Scene", NULL, false, false);
 
 		ImGui::EndMainMenuBar();
 	}
