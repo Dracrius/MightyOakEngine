@@ -21,11 +21,6 @@ void Shaun::Update(float deltaTime)
 
 	m_animationFrameTimer += deltaTime;
 
-	if (m_jumpTimer > 0.f)
-	{
-		m_jumpTimer -= deltaTime;
-	}
-
 	if (m_velocity.x < 0.5f && m_velocity.x > -0.5f)
 	{
 		if (m_playersLastAction == IdleLeft || m_playersLastAction == WalkLeft || m_playersLastAction == JumpLeft || m_playersLastAction == CrouchLeft)
@@ -37,14 +32,26 @@ void Shaun::Update(float deltaTime)
 			m_playersCurrentAction = IdleRight;
 		}
 	}
+	else if (m_playersLastAction == JumpLeft)
+	{
+		if (m_playersCurrentAction != CrouchLeft)
+		{
+			m_playersCurrentAction = IdleLeft;
+		}
+	}
+	else if (m_playersLastAction == JumpRight)
+	{
+		if (m_playersCurrentAction != CrouchRight)
+		{
+			m_playersCurrentAction = IdleRight;
+		}
+	}
 
     //Check Control States
 	//Jump
-    if( m_pPlayerController->WasPressed( PlayerController::Action::Up ) && m_jumpTimer <= 0.f )
+    if( m_pPlayerController->WasPressed( PlayerController::Action::Up ) && m_onGround )
     {
         m_pPhysicsBody->ApplyLinearImpulse(vec3(0.f, c_shaunSpeed, 0.f), true);
-
-        m_jumpTimer = c_jumpTimer;
 
 		if (m_pPhysicsBody->GetVelocity().x > 0.1f || m_playersLastAction == IdleRight)
 		{
@@ -54,6 +61,8 @@ void Shaun::Update(float deltaTime)
 		{
 			m_playersCurrentAction = JumpLeft;
 		}
+
+		m_onGround = false;
     }
 
 	//Crouch
@@ -69,17 +78,36 @@ void Shaun::Update(float deltaTime)
 		}
     }
 
-	//Move Left & Right
-    if( m_pPlayerController->IsHeld( PlayerController::Action::Left ) )
-    {
-        m_pPhysicsBody->ApplyForce(vec3(-(c_shaunSpeed), 0.f, 0.f), true);
-		m_playersCurrentAction = WalkLeft;
-    }
-    if( m_pPlayerController->IsHeld( PlayerController::Action::Right ) )
-    {
-        m_pPhysicsBody->ApplyForce(vec3((c_shaunSpeed), 0.f, 0.f), true);
-		m_playersCurrentAction = WalkRight;
-    }
+	if (m_canWalk)
+	{
+		//Walk Left & Right
+		if (m_pPlayerController->IsHeld(PlayerController::Action::Left))
+		{
+			m_pPhysicsBody->ApplyForce(vec3(-(c_shaunSpeed), 0.f, 0.f), true);
+			m_playersCurrentAction = WalkLeft;
+		}
+		if (m_pPlayerController->IsHeld(PlayerController::Action::Right))
+		{
+			m_pPhysicsBody->ApplyForce(vec3((c_shaunSpeed), 0.f, 0.f), true);
+			m_playersCurrentAction = WalkRight;
+		}
+	}
+	else if (m_onGround)
+	{
+		//Jump Left & Right
+		if (m_pPlayerController->WasPressed(PlayerController::Action::Left))
+		{
+			m_pPhysicsBody->ApplyLinearImpulse(vec3((-c_shaunSpeed / 2.5f), c_shaunSpeed, 0.f), true);
+			m_playersCurrentAction = JumpLeft;
+			m_onGround = false;
+		}
+		if (m_pPlayerController->WasPressed(PlayerController::Action::Right))
+		{
+			m_pPhysicsBody->ApplyLinearImpulse(vec3((c_shaunSpeed / 2.5f), c_shaunSpeed, 0.f), true);
+			m_playersCurrentAction = JumpRight;
+			m_onGround = false;
+		}
+	}
 
 	//Teleport
     if( m_pPlayerController->WasPressed( PlayerController::Action::Teleport ) )
@@ -108,7 +136,14 @@ void Shaun::Update(float deltaTime)
         CycleAnimFrames();
     }
 
-	m_playersLastAction = m_playersCurrentAction;
+	if (m_playersLastAction != JumpLeft && m_playersLastAction != JumpRight)
+	{
+		m_playersLastAction = m_playersCurrentAction;
+	}
+	else if(m_playersCurrentAction == CrouchLeft || m_playersCurrentAction == CrouchRight)
+	{
+		m_playersLastAction = m_playersCurrentAction;
+	}
 }
 
 void Shaun::SetAnimations()
@@ -208,15 +243,25 @@ void Shaun::CycleAnimFrames()
 			{
 				m_animFrame = 0;
 			}
-			if (m_playersLastAction == IdleRight || m_playersLastAction == CrouchRight || m_playersLastAction == WalkRight || m_playersLastAction == JumpRight)
+			if (m_playersLastAction == IdleRight || m_playersLastAction == CrouchRight || m_playersLastAction == WalkRight)
 			{
 				pMesh->SetUVScale(m_shaunFrames.idleRight[m_animFrame]->uvScale);
 				pMesh->SetUVOffset(m_shaunFrames.idleRight[m_animFrame]->uvOffset);
 			}
-			else
+			else if(m_playersLastAction == IdleLeft|| m_playersLastAction == CrouchLeft || m_playersLastAction == WalkLeft)
 			{
 				pMesh->SetUVScale(m_shaunFrames.idleLeft[m_animFrame]->uvScale);
 				pMesh->SetUVOffset(m_shaunFrames.idleLeft[m_animFrame]->uvOffset);
+			}
+			else if (m_playersLastAction == JumpRight)
+			{
+				pMesh->SetUVScale(m_shaunFrames.idleRight[0]->uvScale);
+				pMesh->SetUVOffset(m_shaunFrames.idleRight[0]->uvOffset);
+			}
+			else if (m_playersLastAction == JumpLeft )
+			{
+				pMesh->SetUVScale(m_shaunFrames.idleLeft[0]->uvScale);
+				pMesh->SetUVOffset(m_shaunFrames.idleLeft[0]->uvOffset);
 			}
 		}
 		else
@@ -235,7 +280,7 @@ void Shaun::CycleAnimFrames()
 	}
 	else if (m_velocity.x > 0.1f)
 	{
-		if (m_playersCurrentAction == JumpRight)
+		if (m_playersCurrentAction == JumpRight || (m_playersCurrentAction == CrouchRight && m_playersLastAction == JumpRight))
 		{
 			pMesh->SetUVScale(m_shaunFrames.crouch[0]->uvScale);
 			pMesh->SetUVOffset(m_shaunFrames.crouch[0]->uvOffset);
@@ -249,7 +294,7 @@ void Shaun::CycleAnimFrames()
 			pMesh->SetUVScale(m_shaunFrames.idleRight[0]->uvScale);
 			pMesh->SetUVOffset(m_shaunFrames.idleRight[0]->uvOffset);
 		}
-		else
+		else if (m_playersCurrentAction == WalkRight || m_playersCurrentAction == IdleRight)
 		{
 			if (m_animFrame > 7)
 			{
@@ -261,7 +306,7 @@ void Shaun::CycleAnimFrames()
 	}
 	else if (m_velocity.x < -0.1f)
 	{
-		if (m_playersCurrentAction == JumpLeft)
+		if (m_playersCurrentAction == JumpLeft || (m_playersCurrentAction == CrouchLeft && m_playersLastAction == JumpLeft))
 		{
 			pMesh->SetUVScale(m_shaunFrames.crouch[1]->uvScale);
 			pMesh->SetUVOffset(m_shaunFrames.crouch[1]->uvOffset);
@@ -275,7 +320,7 @@ void Shaun::CycleAnimFrames()
 			pMesh->SetUVScale(m_shaunFrames.idleLeft[0]->uvScale);
 			pMesh->SetUVOffset(m_shaunFrames.idleLeft[0]->uvOffset);
 		}
-		else
+		else if (m_playersCurrentAction == WalkLeft || m_playersCurrentAction == IdleLeft)
 		{
 			if (m_animFrame > 7)
 			{
@@ -302,6 +347,23 @@ void Shaun::CycleAnimFrames()
 			m_animFrame++;
 
 			m_animationFrameTimer = 0.f;
+		}
+	}
+}
+
+void Shaun::SetIsOnGround(bool onGround)
+{
+	m_onGround = onGround;
+
+	if (m_onGround)
+	{
+		if (m_playersLastAction == JumpLeft)
+		{
+			m_playersCurrentAction = CrouchLeft;
+		}
+		if (m_playersLastAction == JumpRight)
+		{
+			m_playersCurrentAction = CrouchRight;
 		}
 	}
 }

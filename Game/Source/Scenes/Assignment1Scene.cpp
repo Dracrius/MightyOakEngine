@@ -50,7 +50,7 @@ Assignment1Scene::Assignment1Scene(Game* pGame) : fw::Scene(pGame)
 		pLeftEdge->AddComponent(pLeftEdgeMesh);
 		pLeftEdge->SetScale(vec3(2.f, 2.f, 0.f));
 		pLeftEdge->CreateBody(m_pPhysicsWorld, false, vec3(2.0f, 2.0f, 2.0f), 1.f);
-		pLeftEdge->SetName("Platform Left Edge");
+		pLeftEdge->SetName("Platform");
 		m_Objects.push_back(pLeftEdge);
 
 		fw::GameObject* pRightEdge = new fw::GameObject(this, c_centerOfScreen + vec3(10.9f, -4.5f, 0.f), vec3());
@@ -62,16 +62,66 @@ Assignment1Scene::Assignment1Scene(Game* pGame) : fw::Scene(pGame)
 		pRightEdge->AddComponent(pRightEdgeMesh);
 		pRightEdge->SetScale(vec3(2.f, 2.f, 0.f));
 		pRightEdge->CreateBody(m_pPhysicsWorld, false, vec3(2.0f, 2.0f, 2.0f), 1.f);
-		pRightEdge->SetName("Platform Left Edge");
+		pRightEdge->SetName("Platform");
 		m_Objects.push_back(pRightEdge);
 	}
 
 	//Meteors
 	{
-		Meteor* pMeteor = new Meteor(this, m_pResourceManager->GetMesh("Sprite"), m_pResourceManager->GetMaterial("NiceDaysWalk"), m_pResourceManager->GetSpriteSheet("NiceDaysWalk"), vec2(c_centerOfScreen.x, c_centerOfScreen.y), vec3());
+		Meteor* pMeteor = new Meteor(this, m_pResourceManager->GetMesh("Sprite"), m_pResourceManager->GetMaterial("NiceDaysWalk"), m_pResourceManager->GetSpriteSheet("NiceDaysWalk"), vec2(c_centerOfScreen.x + 5.f, c_centerOfScreen.y), vec3());
 		pMeteor->CreateBody(m_pPhysicsWorld, true, 1.f);
 		pMeteor->SetName("Meteor");
 		m_Objects.push_back(pMeteor);
+	}
+
+	//Debris
+	{
+		for (int i = 0; i < 9; i++)
+		{
+			fw::GameObject* pDebris = new fw::GameObject(this, vec2(c_centerOfScreen.x - 5.f, c_centerOfScreen.y), vec3());
+			fw::MeshComponent* pDebrisMesh = new fw::MeshComponent(m_pResourceManager->GetMesh("Sprite"), m_pResourceManager->GetMaterial("NiceDaysWalk"));
+
+			if (i < 2)
+			{
+				pDebrisMesh->SetUVScale(m_pResourceManager->GetSpriteSheet("NiceDaysWalk")->GetSpriteByName("Lamb_Chop_01")->uvScale);
+				pDebrisMesh->SetUVOffset(m_pResourceManager->GetSpriteSheet("NiceDaysWalk")->GetSpriteByName("Lamb_Chop_01")->uvOffset);
+			}
+			else if (i < 4)
+			{
+				pDebrisMesh->SetUVScale(m_pResourceManager->GetSpriteSheet("NiceDaysWalk")->GetSpriteByName("Bone_01")->uvScale);
+				pDebrisMesh->SetUVOffset(m_pResourceManager->GetSpriteSheet("NiceDaysWalk")->GetSpriteByName("Bone_01")->uvOffset);
+			}
+			else if (i == 4)
+			{
+				pDebrisMesh->SetUVScale(m_pResourceManager->GetSpriteSheet("NiceDaysWalk")->GetSpriteByName("Leg_01")->uvScale);
+				pDebrisMesh->SetUVOffset(m_pResourceManager->GetSpriteSheet("NiceDaysWalk")->GetSpriteByName("Leg_01")->uvOffset);
+			}
+			else if (i == 5)
+			{
+				pDebrisMesh->SetUVScale(m_pResourceManager->GetSpriteSheet("NiceDaysWalk")->GetSpriteByName("Leg_02")->uvScale);
+				pDebrisMesh->SetUVOffset(m_pResourceManager->GetSpriteSheet("NiceDaysWalk")->GetSpriteByName("Leg_02")->uvOffset);
+			}
+			else if (i == 6)
+			{
+				pDebrisMesh->SetUVScale(m_pResourceManager->GetSpriteSheet("NiceDaysWalk")->GetSpriteByName("Leg_03")->uvScale);
+				pDebrisMesh->SetUVOffset(m_pResourceManager->GetSpriteSheet("NiceDaysWalk")->GetSpriteByName("Leg_03")->uvOffset);
+			}
+			else if (i == 7)
+			{
+				pDebrisMesh->SetUVScale(m_pResourceManager->GetSpriteSheet("NiceDaysWalk")->GetSpriteByName("Leg_04")->uvScale);
+				pDebrisMesh->SetUVOffset(m_pResourceManager->GetSpriteSheet("NiceDaysWalk")->GetSpriteByName("Leg_04")->uvOffset);
+			}
+			else if (i == 8)
+			{
+				pDebrisMesh->SetUVScale(m_pResourceManager->GetSpriteSheet("NiceDaysWalk")->GetSpriteByName("Wool_Chunck_01")->uvScale);
+				pDebrisMesh->SetUVOffset(m_pResourceManager->GetSpriteSheet("NiceDaysWalk")->GetSpriteByName("Wool_Chunck_01")->uvOffset);
+			}
+
+			pDebris->AddComponent(pDebrisMesh);
+			pDebris->CreateBody(m_pPhysicsWorld, true, 0.4f, 1.f);
+			pDebris->SetName("Debris");
+			m_Objects.push_back(pDebris);
+		}
 	}
 
 	Shaun* pShaun = new Shaun(this, m_pResourceManager->GetMesh("Sprite"), m_pResourceManager->GetMaterial("NiceDaysWalk"), vec2(7.5f, 12.0f), m_pPlayerController);
@@ -99,6 +149,24 @@ void Assignment1Scene::StartFrame(float deltaTime)
 void Assignment1Scene::OnEvent(fw::Event* pEvent)
 {
     m_pPlayerController->OnEvent(pEvent);
+
+	if (pEvent->GetEventType() == "CollisionEvent")
+	{
+		fw::CollisionEvent* pCollisionEvent = static_cast<fw::CollisionEvent*>(pEvent);
+
+		fw::ContactState contactState = pCollisionEvent->GetContactState();
+		fw::GameObject* collisObjOne = pCollisionEvent->GetGameObjectOne();
+		fw::GameObject* collisObjTwo = pCollisionEvent->GetGameObjectTwo();
+
+		if ((collisObjOne->GetName() == "Shaun the Sheep" && collisObjTwo->GetName() == "Platform"))
+		{
+			static_cast<Shaun*>(collisObjOne)->SetIsOnGround(true);
+		}
+		if (collisObjOne->GetName() == "Platform" && collisObjTwo->GetName() == "Shaun the Sheep")
+		{
+			static_cast<Shaun*>(collisObjTwo)->SetIsOnGround(true);
+		}
+	}
 
     fw::Scene::OnEvent(pEvent);
 }

@@ -8,7 +8,6 @@ Meteor::Meteor(fw::Scene* pScene, fw::Mesh* pMesh, fw::Material* pMaterial, fw::
 	fw::MeshComponent* pMeshComp = new fw::MeshComponent(pMesh, pMaterial);
 	AddComponent(pMeshComp);
 
-	m_Scale = vec3(2.f, 2.f, 0.f);
 
 	int rand = fw::Random::GetInt(10);
 
@@ -21,6 +20,7 @@ Meteor::Meteor(fw::Scene* pScene, fw::Mesh* pMesh, fw::Material* pMaterial, fw::
 	}
 	else
 	{
+		m_Scale = vec3(2.f, 2.f, 0.f);
 		pMeshComp->SetUVScale(m_pSpriteSheet->GetSpriteByName("Meteor_02")->uvScale);
 		pMeshComp->SetUVOffset(m_pSpriteSheet->GetSpriteByName("Meteor_02")->uvOffset);
 

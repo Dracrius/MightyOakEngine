@@ -7,6 +7,10 @@ class Assignment1Scene : public fw::Scene
 {
 protected:
     PlayerController* m_pPlayerController = nullptr;
+
+	std::vector<fw::GameObject*> m_meteors;
+	std::vector<fw::GameObject*> m_debris;
+
 public:
 	Assignment1Scene(Game* pGame);
     virtual ~Assignment1Scene();

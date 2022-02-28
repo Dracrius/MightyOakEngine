@@ -44,10 +44,10 @@ protected:
     int m_animFrame = 0;
     float m_animationFrameTimer = 0.f;
 	float m_animationTime = 0.f;
-    float m_jumpTimer = 0.f;
     vec3 m_velocity;
 
 	bool m_onGround = false;
+	bool m_canWalk = false;
 
     fw::SpriteSheet* m_pSpriteSheet = nullptr;
     Tilemap* m_pTilemap = nullptr;
@@ -65,4 +65,9 @@ public:
     void SetAnimations();
 
     void CycleAnimFrames();
+
+	void SetWalking(bool canWalk) { m_canWalk = canWalk; }
+	void ToggleWalking() { m_canWalk = !m_canWalk; }
+
+	void SetIsOnGround(bool onGround);
 };
