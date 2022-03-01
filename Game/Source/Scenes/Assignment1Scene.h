@@ -36,6 +36,10 @@ public:
 	void ReloadScene();
 
 protected:
+	fw::GameObject* CheckCollision(fw::CollisionEvent* pCollisionEvent, std::string nameOne, std::string nameTwo);
+
+	void SpawnDebris(vec3 pos);
+
 	void SetupPlatform();
 
 	void FillDebrisPool();

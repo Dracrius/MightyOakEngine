@@ -67,6 +67,7 @@ public:
     void SetScale(vec3 scale) { m_Scale = scale; }
 
 	virtual void ApplyImpulse(const vec3& impulse);
+	virtual void ApplyTorque(const vec3& torque);
 
 	void Editor_OutputObjectDetails();
 

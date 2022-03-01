@@ -3,7 +3,7 @@
 #include "DataTypes.h"
 
 //Default Settings
-const ivec2 c_windowSize = ivec2(1200, 700);
+const ivec2 c_windowSize = ivec2(1024, 544);
 const ivec2 c_glRenderSize = ivec2(1024, 544);
 //Aspect Ratio of OpenGl Window - Can be calculated here, using the OpenGL Render Size https://toolstud.io/photo/aspect.php?
 const float c_aspectRatio = 1.88f; 
@@ -16,7 +16,7 @@ const float c_animationLength = 0.12f;
 const float c_shaunAnimationLength = 0.1f;
 const float c_shaunIdleLength = 0.3f;
 
-const float c_meteorSpawnDelay = 1.f;
+const float c_meteorSpawnDelay = 0.5f;
 const float c_debrisLifeSpan = 3.f;
 
 const vec2 c_gravity = vec2(0.f, -9.8f);

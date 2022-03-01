@@ -170,6 +170,14 @@ void GameObject::ApplyImpulse(const vec3& impulse)
 	}
 }
 
+void GameObject::ApplyTorque(const vec3& torque)
+{
+	if (m_pPhysicsBody)
+	{
+		m_pPhysicsBody->ApplyTorque(torque, true);
+	}
+}
+
 void GameObject::Editor_OutputObjectDetails()
 {
 	vec3 pos = m_Position;

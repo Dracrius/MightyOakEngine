@@ -16,7 +16,7 @@ Assignment1Scene::Assignment1Scene(Game* pGame) : fw::Scene(pGame)
 
 	m_pPlayerController = new PlayerController();
 
-	vec3 pos = c_centerOfScreen + vec3(1.5f, 1.f, 2.f);
+	vec3 pos = c_centerOfScreen + vec3(1.5f, 0.5f, 2.f);
 	vec3 rot = vec3(90.f, 0.f, 0.f);
 
 	fw::GameObject* pBackground = new fw::GameObject(this, pos, rot);
@@ -31,7 +31,12 @@ Assignment1Scene::Assignment1Scene(Game* pGame) : fw::Scene(pGame)
 
 	FillDebrisPool();
 
-	Shaun* pShaun = new Shaun(this, m_pResourceManager->GetMesh("Sprite"), m_pResourceManager->GetMaterial("NiceDaysWalk"), vec2(7.5f, 12.0f), m_pPlayerController);
+	fw::GameObject* pVictory = new fw::GameObject(this, c_centerOfScreen + vec3(0.f, -7.f, 0.f), vec3(0.f, 0.f, 0.f));
+	pVictory->CreateBody(m_pPhysicsWorld, false, vec3(80.0f, 2.0f, 2.0f), 1.f);
+	pVictory->SetName("Victory Box");
+	m_Objects.push_back(pVictory);
+
+	Shaun* pShaun = new Shaun(this, m_pResourceManager->GetMesh("Sprite"), m_pResourceManager->GetMaterial("NiceDaysWalk"), vec2(7.5f, 6.0f), m_pPlayerController);
 	pShaun->SetSpriteSheet(m_pResourceManager->GetSpriteSheet("NiceDaysWalk"));
 	pShaun->SetScale(vec3(2.f, 2.f, 0.f));
 	pShaun->CreateBody(m_pPhysicsWorld, true, vec3(c_shaunCollider.x, c_shaunCollider.y, c_shaunCollider.y) * 2, 1.f);
@@ -71,18 +76,61 @@ void Assignment1Scene::OnEvent(fw::Event* pEvent)
 	{
 		fw::CollisionEvent* pCollisionEvent = static_cast<fw::CollisionEvent*>(pEvent);
 
-		fw::ContactState contactState = pCollisionEvent->GetContactState();
-		fw::GameObject* collisObjOne = pCollisionEvent->GetGameObjectOne();
-		fw::GameObject* collisObjTwo = pCollisionEvent->GetGameObjectTwo();
+		Shaun* pShaun = static_cast<Shaun*>(CheckCollision(pCollisionEvent, "Shaun the Sheep", "Platform"));
+		if (pShaun)
+		{
+			pShaun->SetIsOnGround(true);
+		}
 
-		if ((collisObjOne->GetName() == "Shaun the Sheep" && collisObjTwo->GetName() == "Platform"))
+		pShaun = static_cast<Shaun*>(CheckCollision(pCollisionEvent, "Shaun the Sheep", "Victory Box"));
+		if (pShaun)
 		{
-			static_cast<Shaun*>(collisObjOne)->SetIsOnGround(true);
+			pShaun->SetState(false);
+			m_showWin = true;
 		}
-		if (collisObjOne->GetName() == "Platform" && collisObjTwo->GetName() == "Shaun the Sheep")
+
+		pShaun = static_cast<Shaun*>(CheckCollision(pCollisionEvent, "Shaun the Sheep", "Meteor"));
+		if (pShaun)
 		{
-			static_cast<Shaun*>(collisObjTwo)->SetIsOnGround(true);
+			pShaun->SetState(false);
+			SpawnDebris(pShaun->GetPosition());
+			m_showDeath = true;
 		}
+
+		fw::GameObject* pMeteor = CheckCollision(pCollisionEvent, "Meteor", "Shaun the Sheep");
+		if (!pMeteor)
+		{
+			pMeteor = CheckCollision(pCollisionEvent, "Meteor", "Platform");
+		}
+		if (!pMeteor)
+		{
+			pMeteor = CheckCollision(pCollisionEvent, "Meteor", "Victory Box");
+		}
+		if (pMeteor)
+		{
+			pMeteor->SetState(false);
+			m_pCamera->ShakeCamera();
+
+			std::vector<fw::GameObject*>::iterator it;
+			for (it = m_Objects.begin(); it != m_Objects.end();)
+			{
+				if ((*it) == pMeteor)
+				{
+					m_meteors.push_back(pMeteor);
+					it = m_Objects.erase(it);
+				}
+				else
+				{
+					it++;
+				}
+			}
+		}
+		fw::GameObject* pDebris = CheckCollision(pCollisionEvent, "Debris", "Victory Box");
+		if (pDebris)
+		{
+			pDebris->SetState(false);
+		}
+
 	}
 
     fw::Scene::OnEvent(pEvent);
@@ -99,6 +147,16 @@ void Assignment1Scene::Update(float deltaTime)
 		StartGameWindow();
 	}
 
+	if (m_showWin)
+	{
+		WinWindow();
+	}
+
+	if (m_showDeath)
+	{
+		DeathWindow();
+	}
+
 	if (m_isPlaying)
 	{
 		m_meteorTimer -= deltaTime;
@@ -106,8 +164,25 @@ void Assignment1Scene::Update(float deltaTime)
 		if (m_meteorTimer <= 0.f)
 		{
 			//Spawn Meteor
+			vec3 randDirect = vec3(fw::Random::GetFloat(-10.f, 10.f), -20.f, 0.f);
+			vec3 randPos = vec3(fw::Random::GetFloat(-4.f, 20.f), 20.f, 0.f);
+			vec3 randTorque = vec3(0.f, 0.f, fw::Random::GetFloat(100.f, 150.f));
 
+			bool coinFlip = fw::Random::GetInt(0, 1);
+			if (coinFlip)
+			{
+				randTorque = vec3(0.f, 0.f, fw::Random::GetFloat(-150.f, -100.f));
+			}
 
+			if (!m_meteors.empty())
+			{
+				m_meteors.back()->SetState(true);
+				m_meteors.back()->SetPosition(randPos);
+				m_meteors.back()->ApplyImpulse(randDirect);
+				m_meteors.back()->ApplyTorque(randTorque);
+				m_Objects.push_back(m_meteors.back());
+				m_meteors.pop_back();
+			}
 			m_meteorTimer = c_meteorSpawnDelay;
 		}
 	}
@@ -130,9 +205,52 @@ void Assignment1Scene::ReloadScene()
 	m_showStart = true;
 }
 
+fw::GameObject* Assignment1Scene::CheckCollision(fw::CollisionEvent* pCollisionEvent, std::string nameOne, std::string nameTwo)
+{
+	fw::ContactState contactState = pCollisionEvent->GetContactState();
+	fw::GameObject* collisObjOne = pCollisionEvent->GetGameObjectOne();
+	fw::GameObject* collisObjTwo = pCollisionEvent->GetGameObjectTwo();
+
+	if ((collisObjOne->GetName() == nameOne && collisObjTwo->GetName() == nameTwo))
+	{
+		return collisObjOne;
+	}
+	if (collisObjOne->GetName() == nameTwo && collisObjTwo->GetName() == nameOne)
+	{
+		return collisObjTwo;
+	}
+
+	return nullptr;
+}
+
+void Assignment1Scene::SpawnDebris(vec3 pos)
+{
+	std::vector<fw::GameObject*>::iterator it;
+	for (it = m_debris.begin(); it != m_debris.end();)
+	{
+		vec3 randDirect = vec3(fw::Random::GetFloat(-4.f, 4.f), 4.f, 0.f);
+		vec3 randTorque = vec3(0.f, 0.f, fw::Random::GetFloat(10.f, 50.f));
+
+		bool coinFlip = fw::Random::GetInt(0, 1);
+		if (coinFlip)
+		{
+			randTorque = vec3(0.f, 0.f, fw::Random::GetFloat(-50.f, -10.f));
+		}
+
+		(*it)->SetState(true);
+		(*it)->SetPosition(pos);
+		(*it)->ApplyImpulse(randDirect);
+		(*it)->ApplyTorque(randTorque);
+		m_Objects.push_back((*it));
+		it = m_debris.erase(it);
+	}
+
+	m_spawnedDebris = true;
+}
+
 void Assignment1Scene::SetupPlatform()
 {
-	fw::GameObject* pPlatform = new fw::GameObject(this, c_centerOfScreen + vec3(0.f, -4.5f, 0.f), vec3(0.f, 0.f, 0.f));
+	fw::GameObject* pPlatform = new fw::GameObject(this, c_centerOfScreen + vec3(0.f, -5.f, 0.f), vec3(0.f, 0.f, 0.f));
 	
 	fw::MeshComponent* pPlatformMesh = new fw::MeshComponent(m_pResourceManager->GetMesh("Platform"), m_pResourceManager->GetMaterial("PlatformCenter"));
 	
@@ -145,7 +263,7 @@ void Assignment1Scene::SetupPlatform()
 	pPlatform->SetName("Platform");
 	m_Objects.push_back(pPlatform);
 	
-	fw::GameObject* pLeftEdge = new fw::GameObject(this, c_centerOfScreen + vec3(-10.9f, -4.5f, 0.f), vec3());
+	fw::GameObject* pLeftEdge = new fw::GameObject(this, c_centerOfScreen + vec3(-10.9f, -5.f, 0.f), vec3());
 	
 	fw::MeshComponent* pLeftEdgeMesh = new fw::MeshComponent(m_pResourceManager->GetMesh("Sprite"), m_pResourceManager->GetMaterial("NiceDaysWalk"));
 	
@@ -157,7 +275,7 @@ void Assignment1Scene::SetupPlatform()
 	pLeftEdge->SetName("Platform");
 	m_Objects.push_back(pLeftEdge);
 	
-	fw::GameObject* pRightEdge = new fw::GameObject(this, c_centerOfScreen + vec3(10.9f, -4.5f, 0.f), vec3());
+	fw::GameObject* pRightEdge = new fw::GameObject(this, c_centerOfScreen + vec3(10.9f, -5.f, 0.f), vec3());
 	
 	fw::MeshComponent* pRightEdgeMesh = new fw::MeshComponent(m_pResourceManager->GetMesh("Sprite"), m_pResourceManager->GetMaterial("NiceDaysWalk"));
 	
@@ -272,6 +390,9 @@ void Assignment1Scene::ResetDebrisPool()
 			it++;
 		}
 	}
+
+	m_spawnedDebris = false;
+	m_debrisTimer = c_debrisLifeSpan;
 }
 
 void Assignment1Scene::ResetMeteorPool()
@@ -305,15 +426,20 @@ void Assignment1Scene::ResetGame()
 		if (pObject->GetName() == "Shaun the Sheep")
 		{
 			pObject->SetState(true);
-			pObject->SetPosition(vec2(7.5f, 12.0f));
+			pObject->SetPosition(vec2(7.5f, 6.0f));
+			pObject->SetRotation(vec3());
+			static_cast<Shaun*>(pObject)->SetIsOnGround(false);
 		}
 	}
+
+	m_showWin = false;
+	m_showDeath = false;
 }
 
 void Assignment1Scene::StartGameWindow()
 {
 	ImGui::SetNextWindowSize(ImVec2(140, 70), ImGuiCond_Always);
-	if (!ImGui::Begin("Assignment 1", &m_showStart))
+	if (!ImGui::Begin("Ewe Will Die!", &m_showStart))
 	{
 		ImGui::End();
 		return;
@@ -359,7 +485,7 @@ void Assignment1Scene::WinWindow()
 	{
 		ResetGame();
 		m_isPlaying = true;
-		m_showDeath = false;
+		m_showWin = false;
 	}
 	ImGui::End();
 }
@@ -389,6 +515,8 @@ void Assignment1Scene::ControlsMenu()
 			if (ImGui::MenuItem("Reset Game", ""))
 			{
 				ResetGame();
+				m_isPlaying = false;
+				m_showStart = true;
 			}
 
 			if (ImGui::MenuItem("Enable Walking", "", &m_canWalk)) 
@@ -400,6 +528,11 @@ void Assignment1Scene::ControlsMenu()
 						static_cast<Shaun*>(pObject)->SetWalking(m_canWalk);
 					}
 				}
+			}
+
+			if (ImGui::MenuItem("Shake Camera", ""))
+			{
+				m_pCamera->ShakeCamera();
 			}
 
 			if (ImGui::MenuItem("Enable Debug Draw", "", &m_debugDraw)) {}

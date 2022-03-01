@@ -33,7 +33,7 @@ public:
     void LockView() { m_lockView = true; }
     void UnlockView() { m_lockView = false; }
 
-
+	void ShakeCamera() { m_shaking = true; }
 
 protected:
     matrix m_ViewMatrix;
@@ -45,7 +45,10 @@ protected:
     vec3 m_offset;
 
 	float m_aspectRatio = 1.f;
+	float m_shakeTimer = 0.5f;
+	float m_shakeOffset = 0.f;
 
+	bool m_shaking = false;
     bool m_lockView = false;
 	bool m_perspectiveMode = true;
 };
