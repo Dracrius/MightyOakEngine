@@ -28,7 +28,17 @@ GameObject::~GameObject()
     {
         if (pComponent != nullptr)
         {
-            m_pScene->GetComponentManager()->RemoveComponent(pComponent);
+			if (pComponent->GetType() == MeshComponent::GetStaticType())
+			{
+				if (m_enabled)
+				{
+					m_pScene->GetComponentManager()->RemoveComponent(pComponent);
+				}
+			}
+			else
+			{
+				m_pScene->GetComponentManager()->RemoveComponent(pComponent);
+			}
             delete pComponent;
         }
     }
@@ -132,6 +142,24 @@ const matrix& GameObject::GetWorldTransform()
 {
     m_WorldTransform.CreateSRT(m_Scale, m_Rotation, m_Position);
     return m_WorldTransform;
+}
+
+void GameObject::SetPosition(vec3 pos)
+{
+	m_Position = pos; 
+	if (m_pPhysicsBody)
+	{
+		m_pPhysicsBody->SetPosition(pos);
+	}
+}
+
+void GameObject::SetRotation(vec3 rot)
+{
+	m_Rotation = rot; 
+	if (m_pPhysicsBody)
+	{
+		m_pPhysicsBody->SetTransform(m_Position, rot);
+	}
 }
 
 void GameObject::ApplyImpulse(const vec3& impulse)

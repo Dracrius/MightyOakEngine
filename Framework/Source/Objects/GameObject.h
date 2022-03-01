@@ -62,8 +62,8 @@ public:
 
 	void SetName(std::string name) { m_name = name; }
 
-    void SetPosition(vec3 pos) { m_Position = pos; }
-    void SetRotation(vec3 rot) { m_Rotation = rot; }
+	void SetPosition(vec3 pos);
+	void SetRotation(vec3 rot);
     void SetScale(vec3 scale) { m_Scale = scale; }
 
 	virtual void ApplyImpulse(const vec3& impulse);

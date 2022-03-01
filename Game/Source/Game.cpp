@@ -109,6 +109,11 @@ void Game::OnEvent(fw::Event* pEvent)
     {
         SceneChangeEvent* pSceneChange = static_cast<SceneChangeEvent*>(pEvent);
         SetCurrentScene(pSceneChange->GetSceneName());
+
+		if (pSceneChange->GetSceneName() == "Assignment1")
+		{
+			static_cast<Assignment1Scene*>(m_Scenes["Assignment1"])->ReloadScene();
+		}
     }
     else
     {

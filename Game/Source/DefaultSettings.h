@@ -12,8 +12,13 @@ const std::string c_defaultScene = "Assignment1";
 //List of Scenes: ["Physics"], ["Cube"], ["Water"], ["Obj"], ["Assignment1"]
 
 const float c_animationLength = 0.12f;
+
 const float c_shaunAnimationLength = 0.1f;
 const float c_shaunIdleLength = 0.3f;
+
+const float c_meteorSpawnDelay = 1.f;
+const float c_debrisLifeSpan = 3.f;
+
 const vec2 c_gravity = vec2(0.f, -9.8f);
 
 const vec3 c_centerOfScreen = vec2(1.5f * 10, 1.5f * 10) / 2;
@@ -30,8 +35,3 @@ const vec2 c_shaunCollider = vec2(0.97f, 0.64f);
 const float c_playerSpeed = 250.f;
 const float c_shaunSpeed = 8.f;
 const float c_jumpTimer = 0.5f;
-
-//Astroids
-const int c_astroidPoolSize = 10;
-const float c_astroidRadius = 0.4f;
-const float c_astroidSpeed = 1.f;

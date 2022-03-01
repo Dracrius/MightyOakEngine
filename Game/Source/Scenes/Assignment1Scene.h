@@ -1,4 +1,5 @@
 #pragma once
+#include "DefaultSettings.h"
 
 class Game;
 class PlayerController;
@@ -11,6 +12,17 @@ protected:
 	std::vector<fw::GameObject*> m_meteors;
 	std::vector<fw::GameObject*> m_debris;
 
+	float m_meteorTimer = c_meteorSpawnDelay;
+	float m_debrisTimer = c_debrisLifeSpan;
+
+	bool m_spawnedDebris = false;
+	bool m_canWalk = false;
+	bool m_isPlaying = false;
+
+	bool m_showStart = true;
+	bool m_showWin = false;
+	bool m_showDeath = false;
+
 public:
 	Assignment1Scene(Game* pGame);
     virtual ~Assignment1Scene();
@@ -21,7 +33,24 @@ public:
 
     virtual void Update(float deltaTime) override;
 
+	void ReloadScene();
+
 protected:
+	void SetupPlatform();
+
+	void FillDebrisPool();
+	void FillMeteorPool();
+
+	void ResetDebrisPool();
+	void ResetMeteorPool();
+
+	void ResetGame();
+
+	void StartGameWindow();
+	void DeathWindow();
+	void WinWindow();
+
+
 	void ControlsMenu();
 };
 
