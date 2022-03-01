@@ -80,45 +80,68 @@ Assignment1Scene::Assignment1Scene(Game* pGame) : fw::Scene(pGame)
 		{
 			fw::GameObject* pDebris = new fw::GameObject(this, vec2(c_centerOfScreen.x - 5.f, c_centerOfScreen.y), vec3());
 			fw::MeshComponent* pDebrisMesh = new fw::MeshComponent(m_pResourceManager->GetMesh("Sprite"), m_pResourceManager->GetMaterial("NiceDaysWalk"));
+			pDebris->CreateBody(m_pPhysicsWorld, true, 0.4f, 1.f);
 
 			if (i < 2)
 			{
 				pDebrisMesh->SetUVScale(m_pResourceManager->GetSpriteSheet("NiceDaysWalk")->GetSpriteByName("Lamb_Chop_01")->uvScale);
 				pDebrisMesh->SetUVOffset(m_pResourceManager->GetSpriteSheet("NiceDaysWalk")->GetSpriteByName("Lamb_Chop_01")->uvOffset);
+
+				if (i == 0)
+				{
+					pDebris->ApplyImpulse(vec3(0.81f, 0.58f, 0.f) * 4);
+				}
+				if (i == 1)
+				{
+					pDebris->ApplyImpulse(vec3(-0.81f, 0.58f, 0.f) * 4);
+				}
 			}
 			else if (i < 4)
 			{
 				pDebrisMesh->SetUVScale(m_pResourceManager->GetSpriteSheet("NiceDaysWalk")->GetSpriteByName("Bone_01")->uvScale);
 				pDebrisMesh->SetUVOffset(m_pResourceManager->GetSpriteSheet("NiceDaysWalk")->GetSpriteByName("Bone_01")->uvOffset);
+
+				if (i == 2)
+				{
+					pDebris->ApplyImpulse(vec3(0.58f, 0.81f, 0.f) * 4);
+				}
+				if (i == 3)
+				{
+					pDebris->ApplyImpulse(vec3(-0.58f, 0.81f, 0.f) * 4);
+				}
 			}
 			else if (i == 4)
 			{
 				pDebrisMesh->SetUVScale(m_pResourceManager->GetSpriteSheet("NiceDaysWalk")->GetSpriteByName("Leg_01")->uvScale);
 				pDebrisMesh->SetUVOffset(m_pResourceManager->GetSpriteSheet("NiceDaysWalk")->GetSpriteByName("Leg_01")->uvOffset);
+				pDebris->ApplyImpulse(vec3(0.95f, 0.3f, 0.f) * 4);
 			}
 			else if (i == 5)
 			{
 				pDebrisMesh->SetUVScale(m_pResourceManager->GetSpriteSheet("NiceDaysWalk")->GetSpriteByName("Leg_02")->uvScale);
 				pDebrisMesh->SetUVOffset(m_pResourceManager->GetSpriteSheet("NiceDaysWalk")->GetSpriteByName("Leg_02")->uvOffset);
+				pDebris->ApplyImpulse(vec3(0.3f, 0.95f, 0.f) * 4);
 			}
 			else if (i == 6)
 			{
 				pDebrisMesh->SetUVScale(m_pResourceManager->GetSpriteSheet("NiceDaysWalk")->GetSpriteByName("Leg_03")->uvScale);
 				pDebrisMesh->SetUVOffset(m_pResourceManager->GetSpriteSheet("NiceDaysWalk")->GetSpriteByName("Leg_03")->uvOffset);
+				pDebris->ApplyImpulse(vec3(-0.95f, 0.3f, 0.f) * 4);
 			}
 			else if (i == 7)
 			{
 				pDebrisMesh->SetUVScale(m_pResourceManager->GetSpriteSheet("NiceDaysWalk")->GetSpriteByName("Leg_04")->uvScale);
 				pDebrisMesh->SetUVOffset(m_pResourceManager->GetSpriteSheet("NiceDaysWalk")->GetSpriteByName("Leg_04")->uvOffset);
+				pDebris->ApplyImpulse(vec3(-0.3f, 0.95f, 0.f) * 4);
 			}
 			else if (i == 8)
 			{
 				pDebrisMesh->SetUVScale(m_pResourceManager->GetSpriteSheet("NiceDaysWalk")->GetSpriteByName("Wool_Chunck_01")->uvScale);
 				pDebrisMesh->SetUVOffset(m_pResourceManager->GetSpriteSheet("NiceDaysWalk")->GetSpriteByName("Wool_Chunck_01")->uvOffset);
+				pDebris->ApplyImpulse(vec3(0.f, 1.f, 0.f) * 4);
 			}
 
 			pDebris->AddComponent(pDebrisMesh);
-			pDebris->CreateBody(m_pPhysicsWorld, true, 0.4f, 1.f);
 			pDebris->SetName("Debris");
 			m_Objects.push_back(pDebris);
 		}

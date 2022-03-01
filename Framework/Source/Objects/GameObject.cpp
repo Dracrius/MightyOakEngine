@@ -134,6 +134,14 @@ const matrix& GameObject::GetWorldTransform()
     return m_WorldTransform;
 }
 
+void GameObject::ApplyImpulse(const vec3& impulse)
+{
+	if (m_pPhysicsBody)
+	{
+		m_pPhysicsBody->ApplyLinearImpulse(impulse, true);
+	}
+}
+
 void GameObject::Editor_OutputObjectDetails()
 {
 	vec3 pos = m_Position;

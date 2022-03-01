@@ -66,6 +66,8 @@ public:
     void SetRotation(vec3 rot) { m_Rotation = rot; }
     void SetScale(vec3 scale) { m_Scale = scale; }
 
+	virtual void ApplyImpulse(const vec3& impulse);
+
 	void Editor_OutputObjectDetails();
 
 protected:
