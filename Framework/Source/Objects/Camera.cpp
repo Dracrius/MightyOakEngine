@@ -44,7 +44,7 @@ void Camera::Update(float deltaTime)
 	}
 	else //If not use Ortho Projection
 	{
-		m_ProjecMatrix.CreateOrtho(-5 ,5, -5, 5, -5, 5);
+		m_ProjecMatrix.CreateOrtho(-8 * m_aspectRatio, 8 * m_aspectRatio, -8, 8, 0.01f, 100.f);
 	}
 
     if (m_pCameraOperator) //Check if the Camera is Attached to an Object ie. has a Camera Operatior

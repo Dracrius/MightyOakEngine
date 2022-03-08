@@ -13,6 +13,7 @@ Assignment1Scene::Assignment1Scene(Game* pGame) : fw::Scene(pGame)
 	m_pPhysicsWorld->SetGravity(c_gravity);
 
 	m_pCamera = new fw::Camera(this, c_centerOfScreen + c_cameraOffset);
+	m_pCamera->SetPerspective(false);
 
 	m_pPlayerController = new PlayerController();
 
