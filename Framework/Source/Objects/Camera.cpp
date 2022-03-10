@@ -2,6 +2,7 @@
 
 #include "Camera.h"
 #include "Objects/Scene.h"
+#include "FWCore.h"
 
 namespace fw {
 
@@ -70,6 +71,37 @@ matrix Camera::GetViewMatrix()
 matrix Camera::GetProjecMatrix()
 {
     return m_ProjecMatrix;
+}
+
+void Camera::Hack_ThirdPersonCam(FWCore* pFramework, float deltaTime)
+{
+	float speed = 90.f;
+	float distance = 10.f;
+
+	if (pFramework->IsKeyDown('J'))
+	{
+		m_Rotation.y -= deltaTime * speed;
+	}
+	if (pFramework->IsKeyDown('L'))
+	{
+		m_Rotation.y += deltaTime * speed;
+	}
+
+	if (pFramework->IsKeyDown('I'))
+	{
+		m_Rotation.x -= deltaTime * speed;
+	}
+	if (pFramework->IsKeyDown('K'))
+	{
+		m_Rotation.x += deltaTime * speed;
+	}
+
+	m_ViewMatrix.SetIdentity();
+	m_ViewMatrix.Translate(vec3(0.f,0.f, -distance));
+	m_ViewMatrix.Rotate(m_Rotation.x, 1, 0, 0);
+	m_ViewMatrix.Rotate(m_Rotation.y, 0, 1, 0);
+	m_ViewMatrix.Translate(m_Position);
+	m_ViewMatrix.Inverse();
 }
 
 } // namespace fw

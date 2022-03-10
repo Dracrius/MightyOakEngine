@@ -9,6 +9,7 @@
 #include "Scenes/CubeScene.h"
 #include "Scenes/WaterScene.h"
 #include "Scenes/ObjScene.h"
+#include "Scenes/ThirdPersonScene.h"
 #include "Scenes/Assignment1Scene.h"
 #include "DefaultSettings.h"
 
@@ -91,6 +92,7 @@ void Game::Init()
     m_Scenes["Cube"] = new CubeScene(this);
     m_Scenes["Water"] = new WaterScene(this);
     m_Scenes["Obj"] = new ObjScene(this);
+	m_Scenes["ThirdPerson"] = new ThirdPersonScene(this);
 	m_Scenes["Assignment1"] = new Assignment1Scene(this);
 
     SetCurrentScene(c_defaultScene);
@@ -161,7 +163,7 @@ void Game::SetCurrentScene(std::string scene)
 {
 	m_pCurrentScene = m_Scenes[scene];
 
-	if (scene == "Obj")
+	if (scene == "Obj" || scene == "ThirdPerson")
 	{
 		if (m_backupColor == c_defaultBackground)
 		{

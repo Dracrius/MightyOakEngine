@@ -5,6 +5,8 @@
 
 namespace fw {
 
+class FWCore;
+
 class Camera : public GameObject
 {
 public:
@@ -21,7 +23,7 @@ public:
 
     // Setters.
     void SetFPS() { m_offset = 0.f; }
-    void SetThirdPerson(vec3 offset) { m_offset = offset; }
+    void SetThirdPersonOffset(vec3 offset) { m_offset = offset; }
 	void SetAspectRatio(float aspectRatio) { m_aspectRatio = aspectRatio; }
 
 	void TogglePerspective() { m_perspectiveMode = !m_perspectiveMode; }
@@ -34,6 +36,8 @@ public:
     void UnlockView() { m_lockView = false; }
 
 	void ShakeCamera() { m_shaking = true; }
+
+	void Hack_ThirdPersonCam(FWCore* pFramework, float deltaTime);
 
 protected:
     matrix m_ViewMatrix;
