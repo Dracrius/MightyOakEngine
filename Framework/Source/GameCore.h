@@ -1,11 +1,13 @@
 #pragma once
 
+#include "Events/EventManager.h"
+
 namespace fw {
 
 class Event;
 class ResourceManager;
 
-class GameCore
+class GameCore : public EventListener
 {
 protected:
 	ResourceManager* m_pResourceManager = nullptr;
@@ -14,7 +16,6 @@ public:
 	virtual ~GameCore();
 
     virtual void StartFrame(float deltaTime) = 0;
-    virtual void OnEvent(Event* pEvent) = 0;
     virtual void Update(float deltaTime) = 0;
     virtual void Draw() = 0;
 

@@ -3,6 +3,7 @@
 #include "ComponentManager.h"
 #include "Component.h"
 #include "Components/MeshComponent.h"
+#include "Components/TransformComponent.h"
 #include "Objects/GameObject.h"
 
 namespace fw {
@@ -17,10 +18,16 @@ void ComponentManager::Update(float deltaTime)
 
 void ComponentManager::Draw(Camera* pCamera)
 {
+	for (Component* pComponent : m_Components[TransformComponent::GetStaticType()])
+	{
+		TransformComponent* pTransform = static_cast<TransformComponent*>(pComponent);
+		pTransform->UpdateWorldTransform();
+	}
+
     for (Component* pComponent : m_Components[MeshComponent::GetStaticType()])
     {
         MeshComponent* pMeshComponent = static_cast<MeshComponent*>(pComponent);
-        const matrix& worldTransform = pMeshComponent->GetGameObject()->GetWorldTransform();
+        const matrix& worldTransform = pMeshComponent->GetGameObject()->GetTransform()->GetWorldTransform();
         pMeshComponent->Draw(pCamera, worldTransform);
     }
 }

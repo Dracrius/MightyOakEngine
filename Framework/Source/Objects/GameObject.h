@@ -3,6 +3,7 @@
 #include "..\Libraries\box2d\include\box2d\box2d.h"
 #include "Math/Vector.h"
 #include "Math/Matrix.h"
+#include "Components/TransformComponent.h"
 
 namespace fw {
 
@@ -18,6 +19,18 @@ class Scene;
 
 class GameObject
 {
+protected:
+	std::string m_name;
+    Scene* m_pScene = nullptr;
+
+    //Physics Comp
+    PhysicsBody* m_pPhysicsBody = nullptr;
+
+	TransformComponent* m_pTramsform = nullptr;
+    std::vector<Component*> m_pComponents;
+
+	bool m_enabled = true;
+
 public:
     GameObject(Scene* pScene, vec3 pos, vec3 rot);
     virtual ~GameObject();
@@ -49,13 +62,13 @@ public:
 	}
 
     // Getters.
-    const matrix& GetWorldTransform();
+	TransformComponent* GetTransform() { return m_pTramsform; }
 
 	std::string GetName() { return m_name; }
 
-    vec3 GetPosition() { return m_Position; }
-    vec3 GetRotation() { return m_Rotation; }
-    vec3 GetScale() { return m_Scale; }
+    vec3 GetPosition() { return m_pTramsform->GetPosition(); }
+    vec3 GetRotation() { return  m_pTramsform->GetRotation(); }
+    vec3 GetScale() { return  m_pTramsform->GetScale(); }
 
     // Setters.
     //void SetMaterial(Material* pMaterial) { m_pMaterial = pMaterial; }
@@ -64,30 +77,13 @@ public:
 
 	void SetPosition(vec3 pos);
 	void SetRotation(vec3 rot);
-    void SetScale(vec3 scale) { m_Scale = scale; }
+    void SetScale(vec3 scale) { m_pTramsform->SetScale(scale); }
 
 	virtual void ApplyImpulse(const vec3& impulse);
 	virtual void ApplyTorque(const vec3& torque);
 
 	void Editor_OutputObjectDetails();
 
-protected:
-	std::string m_name;
-    Scene* m_pScene = nullptr;
-
-    //Physics Comp
-    PhysicsBody* m_pPhysicsBody = nullptr;
-
-    //MeshComponent* m_pMeshComponent = nullptr;
-    std::vector<Component*> m_pComponents;
-
-    //Transform Comp
-    matrix m_WorldTransform;
-    vec3 m_Position = vec3( 0, 0, 0 );
-    vec3 m_Rotation = vec3(0, 0, 0);
-    vec3 m_Scale = vec3(1, 1, 1);
-
-	bool m_enabled = true;
 };
 
 } // namespace fw

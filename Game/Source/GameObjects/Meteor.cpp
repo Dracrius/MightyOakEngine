@@ -20,7 +20,7 @@ Meteor::Meteor(fw::Scene* pScene, fw::Mesh* pMesh, fw::Material* pMaterial, fw::
 	}
 	else
 	{
-		m_Scale = vec3(2.f, 2.f, 0.f);
+		m_pTramsform->SetScale(vec3(2.f, 2.f, 0.f));
 		pMeshComp->SetUVScale(m_pSpriteSheet->GetSpriteByName("Meteor_02")->uvScale);
 		pMeshComp->SetUVOffset(m_pSpriteSheet->GetSpriteByName("Meteor_02")->uvOffset);
 

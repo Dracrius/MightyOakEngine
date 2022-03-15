@@ -3,21 +3,14 @@
 #include "GameObject.h"
 #include "Math/Matrix.h"
 #include "Material.h"
-#include "Components/MeshComponent.h"
 
 namespace fw {
 
 GameObject::GameObject(Scene* pScene, vec3 pos, vec3 rot)
     : m_pScene(pScene)
-    , m_Position( pos )
-    , m_Rotation( rot )
 {
-    //if (pMesh != nullptr)
-    //{
-    //    m_pMeshComponent = new MeshComponent(pMesh, pMaterial);
-    //    m_pMeshComponent->SetGameObject(this);
-    //    pScene->GetComponentManager()->AddComponent(m_pMeshComponent);
-    //}
+	m_pTramsform = new TransformComponent(pos, rot, vec3(1));
+	AddComponent(m_pTramsform);
 }
 
 GameObject::~GameObject()
@@ -48,8 +41,8 @@ void GameObject::Update(float deltaTime)
 {
     if (m_pPhysicsBody)
     {
-        m_Position = m_pPhysicsBody->GetPosition();
-        m_Rotation = m_pPhysicsBody->GetRotation();
+		m_pTramsform->SetPosition(m_pPhysicsBody->GetPosition());
+		m_pTramsform->SetRotation(m_pPhysicsBody->GetRotation());
     }
 }
 
@@ -82,12 +75,12 @@ void GameObject::SetState(bool isEnabled)
 
 void GameObject::CreateBody(PhysicsWorld* pWorld, bool isDynamic, float density)
 {
-    CreateBody(pWorld, isDynamic, m_Scale, density);
+    CreateBody(pWorld, isDynamic, m_pTramsform->GetScale(), density);
 }
 
 void GameObject::CreateBody(PhysicsWorld* pWorld, bool isDynamic, vec3 size, float density)
 {
-    m_pPhysicsBody = pWorld->CreateBody(this, isDynamic, size, density, m_Position, m_Rotation);
+    m_pPhysicsBody = pWorld->CreateBody(this, isDynamic, size, density, m_pTramsform->GetPosition(), m_pTramsform->GetRotation());
 
 	if (!m_enabled)
 	{
@@ -97,7 +90,7 @@ void GameObject::CreateBody(PhysicsWorld* pWorld, bool isDynamic, vec3 size, flo
 
 void GameObject::CreateBody(PhysicsWorld* pWorld, bool isDynamic, float radius, float density)
 {
-	m_pPhysicsBody = pWorld->CreateBody(this, isDynamic, radius, density, m_Position, m_Rotation);
+	m_pPhysicsBody = pWorld->CreateBody(this, isDynamic, radius, density, m_pTramsform->GetPosition(), m_pTramsform->GetRotation());
 
 	if (!m_enabled)
 	{
@@ -138,15 +131,9 @@ Component* GameObject::GetComponent(const char* component)
     return nullptr;
 }
 
-const matrix& GameObject::GetWorldTransform()
-{
-    m_WorldTransform.CreateSRT(m_Scale, m_Rotation, m_Position);
-    return m_WorldTransform;
-}
-
 void GameObject::SetPosition(vec3 pos)
 {
-	m_Position = pos; 
+	m_pTramsform->SetPosition(pos);
 	if (m_pPhysicsBody)
 	{
 		m_pPhysicsBody->SetPosition(pos);
@@ -155,10 +142,10 @@ void GameObject::SetPosition(vec3 pos)
 
 void GameObject::SetRotation(vec3 rot)
 {
-	m_Rotation = rot; 
+	m_pTramsform->SetRotation(rot);
 	if (m_pPhysicsBody)
 	{
-		m_pPhysicsBody->SetTransform(m_Position, rot);
+		m_pPhysicsBody->SetTransform(m_pTramsform->GetPosition(), rot);
 	}
 }
 
@@ -180,9 +167,9 @@ void GameObject::ApplyTorque(const vec3& torque)
 
 void GameObject::Editor_OutputObjectDetails()
 {
-	vec3 pos = m_Position;
-	vec3 rot = m_Rotation;
-	vec3 scale = m_Scale;
+	vec3 pos = m_pTramsform->GetPosition();
+	vec3 rot = m_pTramsform->GetRotation();
+	vec3 scale = m_pTramsform->GetScale();
 	bool hasPhysBody = m_pPhysicsBody ? true : false;
 
 	ImGui::Text("Name: %s", m_name.c_str());
@@ -207,20 +194,20 @@ void GameObject::Editor_OutputObjectDetails()
 	{
 		m_pPhysicsBody->Editor_OutputBodyDetails();
 
-		if (pos != m_Position)
+		if (pos != m_pTramsform->GetPosition())
 		{
 			m_pPhysicsBody->SetPosition(pos);
 		}
-		if (rot != m_Rotation)
+		if (rot != m_pTramsform->GetRotation())
 		{
 			m_pPhysicsBody->SetTransform(pos, rot);
 		}
 	}
 	else
 	{
-		m_Position = pos;
-		m_Rotation = rot;
-		m_Scale = scale;
+		m_pTramsform->SetPosition(pos);
+		m_pTramsform->SetRotation(rot);
+		m_pTramsform->SetScale(scale);
 	}
 
 }

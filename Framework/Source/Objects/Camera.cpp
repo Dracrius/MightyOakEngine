@@ -50,16 +50,16 @@ void Camera::Update(float deltaTime)
 
     if (m_pCameraOperator) //Check if the Camera is Attached to an Object ie. has a Camera Operatior
     {
-        m_Position = m_pCameraOperator->GetPosition() + vec3(m_offset.x, m_offset.y + m_shakeOffset, m_offset.z);
+		m_pTramsform->SetPosition(m_pCameraOperator->GetPosition() + vec3(m_offset.x, m_offset.y + m_shakeOffset, m_offset.z));
     }
 
     if (m_lockView) //Check if the view has been locked to a position
     {
-        m_ViewMatrix.CreateLookAtView(m_Position, vec3(0.f, 1.f, 0.f), m_lookAtPos + vec3(0.f, m_shakeOffset, 0.f));
+        m_ViewMatrix.CreateLookAtView(m_pTramsform->GetPosition(), vec3(0.f, 1.f, 0.f), m_lookAtPos + vec3(0.f, m_shakeOffset, 0.f));
     }
     else //Otherwise look at the Camera's Position
     {
-        m_ViewMatrix.CreateLookAtView(m_Position, vec3(0.f, 1.f, 0.f), vec3(m_Position.x, m_Position.y, 0.f) + vec3(0.f, m_shakeOffset, 0.f));
+        m_ViewMatrix.CreateLookAtView(m_pTramsform->GetPosition(), vec3(0.f, 1.f, 0.f), vec3(m_pTramsform->GetPosition().x, m_pTramsform->GetPosition().y, 0.f) + vec3(0.f, m_shakeOffset, 0.f));
     }
 }
 
@@ -78,30 +78,34 @@ void Camera::Hack_ThirdPersonCam(FWCore* pFramework, float deltaTime)
 	float speed = 90.f;
 	float distance = 10.f;
 
+	vec3 rot = m_pTramsform->GetRotation();
+
 	if (pFramework->IsKeyDown('J'))
 	{
-		m_Rotation.y -= deltaTime * speed;
+		rot.y -= deltaTime * speed;
 	}
 	if (pFramework->IsKeyDown('L'))
 	{
-		m_Rotation.y += deltaTime * speed;
+		rot.y += deltaTime * speed;
 	}
 
 	if (pFramework->IsKeyDown('I'))
 	{
-		m_Rotation.x -= deltaTime * speed;
+		rot.x -= deltaTime * speed;
 	}
 	if (pFramework->IsKeyDown('K'))
 	{
-		m_Rotation.x += deltaTime * speed;
+		rot.x += deltaTime * speed;
 	}
 
 	m_ViewMatrix.SetIdentity();
 	m_ViewMatrix.Translate(vec3(0.f,0.f, -distance));
-	m_ViewMatrix.Rotate(m_Rotation.x, 1, 0, 0);
-	m_ViewMatrix.Rotate(m_Rotation.y, 0, 1, 0);
-	m_ViewMatrix.Translate(m_Position);
+	m_ViewMatrix.Rotate(rot.x, 1, 0, 0);
+	m_ViewMatrix.Rotate(rot.y, 0, 1, 0);
+	m_ViewMatrix.Translate(m_pTramsform->GetPosition());
 	m_ViewMatrix.Inverse();
+
+	m_pTramsform->SetRotation(rot);
 }
 
 } // namespace fw

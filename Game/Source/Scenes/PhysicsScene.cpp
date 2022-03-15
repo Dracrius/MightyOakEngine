@@ -15,7 +15,7 @@ PhysicsScene::PhysicsScene(Game* pGame) : fw::Scene(pGame)
 	m_pCamera = new fw::Camera(this, c_centerOfScreen + c_cameraOffset);
 	m_pCamera->SetPerspective(true);
 
-	m_pPlayerController = new PlayerController();
+	m_pPlayerController = new PlayerController(pGame->GetFramework()->GetEventManager());
 
 	vec3 pos = c_centerOfScreen + vec3(1.5f, 1.f, 2.f);
 	vec3 rot = vec3(90.f, 0.f, 0.f);
@@ -115,8 +115,6 @@ void PhysicsScene::StartFrame(float deltaTime)
 
 void PhysicsScene::OnEvent(fw::Event* pEvent)
 {
-    m_pPlayerController->OnEvent(pEvent);
-
     fw::Scene::OnEvent(pEvent);
 }
 

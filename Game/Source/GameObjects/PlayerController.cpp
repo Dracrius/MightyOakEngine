@@ -2,8 +2,21 @@
 
 #include "PlayerController.h"
 
-PlayerController::PlayerController()
+PlayerController::PlayerController(fw::EventManager* pEventManager)
 {
+	if (pEventManager)
+	{
+		m_pEventManager = pEventManager;
+		m_pEventManager->RegisterForEvents(fw::InputEvent::GetStaticEventType(), this);
+	}
+}
+
+PlayerController::~PlayerController()
+{
+	if (m_pEventManager)
+	{
+		m_pEventManager->UnregisterForEvents(fw::InputEvent::GetStaticEventType(), this);
+	}
 }
 
 void PlayerController::StartFrame()

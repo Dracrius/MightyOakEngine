@@ -54,9 +54,9 @@ void Player::Update(float deltaTime)
 	//Teleport
     if( m_pPlayerController->WasPressed( PlayerController::Action::Teleport ) )
     {
-        m_Position = vec2( rand()/(float)RAND_MAX * 15, rand()/(float)RAND_MAX * 15 );
+		m_pTramsform->SetPosition(vec2( rand()/(float)RAND_MAX * 15, rand()/(float)RAND_MAX * 15 ));
 
-        m_pPhysicsBody->SetTransform(m_Position, vec3());
+        m_pPhysicsBody->SetTransform(m_pTramsform->GetPosition(), vec3());
     }
 
     m_velocity = m_pPhysicsBody->GetVelocity();

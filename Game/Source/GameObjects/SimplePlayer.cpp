@@ -18,28 +18,32 @@ void SimplePlayer::Update(float deltaTime)
 {
 	GameObject::Update(deltaTime);
 
+	vec3 pos = m_pTramsform->GetPosition();
+
 	//Check Control States
 	//Forward
 	if (m_pPlayerController->IsHeld(PlayerController::Action::Up))
 	{
-		m_Position.z += (c_playerSpeed / 50.f) * deltaTime;
+		pos.z += (c_playerSpeed / 50.f) * deltaTime;
 	}
 
 	//Backward
 	if (m_pPlayerController->IsHeld(PlayerController::Action::Down))
 	{
-		m_Position.z -= (c_playerSpeed / 50.f) * deltaTime;
+		pos.z -= (c_playerSpeed / 50.f) * deltaTime;
 	}
 
 	//Move Left & Right
 	if (m_pPlayerController->IsHeld(PlayerController::Action::Left))
 	{
-		m_Position.x -= (c_playerSpeed / 50.f) * deltaTime;
+		pos.x -= (c_playerSpeed / 50.f) * deltaTime;
 	}
 	if (m_pPlayerController->IsHeld(PlayerController::Action::Right))
 	{
-		m_Position.x += (c_playerSpeed / 50.f) * deltaTime;
+		pos.x += (c_playerSpeed / 50.f) * deltaTime;
 	}
+
+	m_pTramsform->SetPosition(pos);
 
 }
 

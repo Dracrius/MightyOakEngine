@@ -21,6 +21,10 @@ Game::Game(fw::FWCore& fwCore)
 
 Game::~Game()
 {
+	m_FWCore.GetEventManager()->UnregisterForEvents(fw::InputEvent::GetStaticEventType(), this);
+	m_FWCore.GetEventManager()->UnregisterForEvents(SceneChangeEvent::GetStaticEventType(), this);
+	m_FWCore.GetEventManager()->UnregisterForEvents(fw::InputEvent::GetStaticEventType(), this);
+
 	for (auto& it : m_Scenes)
     {
         delete it.second;
@@ -31,6 +35,9 @@ Game::~Game()
 
 void Game::Init()
 {
+	m_FWCore.GetEventManager()->RegisterForEvents(fw::InputEvent::GetStaticEventType(), this);
+	m_FWCore.GetEventManager()->RegisterForEvents(SceneChangeEvent::GetStaticEventType(), this);
+	m_FWCore.GetEventManager()->RegisterForEvents(fw::InputEvent::GetStaticEventType(), this);
     m_pImGuiManager = new fw::ImGuiManager( &m_FWCore );
 
     // OpenGL settings.
@@ -116,6 +123,7 @@ void Game::OnEvent(fw::Event* pEvent)
 		{
 			static_cast<Assignment1Scene*>(m_Scenes["Assignment1"])->ReloadScene();
 		}
+		//m_Scenes[pSceneChange->GetSceneName()]->SceneFocus(true);
     }
     else
     {

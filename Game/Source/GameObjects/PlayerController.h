@@ -2,7 +2,7 @@
 
 #include "Framework.h"
 
-class PlayerController
+class PlayerController : public fw::EventListener
 {
 public:
     enum Action
@@ -15,16 +15,19 @@ public:
     };
 
 public:
-    PlayerController();
+    PlayerController(fw::EventManager* pEventManager);
+	~PlayerController();
 
     void StartFrame();
-    void OnEvent(fw::Event* pEvent);
+    virtual void OnEvent(fw::Event* pEvent) override;
 
     bool IsHeld(Action action);
     bool WasPressed(Action action);
     bool WasReleased(Action action);
 
 protected:
+	fw::EventManager* m_pEventManager;
+
     unsigned int m_OldFlags = 0;
     unsigned int m_Flags = 0;
 };

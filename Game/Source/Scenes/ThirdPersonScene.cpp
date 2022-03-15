@@ -12,7 +12,7 @@ ThirdPersonScene::ThirdPersonScene(Game* pGame) : fw::Scene(pGame)
     m_pPhysicsWorld = new fw::PhysicsWorldBox2D(pGame->GetFramework()->GetEventManager());
     m_pPhysicsWorld->SetGravity(c_gravity);
 
-	m_pPlayerController = new PlayerController();
+	m_pPlayerController = new PlayerController(pGame->GetFramework()->GetEventManager());
 
     vec3 cameraOffset = vec3(0.f, 0.f, -12.f);
 	float heightOffset = -3.5f;
@@ -81,7 +81,7 @@ void ThirdPersonScene::StartFrame(float deltaTime)
 
 void ThirdPersonScene::OnEvent(fw::Event* pEvent)
 {
-	m_pPlayerController->OnEvent(pEvent);
+	fw::Scene::OnEvent(pEvent);
 }
 
 void ThirdPersonScene::Update(float deltaTime)

@@ -90,7 +90,7 @@ int FWCore::Run(GameCore& game)
             lastTime = currentTime;
 
             game.StartFrame( deltaTime );
-            m_pEventManager->ProcessEvents( game );
+            m_pEventManager->ProcessEvents();
             game.Update( deltaTime );
             game.Draw();
 

@@ -15,7 +15,7 @@ Assignment1Scene::Assignment1Scene(Game* pGame) : fw::Scene(pGame)
 	m_pCamera = new fw::Camera(this, c_centerOfScreen + c_cameraOffset);
 	m_pCamera->SetPerspective(false);
 
-	m_pPlayerController = new PlayerController();
+	m_pPlayerController = new PlayerController(pGame->GetFramework()->GetEventManager());
 
 	vec3 pos = c_centerOfScreen + vec3(1.5f, 0.5f, 2.f);
 	vec3 rot = vec3(90.f, 0.f, 0.f);
@@ -71,8 +71,6 @@ void Assignment1Scene::StartFrame(float deltaTime)
 
 void Assignment1Scene::OnEvent(fw::Event* pEvent)
 {
-    m_pPlayerController->OnEvent(pEvent);
-
 	if (pEvent->GetEventType() == "CollisionEvent")
 	{
 		fw::CollisionEvent* pCollisionEvent = static_cast<fw::CollisionEvent*>(pEvent);
