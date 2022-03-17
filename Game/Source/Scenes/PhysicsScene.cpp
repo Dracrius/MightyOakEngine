@@ -92,14 +92,15 @@ PhysicsScene::PhysicsScene(Game* pGame) : fw::Scene(pGame)
 		m_Objects.push_back(pRightEdge);
 	}
 
-	Player* pPlayer = new Player(this, m_pResourceManager->GetMesh("Sprite"), m_pResourceManager->GetMaterial("Sokoban"), vec2(7.5f, 12.0f), m_pPlayerController);
+	Player* pPlayer = new Player(this, m_pResourceManager->GetMesh("Sprite"), m_pResourceManager->GetMaterial("Sokoban"), vec2(7.5f, 6.0f), m_pPlayerController);
 	pPlayer->SetSpriteSheet(m_pResourceManager->GetSpriteSheet("Sprites"));
 	pPlayer->CreateBody(m_pPhysicsWorld, true, vec3(c_playerCollider.x, c_playerCollider.y, c_playerCollider.y), 1.f);
+	m_pPhysicsWorld->CreateJoint(pPlayer->GetPhysicsBody(), vec2(7.5f, 8.0f));
 	pPlayer->SetName("Player");
 	m_Objects.push_back(pPlayer);
 
-	m_pCamera->AttachTo(m_Objects.back());
-	m_pCamera->SetThirdPersonOffset(c_cameraOffset + vec3(0.f, 4.5f, 0.f));
+	/*m_pCamera->AttachTo(m_Objects.back());
+	m_pCamera->SetThirdPersonOffset(c_cameraOffset + vec3(0.f, 4.5f, 0.f));*/
 	m_pCamera->SetAspectRatio(c_aspectRatio);
 }
 

@@ -1,4 +1,5 @@
 #pragma once
+#include "Events/EventManager.h"
 
 namespace fw {
 
@@ -10,7 +11,7 @@ class PhysicsWorld;
 class ComponentManager;
 class ResourceManager;
 
-class Scene
+class Scene : public EventListener
 {
 protected:
     GameCore* m_pGame = nullptr;
@@ -37,6 +38,8 @@ public:
 
     virtual void Update(float deltaTime);
     virtual void Draw();
+
+	virtual Camera* GetCamera() { return m_pCamera; }
 
 	virtual void SetDebugDraw(bool state) { m_debugDraw = state; }
 	virtual void ToggleDebugDraw() { m_debugDraw = !m_debugDraw; }

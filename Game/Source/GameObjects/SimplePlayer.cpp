@@ -18,33 +18,43 @@ void SimplePlayer::Update(float deltaTime)
 {
 	GameObject::Update(deltaTime);
 
+	float speed = 5.0;
 	vec3 pos = m_pTramsform->GetPosition();
 
-	//Check Control States
-	//Forward
+	//Movement
+	float forwardAxis = 0;
+	float strafeAxis = 0;
+
 	if (m_pPlayerController->IsHeld(PlayerController::Action::Up))
 	{
-		pos.z += (c_playerSpeed / 50.f) * deltaTime;
+		forwardAxis += 1;
 	}
-
-	//Backward
 	if (m_pPlayerController->IsHeld(PlayerController::Action::Down))
 	{
-		pos.z -= (c_playerSpeed / 50.f) * deltaTime;
+		forwardAxis -= 1;
 	}
-
-	//Move Left & Right
 	if (m_pPlayerController->IsHeld(PlayerController::Action::Left))
 	{
-		pos.x -= (c_playerSpeed / 50.f) * deltaTime;
+		strafeAxis -= 1;
 	}
 	if (m_pPlayerController->IsHeld(PlayerController::Action::Right))
 	{
-		pos.x += (c_playerSpeed / 50.f) * deltaTime;
+		strafeAxis += 1;
 	}
 
-	m_pTramsform->SetPosition(pos);
+	//Match Movemnet to Camera Rotation
+	float camY = (m_pScene->GetCamera()->GetTransform()->GetRotation().y + 90.f) / 180.f * PI;
+	vec3 forwardDir(cos(camY), 0, sin(camY));
+	vec3 strafeDir(cos(camY-PI / 2), 0, sin(camY - PI / 2));
 
+	vec3 dir = forwardDir * forwardAxis + strafeDir * strafeAxis;
+	dir.Normalize();
+
+	pos += dir  * speed * deltaTime;
+
+	//Move
+	m_pTramsform->SetPosition(pos);
+	m_pTramsform->SetRotation(vec3(0, m_pScene->GetCamera()->GetTransform()->GetRotation().y, 0));
 }
 
 

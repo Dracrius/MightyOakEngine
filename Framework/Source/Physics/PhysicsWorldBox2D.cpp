@@ -46,6 +46,9 @@ PhysicsWorldBox2D::PhysicsWorldBox2D(EventManager* pEventManager) : PhysicsWorld
 	m_pDebugDraw->SetFlags(b2Draw::e_shapeBit);
 	m_pWorld->SetDebugDraw(m_pDebugDraw);
 	//m_pWorld->Debug
+
+	b2BodyDef bodyDef;
+	m_pGroundBody = m_pWorld->CreateBody(&bodyDef);
 }
 
 PhysicsWorldBox2D::~PhysicsWorldBox2D()
@@ -57,7 +60,22 @@ PhysicsWorldBox2D::~PhysicsWorldBox2D()
 
 void PhysicsWorldBox2D::Update(float deltaTime)
 {
-	m_pWorld->Step(deltaTime, 8, 3);
+	float timeStep = 1 / 60.0f;
+
+	bool didAWorldStep = false;
+	m_timeAccumulated += deltaTime;
+
+	while (m_timeAccumulated >= timeStep)
+	{
+		didAWorldStep = true;
+		m_pWorld->Step(deltaTime, 8, 3);
+		m_timeAccumulated -= timeStep;
+	}
+
+	if (didAWorldStep == false)
+	{
+		m_pWorld->ClearForces();
+	}
 }
 
 void PhysicsWorldBox2D::DebugDraw(Camera* pCamera, Material* pMaterial)
@@ -133,6 +151,18 @@ PhysicsBody* PhysicsWorldBox2D::CreateBody(GameObject* owner, bool isDynamic, fl
 	PhysicsBody* physicsBody = new PhysicsBodyBox2D(body);
 
 	return physicsBody;
+}
+
+void PhysicsWorldBox2D::CreateJoint(PhysicsBody* pBody, vec3 pos)
+{
+	b2RevoluteJointDef jointDef;
+
+	jointDef.Initialize(static_cast<PhysicsBodyBox2D*>(pBody)->Getb2Body(), m_pGroundBody, pos);
+	jointDef.enableMotor = true;
+	jointDef.motorSpeed = 10.0f;
+	jointDef.maxMotorTorque = 10.0;
+
+	b2Joint* pJoint = m_pWorld->CreateJoint(&jointDef);
 }
 
 } // namespace fw

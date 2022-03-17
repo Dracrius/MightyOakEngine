@@ -5,10 +5,13 @@
 #include "GameObjects/PlayerController.h"
 #include "GameObjects/Shaun.h"
 #include "GameObjects/Meteor.h"
+#include "GameEvents/GameEvents.h"
 #include "Game.h"
 
 Assignment1Scene::Assignment1Scene(Game* pGame) : fw::Scene(pGame)
 {
+	pGame->GetFramework()->GetEventManager()->RegisterForEvents(fw::CollisionEvent::GetStaticEventType(), this);
+
 	m_pPhysicsWorld = new fw::PhysicsWorldBox2D(pGame->GetFramework()->GetEventManager());
 	m_pPhysicsWorld->SetGravity(c_gravity);
 
@@ -51,6 +54,8 @@ Assignment1Scene::Assignment1Scene(Game* pGame) : fw::Scene(pGame)
 
 Assignment1Scene::~Assignment1Scene()
 {
+	static_cast<Game*>(m_pGame)->GetFramework()->GetEventManager()->RegisterForEvents(fw::CollisionEvent::GetStaticEventType(), this);
+
     delete m_pPlayerController;
 
 	for (fw::GameObject* pDebris : m_debris)

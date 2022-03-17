@@ -14,7 +14,7 @@ ResourceManager::ResourceManager()
 	m_Shaders["Default"] = new ShaderProgram("Data/FrameworkData/Shaders/Default.vert", "Data/FrameworkData/Shaders/Default.frag"); 
 	m_Materials["Default"] = new Material(m_Shaders["Default"], Color4f::Grey());
 
-	RemoveShader("default");
+	RemoveShader("default"); //?
 }
 
 ResourceManager::~ResourceManager()

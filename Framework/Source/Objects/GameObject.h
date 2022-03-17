@@ -63,6 +63,7 @@ public:
 
     // Getters.
 	TransformComponent* GetTransform() { return m_pTramsform; }
+	PhysicsBody* GetPhysicsBody() { return m_pPhysicsBody; }
 
 	std::string GetName() { return m_name; }
 

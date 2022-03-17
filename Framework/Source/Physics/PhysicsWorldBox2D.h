@@ -35,6 +35,10 @@ protected:
 	b2ContactListener* m_pContactListener = nullptr;
 	DebugDrawBox2D* m_pDebugDraw = nullptr;
 
+	b2Body* m_pGroundBody;
+
+	float m_timeAccumulated = 0.f;
+
 public:
     PhysicsWorldBox2D(EventManager* pEventManager);
     virtual ~PhysicsWorldBox2D();
@@ -47,6 +51,8 @@ public:
     
     virtual PhysicsBody* CreateBody(GameObject* owner, bool isDynamic, vec3 size, float density, vec3 pos, vec3 rot) override;
 	virtual PhysicsBody* CreateBody(GameObject* owner, bool isDynamic, float radius, float density, vec3 pos, vec3 rot) override;
+
+	virtual void CreateJoint(PhysicsBody* pBody, vec3 pos) override;
 
     b2World* Getb2World() { return m_pWorld; }
 };

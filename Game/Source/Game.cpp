@@ -23,7 +23,6 @@ Game::~Game()
 {
 	m_FWCore.GetEventManager()->UnregisterForEvents(fw::InputEvent::GetStaticEventType(), this);
 	m_FWCore.GetEventManager()->UnregisterForEvents(SceneChangeEvent::GetStaticEventType(), this);
-	m_FWCore.GetEventManager()->UnregisterForEvents(fw::InputEvent::GetStaticEventType(), this);
 
 	for (auto& it : m_Scenes)
     {
@@ -37,7 +36,7 @@ void Game::Init()
 {
 	m_FWCore.GetEventManager()->RegisterForEvents(fw::InputEvent::GetStaticEventType(), this);
 	m_FWCore.GetEventManager()->RegisterForEvents(SceneChangeEvent::GetStaticEventType(), this);
-	m_FWCore.GetEventManager()->RegisterForEvents(fw::InputEvent::GetStaticEventType(), this);
+
     m_pImGuiManager = new fw::ImGuiManager( &m_FWCore );
 
     // OpenGL settings.

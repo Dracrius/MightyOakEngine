@@ -12,6 +12,8 @@ public:
     PhysicsBodyBox2D(b2Body* pBody);
     virtual ~PhysicsBodyBox2D();
 
+	b2Body* Getb2Body() { return m_pBody; }
+
     virtual vec3 GetPosition() override;
     virtual vec3 GetRotation() override;
     virtual vec3 GetVelocity() override;
