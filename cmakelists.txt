@@ -25,6 +25,21 @@ add_subdirectory(Framework/Libraries/box2d/src)
 
 
 ###################
+# Bullet Libraries
+###################
+
+add_compile_options(/wd4244) # 'argument': conversion from 'double' to 'btScalar', possible loss of data
+add_compile_options(/wd4267) # '=': conversion from 'size_t' to 'long', possible loss of data
+add_compile_options(/wd4305) # 'initializing': truncation from 'double' to 'btScalar'
+
+set( BULLET_VERSION 3.21 )
+set( BULLET_PHYSICS_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Framework/Libraries/bullet )
+add_subdirectory( Framework/Libraries/bullet/src/BulletCollision )
+add_subdirectory( Framework/Libraries/bullet/src/BulletDynamics )
+add_subdirectory( Framework/Libraries/bullet/src/LinearMath )
+
+
+###################
 # Framework Library
 ###################
 
@@ -43,7 +58,8 @@ file( GLOB_RECURSE FrameworkSourceFiles
 source_group( TREE ${CMAKE_CURRENT_SOURCE_DIR}/Framework FILES ${FrameworkSourceFiles} )
 
 include_directories(
-	Framework/Source
+    Framework/Source
+    Framework/Libraries/bullet/src
 )
 
 # Project Creation
@@ -83,9 +99,12 @@ source_group( "CMake PCH Files" FILES ${GamePCHFiles} )
 
 # Libraries to Link
 target_link_libraries( GameProject
-	Framework
-	box2d
-	opengl32.lib
+    Framework
+    box2d
+    opengl32.lib
+    BulletCollision
+    BulletDynamics
+    LinearMath
 )
 
 # Visual Studio Settings

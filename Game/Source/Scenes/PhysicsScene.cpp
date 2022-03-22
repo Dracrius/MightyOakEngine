@@ -45,7 +45,6 @@ PhysicsScene::PhysicsScene(Game* pGame) : fw::Scene(pGame)
 		std::string name = "Numbered Box " + i;
 		fw::GameObject* pBox = new fw::GameObject(this, pos, vec3());
 		pBox->AddComponent(new fw::MeshComponent(m_pResourceManager->GetMesh("Cube"), m_pResourceManager->GetMaterial("Cube")));
-		pBox->SetScale(vec3(0.5f, 0.5f, 0.5f));
 		pBox->CreateBody(m_pPhysicsWorld, true, vec3(1.0f, 1.0f, 1.0f), 1.f);
 		pBox->SetName(name);
 		m_Objects.push_back(pBox);

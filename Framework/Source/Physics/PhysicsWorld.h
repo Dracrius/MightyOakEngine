@@ -9,6 +9,7 @@ class EventManager;
 class GameObject;
 class Camera;
 class Material;
+class TransformComponent;
 
 class PhysicsWorld
 {
@@ -28,6 +29,7 @@ public:
 
     virtual PhysicsBody* CreateBody(GameObject* owner, bool isDynamic, vec3 size, float density, vec3 pos, vec3 rot) = 0;
 	virtual PhysicsBody* CreateBody(GameObject* owner, bool isDynamic, float radius, float density, vec3 pos, vec3 rot) = 0;
+    virtual PhysicsBody* CreateBody(GameObject* owner, bool isDynamic, float density, TransformComponent* pTransform) = 0;
 
 	virtual void CreateJoint(PhysicsBody* pBody, vec3 pos) = 0;
 };

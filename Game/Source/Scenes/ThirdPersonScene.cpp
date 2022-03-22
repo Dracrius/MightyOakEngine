@@ -43,17 +43,17 @@ ThirdPersonScene::ThirdPersonScene(Game* pGame) : fw::Scene(pGame)
     m_pResourceManager->GetMesh("Obj")->LoadObj(m_lastObj.c_str(), true);
 
 	fw::GameObject* pCube = new fw::GameObject(this, c_centerOfScreen + vec3(-10, 0, 1), vec3());
-	pCube->AddComponent(new fw::MeshComponent(m_pResourceManager->GetMesh("Cube"), m_pResourceManager->GetMaterial("Cube")));
+	pCube->AddComponent(new fw::MeshComponent(m_pResourceManager->GetMesh("Cube"), m_pResourceManager->GetMaterial("White")));
 	pCube->SetName("Numbered Cube");
 	m_Objects.push_back(pCube);
 
 	pCube = new fw::GameObject(this, c_centerOfScreen + vec3(4, 0, 2), vec3());
-	pCube->AddComponent(new fw::MeshComponent(m_pResourceManager->GetMesh("Cube"), m_pResourceManager->GetMaterial("Cube")));
+	pCube->AddComponent(new fw::MeshComponent(m_pResourceManager->GetMesh("Cube"), m_pResourceManager->GetMaterial("Red")));
 	pCube->SetName("Numbered Cube");
 	m_Objects.push_back(pCube);
 
 	pCube = new fw::GameObject(this, c_centerOfScreen + vec3(6, 0, 3), vec3());
-	pCube->AddComponent(new fw::MeshComponent(m_pResourceManager->GetMesh("Cube"), m_pResourceManager->GetMaterial("Cube")));
+	pCube->AddComponent(new fw::MeshComponent(m_pResourceManager->GetMesh("Cube"), m_pResourceManager->GetMaterial("White")));
 	pCube->SetName("Numbered Cube");
 	m_Objects.push_back(pCube);
 

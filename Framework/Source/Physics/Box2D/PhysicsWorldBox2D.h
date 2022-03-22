@@ -51,6 +51,7 @@ public:
     
     virtual PhysicsBody* CreateBody(GameObject* owner, bool isDynamic, vec3 size, float density, vec3 pos, vec3 rot) override;
 	virtual PhysicsBody* CreateBody(GameObject* owner, bool isDynamic, float radius, float density, vec3 pos, vec3 rot) override;
+    virtual PhysicsBody* CreateBody(GameObject* owner, bool isDynamic, float density, TransformComponent* pTransform) override;
 
 	virtual void CreateJoint(PhysicsBody* pBody, vec3 pos) override;
 

@@ -153,6 +153,11 @@ PhysicsBody* PhysicsWorldBox2D::CreateBody(GameObject* owner, bool isDynamic, fl
 	return physicsBody;
 }
 
+PhysicsBody* PhysicsWorldBox2D::CreateBody(GameObject* owner, bool isDynamic, float density, TransformComponent* pTransform)
+{
+    return CreateBody(owner, isDynamic, pTransform->GetScale(), density, pTransform->GetPosition(), pTransform->GetRotation());
+}
+
 void PhysicsWorldBox2D::CreateJoint(PhysicsBody* pBody, vec3 pos)
 {
 	b2RevoluteJointDef jointDef;

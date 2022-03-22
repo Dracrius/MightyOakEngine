@@ -11,6 +11,7 @@
 #include "Scenes/ObjScene.h"
 #include "Scenes/ThirdPersonScene.h"
 #include "Scenes/Assignment1Scene.h"
+#include "Scenes/Physics3DScene.h"
 #include "DefaultSettings.h"
 
 Game::Game(fw::FWCore& fwCore)
@@ -87,6 +88,10 @@ void Game::Init()
 	m_pResourceManager->CreateMaterial("Cube", m_pResourceManager->GetShader("Basic"), m_pResourceManager->GetTexture("Cube"), fw::Color4f::Green());
 	m_pResourceManager->CreateMaterial("Water", m_pResourceManager->GetShader("Water"), m_pResourceManager->GetTexture("Water"), c_defaultWaterColor);
 	m_pResourceManager->CreateMaterial("SolidColor", m_pResourceManager->GetShader("SolidColor"), c_defaultObjColor);
+    m_pResourceManager->CreateMaterial("Red", m_pResourceManager->GetShader("SolidColor"), fw::Color4f::Red());
+    m_pResourceManager->CreateMaterial("Green", m_pResourceManager->GetShader("SolidColor"), fw::Color4f::Green());
+    m_pResourceManager->CreateMaterial("Blue", m_pResourceManager->GetShader("SolidColor"), fw::Color4f::Blue());
+    m_pResourceManager->CreateMaterial("White", m_pResourceManager->GetShader("SolidColor"), fw::Color4f::White());
 	m_pResourceManager->CreateMaterial("Arcade_Cabinet", m_pResourceManager->GetShader("Basic"), m_pResourceManager->GetTexture("Arcade_Cabinet"), c_defaultObjColor);
 	m_pResourceManager->CreateMaterial("Arcade_Floor", m_pResourceManager->GetShader("Basic"), m_pResourceManager->GetTexture("Arcade_Floor"), c_defaultObjColor);
 	m_pResourceManager->CreateMaterial("Background", m_pResourceManager->GetShader("Basic"), m_pResourceManager->GetTexture("Background"), c_defaultWaterColor);
@@ -100,6 +105,7 @@ void Game::Init()
     m_Scenes["Obj"] = new ObjScene(this);
 	m_Scenes["ThirdPerson"] = new ThirdPersonScene(this);
 	m_Scenes["Assignment1"] = new Assignment1Scene(this);
+    m_Scenes["Physics3D"] = new Physics3DScene(this);
 
     SetCurrentScene(c_defaultScene);
 }
@@ -311,6 +317,18 @@ void Game::MainMenu()
 					SceneChangeEvent* pSceneChange = new SceneChangeEvent("Physics");
 					m_FWCore.GetEventManager()->AddEvent(pSceneChange);
 				}
+
+                if (ImGui::MenuItem("Physics3D", ""))
+                {
+                    SceneChangeEvent* pSceneChange = new SceneChangeEvent("Physics3D");
+                    m_FWCore.GetEventManager()->AddEvent(pSceneChange);
+                }
+
+                if (ImGui::MenuItem("ThirdPerson", ""))
+                {
+                    SceneChangeEvent* pSceneChange = new SceneChangeEvent("ThirdPerson");
+                    m_FWCore.GetEventManager()->AddEvent(pSceneChange);
+                }
 
 				if (ImGui::MenuItem("Water", "Ctrl+W"))
 				{
