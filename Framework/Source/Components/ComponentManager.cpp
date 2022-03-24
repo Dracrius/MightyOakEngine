@@ -52,4 +52,16 @@ void ComponentManager::RemoveComponent(Component* pComponent)
     list.erase(std::remove(list.begin(), list.end(), pComponent), list.end());
 }
 
+std::vector<Component*> ComponentManager::GetComponentsOfType(const char* type)
+{
+    std::vector<Component*> compsOfType;
+
+    for (Component* pComponent : m_Components[type])
+    {
+        compsOfType.push_back(pComponent);
+    }
+
+    return compsOfType;
+}
+
 } // namespace fw

@@ -4,7 +4,7 @@
 #include "DataTypes.h"
 #include "Game.h"
 #include "GameObjects/PlayerController.h"
-#include "GameObjects/SimplePlayer.h"
+#include "Components/SimplePlayerMovementComponent.h"
 #include "DefaultSettings.h"
 
 ThirdPersonScene::ThirdPersonScene(Game* pGame) : fw::Scene(pGame)
@@ -44,20 +44,22 @@ ThirdPersonScene::ThirdPersonScene(Game* pGame) : fw::Scene(pGame)
 
 	fw::GameObject* pCube = new fw::GameObject(this, c_centerOfScreen + vec3(-10, 0, 1), vec3());
 	pCube->AddComponent(new fw::MeshComponent(m_pResourceManager->GetMesh("Cube"), m_pResourceManager->GetMaterial("White")));
-	pCube->SetName("Numbered Cube");
+	pCube->SetName("White Cube");
 	m_Objects.push_back(pCube);
 
 	pCube = new fw::GameObject(this, c_centerOfScreen + vec3(4, 0, 2), vec3());
 	pCube->AddComponent(new fw::MeshComponent(m_pResourceManager->GetMesh("Cube"), m_pResourceManager->GetMaterial("Red")));
-	pCube->SetName("Numbered Cube");
+	pCube->SetName("Red Cube");
 	m_Objects.push_back(pCube);
 
 	pCube = new fw::GameObject(this, c_centerOfScreen + vec3(6, 0, 3), vec3());
 	pCube->AddComponent(new fw::MeshComponent(m_pResourceManager->GetMesh("Cube"), m_pResourceManager->GetMaterial("White")));
-	pCube->SetName("Numbered Cube");
+	pCube->SetName("White Cube");
 	m_Objects.push_back(pCube);
 
-	SimplePlayer* pPlayer = new SimplePlayer(this, m_pResourceManager->GetMesh("Cube"), m_pResourceManager->GetMaterial("Cube"), c_centerOfScreen + vec3(-6, 0, -3), m_pPlayerController);
+    fw::GameObject* pPlayer = new fw::GameObject(this, c_centerOfScreen + vec3(-6, 0, -3), rot);
+    pPlayer->AddComponent(new fw::MeshComponent(m_pResourceManager->GetMesh("Cube"), m_pResourceManager->GetMaterial("Cube")));
+    pPlayer->AddComponent(new SimplePlayerMovementComponent(m_pPlayerController));
 	pPlayer->SetName("Player");
 	m_Objects.push_back(pPlayer);
 	
@@ -86,6 +88,13 @@ void ThirdPersonScene::OnEvent(fw::Event* pEvent)
 
 void ThirdPersonScene::Update(float deltaTime)
 {
+    std::vector<fw::Component*>& list = m_pComponentManager->GetComponentsOfType(SimplePlayerMovementComponent::GetStaticType());
+    for (fw::Component* pComponent : list)
+    {
+        SimplePlayerMovementComponent* pPlayerComp = static_cast<SimplePlayerMovementComponent*>(pComponent);
+        pPlayerComp->Update(deltaTime);
+    }
+
     Scene::Update(deltaTime);
 
 	fw::FWCore* pFramework = static_cast<Game*>(m_pGame)->GetFramework();
@@ -175,7 +184,7 @@ void ThirdPersonScene::SettingsMenu()
 
 			ImGui::EndMenu();
 		}
-		ImGui::MenuItem("Obj Loader", NULL, false, false);
+		ImGui::MenuItem("Third Person", NULL, false, false);
 		ImGui::EndMainMenuBar();
 	}
 }

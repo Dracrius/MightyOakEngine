@@ -150,6 +150,16 @@ void Game::Update(float deltaTime)
 {
 	MainMenu();
 
+    std::vector<vec3> verts;
+    for (int y = 0; y < 10; y++)
+    {
+        for (int x = 0; x < 10; x++)
+        {
+            vec3 temp = vec3(int(cos(x)), y, int(sin(x)));
+            verts.push_back(temp);
+        }
+    }
+
 	if (m_showBGColorSelect)
 	{
 		BGColorSelect();

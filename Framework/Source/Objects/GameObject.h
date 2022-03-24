@@ -71,6 +71,8 @@ public:
     vec3 GetRotation() { return  m_pTramsform->GetRotation(); }
     vec3 GetScale() { return  m_pTramsform->GetScale(); }
 
+    Scene* GetScene() { return m_pScene; }
+
     // Setters.
     //void SetMaterial(Material* pMaterial) { m_pMaterial = pMaterial; }
 
