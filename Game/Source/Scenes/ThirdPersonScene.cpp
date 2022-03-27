@@ -1,17 +1,15 @@
 #include "Framework.h"
+#include "DefaultSettings.h"
 
 #include "ThirdPersonScene.h"
 #include "DataTypes.h"
 #include "Game.h"
+
 #include "GameObjects/PlayerController.h"
 #include "Components/SimplePlayerMovementComponent.h"
-#include "DefaultSettings.h"
 
 ThirdPersonScene::ThirdPersonScene(Game* pGame) : fw::Scene(pGame)
 {
-    m_pPhysicsWorld = new fw::PhysicsWorldBox2D(pGame->GetFramework()->GetEventManager());
-    m_pPhysicsWorld->SetGravity(c_gravity);
-
 	m_pPlayerController = new PlayerController(pGame->GetFramework()->GetEventManager());
 
     vec3 cameraOffset = vec3(0.f, 0.f, -12.f);
@@ -42,29 +40,30 @@ ThirdPersonScene::ThirdPersonScene(Game* pGame) : fw::Scene(pGame)
 
     m_pResourceManager->GetMesh("Obj")->LoadObj(m_lastObj.c_str(), true);
 
-	fw::GameObject* pCube = new fw::GameObject(this, c_centerOfScreen + vec3(-10, 0, 1), vec3());
+	fw::GameObject* pCube = new fw::GameObject(this, c_centerOfScreen + vec3(-10.f, -3.f, 1.f), vec3());
 	pCube->AddComponent(new fw::MeshComponent(m_pResourceManager->GetMesh("Cube"), m_pResourceManager->GetMaterial("White")));
 	pCube->SetName("White Cube");
 	m_Objects.push_back(pCube);
 
-	pCube = new fw::GameObject(this, c_centerOfScreen + vec3(4, 0, 2), vec3());
+	pCube = new fw::GameObject(this, c_centerOfScreen + vec3(4.f, -3.f, 2.f), vec3());
 	pCube->AddComponent(new fw::MeshComponent(m_pResourceManager->GetMesh("Cube"), m_pResourceManager->GetMaterial("Red")));
 	pCube->SetName("Red Cube");
 	m_Objects.push_back(pCube);
 
-	pCube = new fw::GameObject(this, c_centerOfScreen + vec3(6, 0, 3), vec3());
+	pCube = new fw::GameObject(this, c_centerOfScreen + vec3(6.f, -3.f, 3.f), vec3());
 	pCube->AddComponent(new fw::MeshComponent(m_pResourceManager->GetMesh("Cube"), m_pResourceManager->GetMaterial("White")));
 	pCube->SetName("White Cube");
 	m_Objects.push_back(pCube);
 
-    fw::GameObject* pPlayer = new fw::GameObject(this, c_centerOfScreen + vec3(-6, 0, -3), rot);
-    pPlayer->AddComponent(new fw::MeshComponent(m_pResourceManager->GetMesh("Cube"), m_pResourceManager->GetMaterial("Cube")));
+    fw::GameObject* pPlayer = new fw::GameObject(this, c_centerOfScreen + vec3(-6.f, -3.5f, -3.f), rot);
+    pPlayer->AddComponent(new fw::MeshComponent(m_pResourceManager->GetMesh("Facehugger"), m_pResourceManager->GetMaterial("Green")));
+    pPlayer->SetRotation(vec3(-90.f, -180.f, 0.f));
+    pPlayer->SetScale(vec3(0.1f, 0.1f, 0.1f));
     pPlayer->AddComponent(new SimplePlayerMovementComponent(m_pPlayerController));
 	pPlayer->SetName("Player");
 	m_Objects.push_back(pPlayer);
 	
 	m_pCamera->AttachTo(pPlayer);
-	//m_pCamera->SetThirdPersonOffset(vec3(-6, 3, -3));
 
     fw::GameObject* pFloor = new fw::GameObject(this, pos, rot);
     pFloor->AddComponent(new fw::MeshComponent(m_pResourceManager->GetMesh("Sprite"), m_pResourceManager->GetMaterial("Arcade_Floor")));

@@ -3,10 +3,6 @@
 #include "Framework.h"
 #include "DefaultSettings.h"
 
-class Enemy;
-class Player;
-class PlayerController;
-
 class Game : public fw::GameCore
 {
 protected:

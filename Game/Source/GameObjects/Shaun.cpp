@@ -18,10 +18,6 @@ Shaun::~Shaun()
 void Shaun::Update(float deltaTime)
 {
     fw::PhysicsBody* pPhysicsBody = GetComponent<fw::PhysicsBodyComponent>()->GetPhysicsBody();
-    if (pPhysicsBody)
-    {
-        GetComponent<fw::PhysicsBodyComponent>()->Update(deltaTime);
-    }
 
 	m_animationFrameTimer += deltaTime;
 

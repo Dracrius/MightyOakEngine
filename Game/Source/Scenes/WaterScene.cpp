@@ -8,10 +8,6 @@
 
 WaterScene::WaterScene(Game* pGame) : fw::Scene(pGame)
 {
-
-    m_pPhysicsWorld = new fw::PhysicsWorldBox2D(pGame->GetFramework()->GetEventManager());
-    m_pPhysicsWorld->SetGravity(c_gravity);
-
     m_pCamera = new fw::Camera(this, c_centerOfScreen + c_cameraOffset);
 	m_pCamera->SetAspectRatio(c_aspectRatio);
 
@@ -88,7 +84,12 @@ void WaterScene::SettingsMenu()
 			}
 			ImGui::EndMenu();
 		}
-		if (ImGui::MenuItem("Settings", "", &m_showSlider)) {};
+        if (ImGui::BeginMenu("Settings"))
+        {
+		    if (ImGui::MenuItem("Plane Settings", "", &m_showSlider)) {};
+
+            ImGui::EndMenu();
+        }
 
 		ImGui::MenuItem("Cube Scene", NULL, false, false);
 		ImGui::EndMainMenuBar();

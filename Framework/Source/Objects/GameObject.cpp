@@ -2,8 +2,6 @@
 
 #include "../Libraries/imgui/imgui.h"
 #include "GameObject.h"
-#include "Math/Matrix.h"
-#include "Material.h"
 #include "Components/MeshComponent.h"
 #include "Components/TransformComponent.h"
 #include "Components/PhysicsBodyComponent.h"
@@ -141,7 +139,7 @@ void GameObject::Editor_OutputObjectDetails()
 	if (hasPhysBody)
 	{
 		ImGui::DragFloat("Rotation", &rot.z, 0.01f);
-		//ImGui::DragFloat2("Scale", &scale.x, 0.01f;
+		//ImGui::DragFloat2("Scale", &scale.x, 0.01f; //Save For Experimenting
 	}
 	else
 	{

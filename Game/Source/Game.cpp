@@ -1,18 +1,16 @@
 #include "Framework.h"
+#include "DefaultSettings.h"
 
 #include "Game.h"
-#include "GameObjects/Player.h"
-#include "GameObjects/PlayerController.h"
-#include "Meshes/Shapes.h"
 #include "GameEvents/GameEvents.h"
-#include "Scenes/PhysicsScene.h"
-#include "Scenes/CubeScene.h"
-#include "Scenes/WaterScene.h"
-#include "Scenes/ObjScene.h"
-#include "Scenes/ThirdPersonScene.h"
+#include "Meshes/Shapes.h"
 #include "Scenes/Assignment1Scene.h"
+#include "Scenes/CubeScene.h"
+#include "Scenes/ObjScene.h"
 #include "Scenes/Physics3DScene.h"
-#include "DefaultSettings.h"
+#include "Scenes/PhysicsScene.h"
+#include "Scenes/ThirdPersonScene.h"
+#include "Scenes/WaterScene.h"
 
 Game::Game(fw::FWCore& fwCore)
     : m_FWCore( fwCore )
@@ -44,7 +42,6 @@ void Game::Init()
 	glViewport((c_windowSize.x - c_glRenderSize.x) / 2, (c_windowSize.y - c_glRenderSize.y) / 2, c_glRenderSize.x, c_glRenderSize.y);
 
     glPointSize( 10 );
-    //glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
     glEnable(GL_BLEND);
     glEnable(GL_DEPTH_TEST);
@@ -62,6 +59,8 @@ void Game::Init()
 	m_pResourceManager->CreateMesh("Plane");
 	m_pResourceManager->GetMesh("Plane")->CreatePlane(vec2(100.f, 100.f), ivec2(1000, 1000));
 	m_pResourceManager->CreateMesh("Obj");
+    m_pResourceManager->CreateMesh("Facehugger");
+    m_pResourceManager->GetMesh("Facehugger")->LoadObj("Data/Models/Chibi_Facehugger.obj", true);
 
 
     // Setup Shaders
@@ -128,7 +127,6 @@ void Game::OnEvent(fw::Event* pEvent)
 		{
 			static_cast<Assignment1Scene*>(m_Scenes["Assignment1"])->ReloadScene();
 		}
-		//m_Scenes[pSceneChange->GetSceneName()]->SceneFocus(true);
     }
     else
     {
@@ -149,16 +147,6 @@ void Game::OnEvent(fw::Event* pEvent)
 void Game::Update(float deltaTime)
 {
 	MainMenu();
-
-    std::vector<vec3> verts;
-    for (int y = 0; y < 10; y++)
-    {
-        for (int x = 0; x < 10; x++)
-        {
-            vec3 temp = vec3(int(cos(x)), y, int(sin(x)));
-            verts.push_back(temp);
-        }
-    }
 
 	if (m_showBGColorSelect)
 	{
@@ -197,7 +185,8 @@ void Game::SetCurrentScene(std::string scene)
 	{
 		m_backgroundColor = m_backupColor;
 	}
-		glClearColor(m_backgroundColor.r, m_backgroundColor.g, m_backgroundColor.b, m_backgroundColor.a);
+
+	glClearColor(m_backgroundColor.r, m_backgroundColor.g, m_backgroundColor.b, m_backgroundColor.a);
 }
 
 void Game::ResetBackgroundColor(bool toBlack)

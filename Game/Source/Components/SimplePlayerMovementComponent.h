@@ -11,6 +11,9 @@ protected:
     PlayerController* m_pPlayerController = nullptr;
     float m_speed = 5.f;
 
+    fw::vec3 m_origRotation;
+    bool m_firstUpdate = true;
+
 public:
     SimplePlayerMovementComponent(PlayerController* pController);
     virtual ~SimplePlayerMovementComponent();

@@ -6,13 +6,7 @@
 
 namespace fw {
 
-class Camera;
 class Component;
-class MeshComponent;
-class GameCore;
-class Mesh;
-class Material;
-
 class Scene;
 
 class GameObject
@@ -64,8 +58,6 @@ public:
     Scene* GetScene() { return m_pScene; }
 
     // Setters.
-    //void SetMaterial(Material* pMaterial) { m_pMaterial = pMaterial; }
-
 	void SetName(std::string name) { m_name = name; }
 
 	void SetPosition(vec3 pos);

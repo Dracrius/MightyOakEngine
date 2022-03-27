@@ -1,11 +1,11 @@
 #include "Framework.h"
+#include "DefaultSettings.h"
 
 #include "Physics3DScene.h"
 #include "DataTypes.h"
 #include "GameObjects/PlayerController.h"
 #include "GameObjects/Player3D.h"
 #include "Game.h"
-#include "DefaultSettings.h"
 
 Physics3DScene::Physics3DScene(Game* pGame) : fw::Scene(pGame)
 {
@@ -92,106 +92,78 @@ void Physics3DScene::OnEvent(fw::Event* pEvent)
 
 void Physics3DScene::Update(float deltaTime)
 {
-    Scene::Update(deltaTime);
-
     m_pPlayer->Update(deltaTime);
+
+    Scene::Update(deltaTime);
 
     fw::FWCore* pFramework = static_cast<Game*>(m_pGame)->GetFramework();
     m_pCamera->Hack_ThirdPersonCam(pFramework, deltaTime);
 
 	ControlsMenu();
 
-	//Figure out world space coordinate of mosue in Ortho.
-	//{
-	//	ivec2 mouse; //Window Coodinates
-	//	
-	//	Game* pGame = static_cast<Game*>(m_pGame);
+    if (m_showPerspecMouseCoords)
+    {
+        ShowPerspecMouseCoordinates();
+    }
+}
 
-	//	pGame->GetFramework()->GetMouseCoordinates(&mouse.x, &mouse.y);
+void Physics3DScene::ShowPerspecMouseCoordinates()
+{
+    ImGui::SetNextWindowSize(ImVec2(325, 120), ImGuiCond_Always);
+    if (!ImGui::Begin("Perspective Mouse Coords", &m_showPerspecMouseCoords))
+    {
+        ImGui::End();
+        return;
+    }
 
-	//	ivec2 viewPortMouse = mouse;
-	//	ivec2 windowSize(pGame->GetFramework()->GetWindowWidth(), pGame->GetFramework()->GetWindowHeight());
+    //Figure out world space coordinate of mosue in Perspective.
+    ivec2 mouse; //Window Coodinates
 
-	//	//Window to OpenGL Render Space ie View Port
+    Game* pGame = static_cast<Game*>(m_pGame);
 
-	//	//Flip Window Coord
-	//	viewPortMouse.x = viewPortMouse.x;
-	//	viewPortMouse.y = windowSize.y - viewPortMouse.y;
+    pGame->GetFramework()->GetMouseCoordinates(&mouse.x, &mouse.y);
 
-	//	//Find View Coord
-	//	viewPortMouse.x -= (windowSize.x - c_glRenderSize.x) / 2;
-	//	viewPortMouse.y -= (windowSize.y - c_glRenderSize.y) / 2;
+    ivec2 viewPortMouse = mouse;
+    ivec2 windowSize(pGame->GetFramework()->GetWindowWidth(), pGame->GetFramework()->GetWindowHeight());
 
-	//	//Find Clip Space Coord
-	//	vec2 clipSpaceMouse = viewPortMouse / (c_glRenderSize / 2.f) - 1.f;
+    //Window to OpenGL Render Space ie View Port
 
-	//	//Find View Space Coord
-	//	fw::matrix invProj;
-	//	invProj = m_pCamera->GetProjecMatrix().GetInverse();
+    //Flip Window Coord
+    viewPortMouse.x = viewPortMouse.x;
+    viewPortMouse.y = windowSize.y - viewPortMouse.y;
 
-	//	vec2 viewSpaceMouse = invProj * clipSpaceMouse;
+    //Find View Coord
+    viewPortMouse.x -= (windowSize.x - c_glRenderSize.x) / 2;
+    viewPortMouse.y -= (windowSize.y - c_glRenderSize.y) / 2;
 
-	//	//Find World Space Coord
-	//	fw::matrix invView = m_pCamera->GetViewMatrix().GetInverse();
-	//	vec2 worldSpaceMouse = invView * viewSpaceMouse;
+    //Find Clip Space Coord
+    vec2 clipSpaceMouse = viewPortMouse / (c_glRenderSize / 2.f) - 1.f;
+    vec4 clipSpaceMouse4 = vec4(clipSpaceMouse, 1, 1);
 
+    //Find View Space Coord
+    fw::matrix invProj = m_pCamera->GetProjecMatrix().GetInverse();
+    vec4 viewSpaceMouse4 = invProj * clipSpaceMouse4;
 
-	//	ImGui::Text("Mouse Window Coords: %d, %d", mouse.x, mouse.y);
-	//	ImGui::Text("Mouse View Port Coords: %d, %d", viewPortMouse.x, viewPortMouse.y);
-	//	ImGui::Text("Mouse Clip Space Coords: %0.2f, %0.2f", clipSpaceMouse.x, clipSpaceMouse.y);
-	//	ImGui::Text("Mouse View Space Coords: %0.2f, %0.2f", viewSpaceMouse.x, viewSpaceMouse.y);
-	//	ImGui::Text("Mouse World Space Coords: %0.2f, %0.2f", worldSpaceMouse.x, worldSpaceMouse.y);
+    //Find World Space Coord
+    fw::matrix invView = m_pCamera->GetViewMatrix().GetInverse();
+    vec4 worldSpaceMouse4 = invView * viewSpaceMouse4;
 
-	//}
-	//Figure out world space coordinate of mosue in Perspective.
-	{
-		ivec2 mouse; //Window Coodinates
+    vec3 nearPosition = m_pCamera->GetPosition();
+    vec3 farPosition = worldSpaceMouse4.XYZ() / worldSpaceMouse4.w;
 
-		Game* pGame = static_cast<Game*>(m_pGame);
-
-		pGame->GetFramework()->GetMouseCoordinates(&mouse.x, &mouse.y);
-
-		ivec2 viewPortMouse = mouse;
-		ivec2 windowSize(pGame->GetFramework()->GetWindowWidth(), pGame->GetFramework()->GetWindowHeight());
-
-		//Window to OpenGL Render Space ie View Port
-
-		//Flip Window Coord
-		viewPortMouse.x = viewPortMouse.x;
-		viewPortMouse.y = windowSize.y - viewPortMouse.y;
-
-		//Find View Coord
-		viewPortMouse.x -= (windowSize.x - c_glRenderSize.x) / 2;
-		viewPortMouse.y -= (windowSize.y - c_glRenderSize.y) / 2;
-
-		//Find Clip Space Coord
-		vec2 clipSpaceMouse = viewPortMouse / (c_glRenderSize / 2.f) - 1.f;
-		vec4 clipSpaceMouse4 = vec4(clipSpaceMouse, 1, 1);
-
-		//Find View Space Coord
-		fw::matrix invProj = m_pCamera->GetProjecMatrix().GetInverse();
-		vec4 viewSpaceMouse4 = invProj * clipSpaceMouse4;
-
-		//Find World Space Coord
-		fw::matrix invView = m_pCamera->GetViewMatrix().GetInverse();
-		vec4 worldSpaceMouse4 = invView * viewSpaceMouse4;
-
-		vec3 nearPosition = m_pCamera->GetPosition();
-		vec3 farPosition = worldSpaceMouse4.XYZ() / worldSpaceMouse4.w;
-
-		float zDesired = 0.f;
-		vec3 rayDir = farPosition - nearPosition;
-		float rayPerc = (zDesired - nearPosition.z) / rayDir.z;
-		vec3 zDesiredMouse = nearPosition + rayDir * rayPerc;
+    float zDesired = 0.f;
+    vec3 rayDir = farPosition - nearPosition;
+    float rayPerc = (zDesired - nearPosition.z) / rayDir.z;
+    vec3 zDesiredMouse = nearPosition + rayDir * rayPerc;
 
 
-		ImGui::Text("Mouse Window Coords: %d, %d", mouse.x, mouse.y);
-		ImGui::Text("Mouse View Port Coords: %d, %d", viewPortMouse.x, viewPortMouse.y);
-		ImGui::Text("Mouse Clip Space Coords: %0.2f, %0.2f", clipSpaceMouse.x, clipSpaceMouse.y);
-		ImGui::Text("Mouse View Space Coords: %0.2f, %0.2f", viewSpaceMouse4.x, viewSpaceMouse4.y);
-		ImGui::Text("Mouse World Space Coords: %0.2f, %0.2f, %0.2f", zDesiredMouse.x, zDesiredMouse.y, zDesiredMouse.z);
+    ImGui::Text("Mouse Window Coords: %d, %d", mouse.x, mouse.y);
+    ImGui::Text("Mouse View Port Coords: %d, %d", viewPortMouse.x, viewPortMouse.y);
+    ImGui::Text("Mouse Clip Space Coords: %0.2f, %0.2f", clipSpaceMouse.x, clipSpaceMouse.y);
+    ImGui::Text("Mouse View Space Coords: %0.2f, %0.2f", viewSpaceMouse4.x, viewSpaceMouse4.y);
+    ImGui::Text("Mouse World Space Coords: %0.2f, %0.2f, %0.2f", zDesiredMouse.x, zDesiredMouse.y, zDesiredMouse.z);
 
-	}
+    ImGui::End();
 }
 
 void Physics3DScene::ControlsMenu()
@@ -214,16 +186,23 @@ void Physics3DScene::ControlsMenu()
 		}
 		if (ImGui::BeginMenu("Settings"))
 		{
+            if (ImGui::MenuItem("Show Perspective Mouse Coords", "", &m_showPerspecMouseCoords)) {};
+
+            ImGui::Separator();
+
 			if (ImGui::MenuItem("Enable Debug Draw", "", &m_debugDraw)) {}
 
 			ImGui::EndMenu();
 		}
 		if (ImGui::BeginMenu("Controls"))
 		{
-			ImGui::Text("Left = <- or A");
-			ImGui::Text("Right = -> or D");
-			ImGui::Text("Jump = Up or Space");
-			ImGui::Text("Teleport = Z");
+			ImGui::Text("Forward = Up or W");
+			ImGui::Text("Back = Down or S");
+            ImGui::Separator();
+			ImGui::Text("Camera Rotate Left = J");
+			ImGui::Text("Camera Rotate Right = L");
+            ImGui::Text("Camera Tilt Up = I");
+            ImGui::Text("Camera Tilt Down = K");
 
 			ImGui::EndMenu();
 		}

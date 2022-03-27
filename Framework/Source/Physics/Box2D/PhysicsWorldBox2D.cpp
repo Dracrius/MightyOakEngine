@@ -45,7 +45,6 @@ PhysicsWorldBox2D::PhysicsWorldBox2D(EventManager* pEventManager) : PhysicsWorld
 	m_pWorld->SetContactListener(m_pContactListener);
 	m_pDebugDraw->SetFlags(b2Draw::e_shapeBit);
 	m_pWorld->SetDebugDraw(m_pDebugDraw);
-	//m_pWorld->Debug
 
 	b2BodyDef bodyDef;
 	m_pGroundBody = m_pWorld->CreateBody(&bodyDef);

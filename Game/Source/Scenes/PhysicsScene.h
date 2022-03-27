@@ -11,6 +11,9 @@ protected:
 
     Player* m_pPlayer = nullptr;
 
+    bool m_showOrthoMouseCoords = false;
+    bool m_showPerspecMouseCoords = false;
+
 public:
     PhysicsScene(Game* pGame);
     virtual ~PhysicsScene();
@@ -21,7 +24,11 @@ public:
 
     virtual void Update(float deltaTime) override;
 
+
 protected:
+    void ShowOrthoMouseCoordinates();
+    void ShowPerspecMouseCoordinates();
+
 	void ControlsMenu();
 };
 

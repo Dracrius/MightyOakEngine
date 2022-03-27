@@ -15,6 +15,12 @@ SimplePlayerMovementComponent::~SimplePlayerMovementComponent()
 
 void SimplePlayerMovementComponent::Update(float deltaTime)
 {
+    if (m_firstUpdate)
+    {
+        m_origRotation = m_pGameObject->GetTransform()->GetRotation();
+        m_firstUpdate = false;
+    }
+
     vec3 pos = m_pGameObject->GetTransform()->GetPosition();
 
     //Movement
@@ -50,5 +56,5 @@ void SimplePlayerMovementComponent::Update(float deltaTime)
 
     //Move
     m_pGameObject->GetTransform()->SetPosition(pos);
-    m_pGameObject->GetTransform()->SetRotation(vec3(0, m_pGameObject->GetScene()->GetCamera()->GetTransform()->GetRotation().y, 0));
+    m_pGameObject->GetTransform()->SetRotation(m_origRotation + vec3(0, m_pGameObject->GetScene()->GetCamera()->GetTransform()->GetRotation().y, 0));
 }

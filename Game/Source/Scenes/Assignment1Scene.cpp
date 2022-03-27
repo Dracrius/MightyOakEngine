@@ -48,8 +48,6 @@ Assignment1Scene::Assignment1Scene(Game* pGame) : fw::Scene(pGame)
     m_pShaun->GetComponent<fw::PhysicsBodyComponent>()->CreateBody(m_pPhysicsWorld, true, vec3(c_shaunCollider.x, c_shaunCollider.y, c_shaunCollider.y) * 2, 1.f);
     m_pShaun->SetName("Shaun the Sheep");
 
-	//m_pCamera->AttachTo(m_Objects.back());
-	//m_pCamera->SetThirdPerson(c_cameraOffset + vec3(0.f, 4.5f, 0.f));
 	m_pCamera->SetAspectRatio(c_aspectRatio);
 }
 
@@ -145,9 +143,9 @@ void Assignment1Scene::OnEvent(fw::Event* pEvent)
 
 void Assignment1Scene::Update(float deltaTime)
 {
-    Scene::Update(deltaTime);
-
     m_pShaun->Update(deltaTime);
+
+    Scene::Update(deltaTime);
 
 	ControlsMenu();
 
@@ -310,59 +308,36 @@ void Assignment1Scene::FillDebrisPool()
 		{
 			pDebrisMesh->SetUVScale(m_pResourceManager->GetSpriteSheet("NiceDaysWalk")->GetSpriteByName("Lamb_Chop_01")->uvScale);
 			pDebrisMesh->SetUVOffset(m_pResourceManager->GetSpriteSheet("NiceDaysWalk")->GetSpriteByName("Lamb_Chop_01")->uvOffset);
-
-			if (i == 0)
-			{
-				pDebris->GetComponent<fw::PhysicsBodyComponent>()->ApplyImpulse(vec3(0.81f, 0.58f, 0.f) * 4);
-			}
-			if (i == 1)
-			{
-				pDebris->GetComponent<fw::PhysicsBodyComponent>()->ApplyImpulse(vec3(-0.81f, 0.58f, 0.f) * 4);
-			}
 		}
 		else if (i < 4)
 		{
 			pDebrisMesh->SetUVScale(m_pResourceManager->GetSpriteSheet("NiceDaysWalk")->GetSpriteByName("Bone_01")->uvScale);
 			pDebrisMesh->SetUVOffset(m_pResourceManager->GetSpriteSheet("NiceDaysWalk")->GetSpriteByName("Bone_01")->uvOffset);
-
-			if (i == 2)
-			{
-				pDebris->GetComponent<fw::PhysicsBodyComponent>()->ApplyImpulse(vec3(0.58f, 0.81f, 0.f) * 4);
-			}
-			if (i == 3)
-			{
-				pDebris->GetComponent<fw::PhysicsBodyComponent>()->ApplyImpulse(vec3(-0.58f, 0.81f, 0.f) * 4);
-			}
 		}
 		else if (i == 4)
 		{
 			pDebrisMesh->SetUVScale(m_pResourceManager->GetSpriteSheet("NiceDaysWalk")->GetSpriteByName("Leg_01")->uvScale);
 			pDebrisMesh->SetUVOffset(m_pResourceManager->GetSpriteSheet("NiceDaysWalk")->GetSpriteByName("Leg_01")->uvOffset);
-			pDebris->GetComponent<fw::PhysicsBodyComponent>()->ApplyImpulse(vec3(0.95f, 0.3f, 0.f) * 4);
 		}
 		else if (i == 5)
 		{
 			pDebrisMesh->SetUVScale(m_pResourceManager->GetSpriteSheet("NiceDaysWalk")->GetSpriteByName("Leg_02")->uvScale);
 			pDebrisMesh->SetUVOffset(m_pResourceManager->GetSpriteSheet("NiceDaysWalk")->GetSpriteByName("Leg_02")->uvOffset);
-			pDebris->GetComponent<fw::PhysicsBodyComponent>()->ApplyImpulse(vec3(0.3f, 0.95f, 0.f) * 4);
 		}
 		else if (i == 6)
 		{
 			pDebrisMesh->SetUVScale(m_pResourceManager->GetSpriteSheet("NiceDaysWalk")->GetSpriteByName("Leg_03")->uvScale);
 			pDebrisMesh->SetUVOffset(m_pResourceManager->GetSpriteSheet("NiceDaysWalk")->GetSpriteByName("Leg_03")->uvOffset);
-			pDebris->GetComponent<fw::PhysicsBodyComponent>()->ApplyImpulse(vec3(-0.95f, 0.3f, 0.f) * 4);
 		}
 		else if (i == 7)
 		{
 			pDebrisMesh->SetUVScale(m_pResourceManager->GetSpriteSheet("NiceDaysWalk")->GetSpriteByName("Leg_04")->uvScale);
 			pDebrisMesh->SetUVOffset(m_pResourceManager->GetSpriteSheet("NiceDaysWalk")->GetSpriteByName("Leg_04")->uvOffset);
-			pDebris->GetComponent<fw::PhysicsBodyComponent>()->ApplyImpulse(vec3(-0.3f, 0.95f, 0.f) * 4);
 		}
 		else if (i == 8)
 		{
 			pDebrisMesh->SetUVScale(m_pResourceManager->GetSpriteSheet("NiceDaysWalk")->GetSpriteByName("Wool_Chunck_01")->uvScale);
 			pDebrisMesh->SetUVOffset(m_pResourceManager->GetSpriteSheet("NiceDaysWalk")->GetSpriteByName("Wool_Chunck_01")->uvOffset);
-			pDebris->GetComponent<fw::PhysicsBodyComponent>()->ApplyImpulse(vec3(0.f, 1.f, 0.f) * 4);
 		}
 
 		pDebris->AddComponent(pDebrisMesh);
@@ -432,16 +407,10 @@ void Assignment1Scene::ResetGame()
 	m_meteorTimer = c_meteorSpawnDelay;
 	m_debrisTimer = c_debrisLifeSpan;
 
-	for (fw::GameObject* pObject : m_Objects)
-	{
-		if (pObject->GetName() == "Shaun the Sheep")
-		{
-			pObject->SetState(true);
-			pObject->SetPosition(vec2(7.5f, 6.0f));
-			pObject->SetRotation(vec3());
-			static_cast<Shaun*>(pObject)->SetIsOnGround(false);
-		}
-	}
+    m_pShaun->SetState(true);
+    m_pShaun->SetPosition(vec2(7.5f, 6.0f));
+    m_pShaun->SetRotation(vec3());
+    m_pShaun->SetIsOnGround(false);
 
 	m_showWin = false;
 	m_showDeath = false;

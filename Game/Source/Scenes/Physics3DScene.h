@@ -11,6 +11,8 @@ protected:
 
     Player3D* m_pPlayer = nullptr;
 
+    bool m_showPerspecMouseCoords = false;
+
 public:
     Physics3DScene(Game* pGame);
     virtual ~Physics3DScene();
@@ -22,6 +24,8 @@ public:
     virtual void Update(float deltaTime) override;
 
 protected:
+    void ShowPerspecMouseCoordinates();
+
 	void ControlsMenu();
 };
 

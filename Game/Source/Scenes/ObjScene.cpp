@@ -1,15 +1,12 @@
 #include "Framework.h"
+#include "DefaultSettings.h"
 
 #include "ObjScene.h"
 #include "DataTypes.h"
 #include "Game.h"
-#include "DefaultSettings.h"
 
 ObjScene::ObjScene(Game* pGame) : fw::Scene(pGame)
 {
-    m_pPhysicsWorld = new fw::PhysicsWorldBox2D(pGame->GetFramework()->GetEventManager());
-    m_pPhysicsWorld->SetGravity(c_gravity);
-
     vec3 cameraOffset = vec3(0.f, 0.f, -12.f);
 	float heightOffset = -3.5f;
 

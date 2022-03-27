@@ -40,7 +40,6 @@ void EventManager::ProcessEvents()
 				pListener->OnEvent(pEvent);
 			}
 		}
-		//listener.OnEvent( pEvent );
 
         delete pEvent;
     }

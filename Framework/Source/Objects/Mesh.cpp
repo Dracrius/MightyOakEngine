@@ -95,7 +95,6 @@ void Mesh::Draw(Camera* pCamera, Material* pMaterial, const matrix& worldMat, ve
     
     // Misc uniforms.
     SetupUniform(pShader, "u_Time", (float)GetSystemTimeSinceGameStart());
-    //SetupUniform(pShader, "u_MaterialColor", vec4(15.f / 255, 103.f / 255, 227.f / 255, 1.f));
 
     SetupUniform(pShader, "u_MaterialColor", vec4(pMaterial->GetColor().r, pMaterial->GetColor().g, pMaterial->GetColor().b, pMaterial->GetColor().a));
 
@@ -157,13 +156,23 @@ void Mesh::Rebuild(GLenum primitiveType, const std::vector<VertexFormat>& verts,
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * m_NumIndices, &indices[0], GL_STATIC_DRAW);
 }
 
-//void Mesh::CreateSprite(vec2 size, ivec2 numTiles)
-//{
-//	{ vec3(-0.5f,-0.5f,0.f),  255,255,255,255,  vec2(0.0f,0.0f) }, // bottom left
-//	{ vec3(-0.5f,0.5f,0.f),  255,255,255,255,  vec2(0.0f,1.0f) }, // top left
-//	{ vec3(0.5f,-0.5f,0.f),  255,255,255,255,  vec2(1.0f,0.0f) }, // bottom right
-//	{ vec3(0.5f,0.5f,0.f),  255,255,255,255,  vec2(1.0f,1.0f) }, // top right
-//}
+void Mesh::CreateSprite()
+{
+    std::vector<fw::VertexFormat> spriteVerts =
+    {
+        { vec3(-0.5f,-0.5f,0.f),  255,255,255,255,  vec2(0.0f,0.0f) }, // bottom left
+        { vec3(-0.5f,0.5f,0.f),  255,255,255,255,  vec2(0.0f,1.0f) }, // top left
+        { vec3(0.5f,-0.5f,0.f),  255,255,255,255,  vec2(1.0f,0.0f) }, // bottom right
+        { vec3(0.5f,0.5f,0.f),  255,255,255,255,  vec2(1.0f,1.0f) }, // top right
+    };
+
+    std::vector<unsigned int> spriteIndices =
+    {
+        0, 1, 2, 2, 1, 3,
+    };
+
+    Rebuild(GL_TRIANGLES, spriteVerts, spriteIndices);
+}
 
 void Mesh::CreatePlane(vec2 size, ivec2 vertRes)
 {
@@ -211,8 +220,6 @@ void Mesh::CreatePlane(vec2 size, ivec2 vertRes)
         }
     }
 
-    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-
     Rebuild(GL_TRIANGLES, verts, indices);
 }
 
@@ -222,7 +229,6 @@ void Mesh::LoadObj(const char* filename)
 }
 void Mesh::LoadObj(const char* filename, bool righthanded)
 {
-    //CreatePlane(vec2(10.f,10.f), ivec2(2,2));
     std::vector<vec3> positions;
     std::vector <vec2> uvs;
     std::vector <vec3> normals;

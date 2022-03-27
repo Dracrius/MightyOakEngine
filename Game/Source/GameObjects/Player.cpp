@@ -25,10 +25,6 @@ void Player::Update(float deltaTime)
     }
 
     fw::PhysicsBody* pPhysicsBody = GetComponent<fw::PhysicsBodyComponent>()->GetPhysicsBody();
-    if (pPhysicsBody)
-    {
-        GetComponent<fw::PhysicsBodyComponent>()->Update(deltaTime);
-    }
 
     //Check Control States
 	//Jump
@@ -36,7 +32,7 @@ void Player::Update(float deltaTime)
     {
         if (pPhysicsBody)
         {
-            pPhysicsBody->ApplyLinearImpulse(vec3(0.f, c_playerSpeed, 0.f), true);
+            pPhysicsBody->ApplyLinearImpulse(vec3(0.f, c_playerSpeed / 1.25f, 0.f), true);
         }
         m_jumpTimer = c_jumpTimer;
     }

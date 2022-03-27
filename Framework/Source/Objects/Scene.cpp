@@ -48,15 +48,7 @@ void Scene::Update(float deltaTime)
 		m_pPhysicsWorld->Update(deltaTime);
 	}
 
-    for (auto it = m_Objects.begin(); it != m_Objects.end(); it++)
-    {
-        fw::GameObject* pObject = *it;
-        fw::PhysicsBodyComponent* pPhysicsBody = pObject->GetComponent<fw::PhysicsBodyComponent>();
-        if (pPhysicsBody)
-        {
-            pPhysicsBody->Update(deltaTime);
-        }
-    }
+    m_pComponentManager->Update(deltaTime);
 
     m_pCamera->Update(deltaTime);
 
@@ -85,7 +77,7 @@ void Scene::Editor_ShowObjectList()
 	{
 		if (ImGui::BeginMenu("Settings"))
 		{
-			if(ImGui::BeginMenu("Scene Objects")) //, "", &m_showObjectList
+			if(ImGui::BeginMenu("Scene Objects"))
 			{
 				for (GameObject* pObject : m_Objects)
 				{

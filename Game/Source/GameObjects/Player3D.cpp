@@ -18,10 +18,6 @@ Player3D::~Player3D()
 void Player3D::Update(float deltaTime)
 {
     fw::PhysicsBodyComponent* pPhysicsBody = GetComponent<fw::PhysicsBodyComponent>();
-    if (pPhysicsBody)
-    {
-        pPhysicsBody->Update(deltaTime);
-    }
 
     m_timePassed += deltaTime;
 

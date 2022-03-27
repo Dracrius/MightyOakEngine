@@ -1,16 +1,13 @@
 #include "Framework.h"
+#include "DefaultSettings.h"
 
 #include "CubeScene.h"
 #include "DataTypes.h"
 #include "Game.h"
-#include "DefaultSettings.h"
 
 CubeScene::CubeScene(Game* pGame) : fw::Scene(pGame)
 {
-    m_pPhysicsWorld = new fw::PhysicsWorldBox2D(pGame->GetFramework()->GetEventManager());
-    m_pPhysicsWorld->SetGravity(c_gravity);
-
-    m_pCamera = new fw::Camera(this, c_centerOfScreen + c_cameraOffset);
+    m_pCamera = new fw::Camera(this, c_centerOfScreen + (c_cameraOffset / 2));
 	m_pCamera->SetAspectRatio(c_aspectRatio);
 
     fw::GameObject* pCube = new fw::GameObject(this, c_centerOfScreen, vec3());

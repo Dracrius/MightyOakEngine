@@ -35,6 +35,7 @@ public:
     void Rebuild(GLenum primitiveType, const std::vector<VertexFormat>& verts);
     void Rebuild(GLenum primitiveType, const std::vector<VertexFormat>& verts, const std::vector<unsigned int>& indices);
 
+    void CreateSprite();
     void CreatePlane(vec2 size, ivec2 vertRes);
 
     void LoadObj(const char* filename);
