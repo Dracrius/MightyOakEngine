@@ -14,7 +14,7 @@ public:
     Camera(Scene* pScene, vec3 pos, vec3 lookAtPos);
     virtual ~Camera();
 
-    virtual void Update(float deltaTime) override;
+    void Update(float deltaTime);
 
     // Getters.
     matrix GetViewMatrix();

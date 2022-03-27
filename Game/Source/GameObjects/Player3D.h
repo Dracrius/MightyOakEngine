@@ -12,10 +12,7 @@ public:
     Player3D(fw::Scene* pScene, fw::Mesh* pMesh, fw::Material* pMaterial, vec2 pos, PlayerController* pController);
     virtual ~Player3D();
 
-    virtual void Update(float deltaTime) override;
-    //virtual void Draw() override;
-
-    // Setters.
+    void Update(float deltaTime);
 
 protected:
     PlayerController* m_pPlayerController = nullptr;

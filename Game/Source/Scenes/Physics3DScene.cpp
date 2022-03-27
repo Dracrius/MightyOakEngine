@@ -45,7 +45,8 @@ Physics3DScene::Physics3DScene(Game* pGame) : fw::Scene(pGame)
 		std::string name = "Numbered Box " + i;
 		fw::GameObject* pBox = new fw::GameObject(this, pos, vec3());
 		pBox->AddComponent(new fw::MeshComponent(m_pResourceManager->GetMesh("Cube"), m_pResourceManager->GetMaterial("Cube")));
-		pBox->CreateBody(m_pPhysicsWorld, true, vec3(1.0f, 1.0f, 1.0f), 1.f);
+        pBox->AddComponent(new fw::PhysicsBodyComponent());
+        pBox->GetComponent<fw::PhysicsBodyComponent>()->CreateBody(m_pPhysicsWorld, true, vec3(1.0f, 1.0f, 1.0f), 1.f);
 		pBox->SetName(name);
 		m_Objects.push_back(pBox);
 	}
@@ -58,22 +59,25 @@ Physics3DScene::Physics3DScene(Game* pGame) : fw::Scene(pGame)
 
 	pPlatform->AddComponent(pPlatformMesh);
 	pPlatform->SetScale(vec3(20.f, 1.f, 10.f));
-	pPlatform->CreateBody(m_pPhysicsWorld, false, vec3(20.0f, 1.0f, 10.0f), 0.f);
+    pPlatform->AddComponent(new fw::PhysicsBodyComponent());
+	pPlatform->GetComponent<fw::PhysicsBodyComponent>()->CreateBody(m_pPhysicsWorld, false, vec3(20.0f, 1.0f, 10.0f), 0.f);
 	pPlatform->SetName("Platform");
 	m_Objects.push_back(pPlatform);
 
-	Player3D* pPlayer = new Player3D(this, m_pResourceManager->GetMesh("Cube"), m_pResourceManager->GetMaterial("Cube"), vec2(7.5f, 16.0f), m_pPlayerController);
-	pPlayer->CreateBody(m_pPhysicsWorld, true, vec3(1.f), 1.f);
-	pPlayer->SetName("Player");
-	m_Objects.push_back(pPlayer);
+    m_pPlayer = new Player3D(this, m_pResourceManager->GetMesh("Cube"), m_pResourceManager->GetMaterial("Cube"), vec2(7.5f, 16.0f), m_pPlayerController);
+    m_pPlayer->AddComponent(new fw::PhysicsBodyComponent());
+    m_pPlayer->GetComponent<fw::PhysicsBodyComponent>()->CreateBody(m_pPhysicsWorld, true, vec3(1.f), 1.f);
+    m_pPlayer->SetName("Player");
 
 	m_pCamera->SetAspectRatio(c_aspectRatio);
-    m_pCamera->AttachTo(pPlayer);
+    m_pCamera->AttachTo(m_pPlayer);
 }
 
 Physics3DScene::~Physics3DScene()
 {
     delete m_pPlayerController;
+
+    delete m_pPlayer;
 }
 
 void Physics3DScene::StartFrame(float deltaTime)
@@ -89,6 +93,8 @@ void Physics3DScene::OnEvent(fw::Event* pEvent)
 void Physics3DScene::Update(float deltaTime)
 {
     Scene::Update(deltaTime);
+
+    m_pPlayer->Update(deltaTime);
 
     fw::FWCore* pFramework = static_cast<Game*>(m_pGame)->GetFramework();
     m_pCamera->Hack_ThirdPersonCam(pFramework, deltaTime);

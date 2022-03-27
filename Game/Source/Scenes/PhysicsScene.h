@@ -2,11 +2,15 @@
 
 class Game;
 class PlayerController;
+class Player;
 
 class PhysicsScene : public fw::Scene
 {
 protected:
     PlayerController* m_pPlayerController = nullptr;
+
+    Player* m_pPlayer = nullptr;
+
 public:
     PhysicsScene(Game* pGame);
     virtual ~PhysicsScene();

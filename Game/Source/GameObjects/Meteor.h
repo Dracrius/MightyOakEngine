@@ -14,10 +14,4 @@ protected:
 public:
 	Meteor(fw::Scene* pScene, fw::Mesh* pMesh, fw::Material* pMaterial, fw::SpriteSheet* pSpriteSheet, vec2 pos, vec3 rot);
     virtual ~Meteor();
-
-    virtual void Update(float deltaTime) override;
-    //virtual void Draw() override;
-
-	virtual void CreateBody(fw::PhysicsWorld* pWorld, bool isDynamic, float density) override;
-
 };

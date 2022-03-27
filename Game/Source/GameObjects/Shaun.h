@@ -56,8 +56,7 @@ public:
 	Shaun(fw::Scene* pScene, fw::Mesh* pMesh, fw::Material* pMaterial, vec2 pos, PlayerController* pController);
     virtual ~Shaun();
 
-    virtual void Update(float deltaTime) override;
-    //virtual void Draw() override;
+    void Update(float deltaTime);
 
     // Setters.
     void SetSpriteSheet(fw::SpriteSheet* pSpriteSheet) { m_pSpriteSheet = pSpriteSheet; SetAnimations(); }

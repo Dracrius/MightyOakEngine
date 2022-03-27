@@ -16,10 +16,8 @@ SimplePlayer::~SimplePlayer()
 
 void SimplePlayer::Update(float deltaTime)
 {
-	GameObject::Update(deltaTime);
-
 	float speed = 5.0;
-	vec3 pos = m_pTramsform->GetPosition();
+	vec3 pos = m_pTransform->GetPosition();
 
 	//Movement
 	float forwardAxis = 0;
@@ -53,8 +51,8 @@ void SimplePlayer::Update(float deltaTime)
 	pos += dir  * speed * deltaTime;
 
 	//Move
-	m_pTramsform->SetPosition(pos);
-	m_pTramsform->SetRotation(vec3(0, m_pScene->GetCamera()->GetTransform()->GetRotation().y, 0));
+	m_pTransform->SetPosition(pos);
+	m_pTransform->SetRotation(vec3(0, m_pScene->GetCamera()->GetTransform()->GetRotation().y, 0));
 }
 
 

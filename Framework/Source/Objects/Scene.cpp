@@ -51,7 +51,11 @@ void Scene::Update(float deltaTime)
     for (auto it = m_Objects.begin(); it != m_Objects.end(); it++)
     {
         fw::GameObject* pObject = *it;
-        pObject->Update(deltaTime);
+        fw::PhysicsBodyComponent* pPhysicsBody = pObject->GetComponent<fw::PhysicsBodyComponent>();
+        if (pPhysicsBody)
+        {
+            pPhysicsBody->Update(deltaTime);
+        }
     }
 
     m_pCamera->Update(deltaTime);

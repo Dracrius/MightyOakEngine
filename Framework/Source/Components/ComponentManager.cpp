@@ -4,6 +4,7 @@
 #include "Component.h"
 #include "Components/MeshComponent.h"
 #include "Components/TransformComponent.h"
+#include "Components/PhysicsBodyComponent.h"
 #include "Objects/GameObject.h"
 
 namespace fw {
@@ -14,6 +15,11 @@ ComponentManager::ComponentManager()
 
 void ComponentManager::Update(float deltaTime)
 {
+    for (Component* pComponent : m_Components[PhysicsBodyComponent::GetStaticType()])
+    {
+        PhysicsBodyComponent* pPhysicsBody = static_cast<PhysicsBodyComponent*>(pComponent);
+        pPhysicsBody->Update(deltaTime);
+    }
 }
 
 void ComponentManager::Draw(Camera* pCamera)
@@ -52,16 +58,11 @@ void ComponentManager::RemoveComponent(Component* pComponent)
     list.erase(std::remove(list.begin(), list.end(), pComponent), list.end());
 }
 
-std::vector<Component*> ComponentManager::GetComponentsOfType(const char* type)
+std::vector<Component*>& ComponentManager::GetComponentsOfType(const char* type)
 {
-    std::vector<Component*> compsOfType;
+    std::vector<Component*>& list = m_Components[type];
 
-    for (Component* pComponent : m_Components[type])
-    {
-        compsOfType.push_back(pComponent);
-    }
-
-    return compsOfType;
+    return list;
 }
 
 } // namespace fw

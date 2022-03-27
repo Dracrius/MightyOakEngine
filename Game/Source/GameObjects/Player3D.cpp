@@ -17,7 +17,11 @@ Player3D::~Player3D()
 
 void Player3D::Update(float deltaTime)
 {
-    GameObject::Update(deltaTime);
+    fw::PhysicsBodyComponent* pPhysicsBody = GetComponent<fw::PhysicsBodyComponent>();
+    if (pPhysicsBody)
+    {
+        pPhysicsBody->Update(deltaTime);
+    }
 
     m_timePassed += deltaTime;
 
@@ -53,7 +57,11 @@ void Player3D::Update(float deltaTime)
     dir.Normalize();
 
     //Move
-    m_pPhysicsBody->ApplyForce(dir * speed, true);
-    //m_pPhysicsBody->ApplyTorque(vec3(0, strafeAxis, 0), true); //Camera would need to adjust
+    if (pPhysicsBody)
+    {
+        pPhysicsBody->Update(deltaTime);
+        pPhysicsBody->GetPhysicsBody()->ApplyForce(dir * speed, true);
+        //pPhysicsBody->GetPhysicsBody()->ApplyTorque(vec3(0, strafeAxis, 0), true); //Camera would need to adjust
+    }
 
 }

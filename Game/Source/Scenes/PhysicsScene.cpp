@@ -45,7 +45,8 @@ PhysicsScene::PhysicsScene(Game* pGame) : fw::Scene(pGame)
 		std::string name = "Numbered Box " + i;
 		fw::GameObject* pBox = new fw::GameObject(this, pos, vec3());
 		pBox->AddComponent(new fw::MeshComponent(m_pResourceManager->GetMesh("Cube"), m_pResourceManager->GetMaterial("Cube")));
-		pBox->CreateBody(m_pPhysicsWorld, true, vec3(1.0f, 1.0f, 1.0f), 1.f);
+        pBox->AddComponent(new fw::PhysicsBodyComponent());
+        pBox->GetComponent<fw::PhysicsBodyComponent>()->CreateBody(m_pPhysicsWorld, true, vec3(1.0f, 1.0f, 1.0f), 1.f);
 		pBox->SetName(name);
 		m_Objects.push_back(pBox);
 	}
@@ -62,7 +63,8 @@ PhysicsScene::PhysicsScene(Game* pGame) : fw::Scene(pGame)
 
 		pPlatform->AddComponent(pPlatformMesh);
 		pPlatform->SetScale(vec3(20.f, 2.f, 0.f));
-		pPlatform->CreateBody(m_pPhysicsWorld, false, vec3(20.0f, 2.0f, 2.0f), 1.f);
+        pPlatform->AddComponent(new fw::PhysicsBodyComponent());
+		pPlatform->GetComponent<fw::PhysicsBodyComponent>()->CreateBody(m_pPhysicsWorld, false, vec3(20.0f, 2.0f, 2.0f), 1.f);
 		pPlatform->SetName("Platform");
 		m_Objects.push_back(pPlatform);
 
@@ -74,7 +76,8 @@ PhysicsScene::PhysicsScene(Game* pGame) : fw::Scene(pGame)
 		pLeftEdgeMesh->SetUVOffset(m_pResourceManager->GetSpriteSheet("NiceDaysWalk")->GetSpriteByName("Ground_01")->uvOffset);
 		pLeftEdge->AddComponent(pLeftEdgeMesh);
 		pLeftEdge->SetScale(vec3(2.f, 2.f, 0.f));
-		pLeftEdge->CreateBody(m_pPhysicsWorld, false, vec3(2.0f, 2.0f, 2.0f), 1.f);
+        pLeftEdge->AddComponent(new fw::PhysicsBodyComponent());
+		pLeftEdge->GetComponent<fw::PhysicsBodyComponent>()->CreateBody(m_pPhysicsWorld, false, vec3(2.0f, 2.0f, 2.0f), 1.f);
 		pLeftEdge->SetName("Platform Left Edge");
 		m_Objects.push_back(pLeftEdge);
 
@@ -86,17 +89,18 @@ PhysicsScene::PhysicsScene(Game* pGame) : fw::Scene(pGame)
 		pRightEdgeMesh->SetUVOffset(m_pResourceManager->GetSpriteSheet("NiceDaysWalk")->GetSpriteByName("Ground_03")->uvOffset);
 		pRightEdge->AddComponent(pRightEdgeMesh);
 		pRightEdge->SetScale(vec3(2.f, 2.f, 0.f));
-		pRightEdge->CreateBody(m_pPhysicsWorld, false, vec3(2.0f, 2.0f, 2.0f), 1.f);
+        pRightEdge->AddComponent(new fw::PhysicsBodyComponent());
+		pRightEdge->GetComponent<fw::PhysicsBodyComponent>()->CreateBody(m_pPhysicsWorld, false, vec3(2.0f, 2.0f, 2.0f), 1.f);
 		pRightEdge->SetName("Platform Left Edge");
 		m_Objects.push_back(pRightEdge);
 	}
 
-	Player* pPlayer = new Player(this, m_pResourceManager->GetMesh("Sprite"), m_pResourceManager->GetMaterial("Sokoban"), vec2(7.5f, 6.0f), m_pPlayerController);
-	pPlayer->SetSpriteSheet(m_pResourceManager->GetSpriteSheet("Sprites"));
-	pPlayer->CreateBody(m_pPhysicsWorld, true, vec3(c_playerCollider.x, c_playerCollider.y, c_playerCollider.y), 1.f);
-	m_pPhysicsWorld->CreateJoint(pPlayer->GetPhysicsBody(), vec2(7.5f, 8.0f));
-	pPlayer->SetName("Player");
-	m_Objects.push_back(pPlayer);
+    m_pPlayer = new Player(this, m_pResourceManager->GetMesh("Sprite"), m_pResourceManager->GetMaterial("Sokoban"), vec2(7.5f, 6.0f), m_pPlayerController);
+    m_pPlayer->SetSpriteSheet(m_pResourceManager->GetSpriteSheet("Sprites"));
+    m_pPlayer->AddComponent(new fw::PhysicsBodyComponent());
+    m_pPlayer->GetComponent<fw::PhysicsBodyComponent>()->CreateBody(m_pPhysicsWorld, true, vec3(c_playerCollider.x, c_playerCollider.y, c_playerCollider.y), 1.f);
+	m_pPhysicsWorld->CreateJoint(m_pPlayer->GetComponent<fw::PhysicsBodyComponent>()->GetPhysicsBody(), vec2(7.5f, 8.0f));
+    m_pPlayer->SetName("Player");
 
 	/*m_pCamera->AttachTo(m_Objects.back());
 	m_pCamera->SetThirdPersonOffset(c_cameraOffset + vec3(0.f, 4.5f, 0.f));*/
@@ -106,6 +110,8 @@ PhysicsScene::PhysicsScene(Game* pGame) : fw::Scene(pGame)
 PhysicsScene::~PhysicsScene()
 {
     delete m_pPlayerController;
+
+    delete m_pPlayer;
 }
 
 void PhysicsScene::StartFrame(float deltaTime)
@@ -121,6 +127,8 @@ void PhysicsScene::OnEvent(fw::Event* pEvent)
 void PhysicsScene::Update(float deltaTime)
 {
     Scene::Update(deltaTime);
+
+    m_pPlayer->Update(deltaTime);
 
 	ControlsMenu();
 

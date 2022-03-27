@@ -15,6 +15,7 @@
 #include "Components/ComponentManager.h"
 #include "Components/MeshComponent.h"
 #include "Components/TransformComponent.h"
+#include "Components/PhysicsBodyComponent.h"
 #include "Events/Event.h"
 #include "Events/EventManager.h"
 #include "Math/Matrix.h"

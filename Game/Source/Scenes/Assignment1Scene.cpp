@@ -36,16 +36,17 @@ Assignment1Scene::Assignment1Scene(Game* pGame) : fw::Scene(pGame)
 	FillDebrisPool();
 
 	fw::GameObject* pVictory = new fw::GameObject(this, c_centerOfScreen + vec3(0.f, -7.f, 0.f), vec3(0.f, 0.f, 0.f));
-	pVictory->CreateBody(m_pPhysicsWorld, false, vec3(80.0f, 2.0f, 2.0f), 1.f);
+    pVictory->AddComponent(new fw::PhysicsBodyComponent());
+	pVictory->GetComponent<fw::PhysicsBodyComponent>()->CreateBody(m_pPhysicsWorld, false, vec3(80.0f, 2.0f, 2.0f), 1.f);
 	pVictory->SetName("Victory Box");
 	m_Objects.push_back(pVictory);
 
-	Shaun* pShaun = new Shaun(this, m_pResourceManager->GetMesh("Sprite"), m_pResourceManager->GetMaterial("NiceDaysWalk"), vec2(7.5f, 6.0f), m_pPlayerController);
-	pShaun->SetSpriteSheet(m_pResourceManager->GetSpriteSheet("NiceDaysWalk"));
-	pShaun->SetScale(vec3(2.f, 2.f, 0.f));
-	pShaun->CreateBody(m_pPhysicsWorld, true, vec3(c_shaunCollider.x, c_shaunCollider.y, c_shaunCollider.y) * 2, 1.f);
-	pShaun->SetName("Shaun the Sheep");
-	m_Objects.push_back(pShaun);
+	m_pShaun = new Shaun(this, m_pResourceManager->GetMesh("Sprite"), m_pResourceManager->GetMaterial("NiceDaysWalk"), vec2(7.5f, 6.0f), m_pPlayerController);
+    m_pShaun->SetSpriteSheet(m_pResourceManager->GetSpriteSheet("NiceDaysWalk"));
+    m_pShaun->SetScale(vec3(2.f, 2.f, 0.f));
+    m_pShaun->AddComponent(new fw::PhysicsBodyComponent());
+    m_pShaun->GetComponent<fw::PhysicsBodyComponent>()->CreateBody(m_pPhysicsWorld, true, vec3(c_shaunCollider.x, c_shaunCollider.y, c_shaunCollider.y) * 2, 1.f);
+    m_pShaun->SetName("Shaun the Sheep");
 
 	//m_pCamera->AttachTo(m_Objects.back());
 	//m_pCamera->SetThirdPerson(c_cameraOffset + vec3(0.f, 4.5f, 0.f));
@@ -57,6 +58,8 @@ Assignment1Scene::~Assignment1Scene()
 	static_cast<Game*>(m_pGame)->GetFramework()->GetEventManager()->RegisterForEvents(fw::CollisionEvent::GetStaticEventType(), this);
 
     delete m_pPlayerController;
+
+    delete m_pShaun;
 
 	for (fw::GameObject* pDebris : m_debris)
 	{
@@ -144,6 +147,8 @@ void Assignment1Scene::Update(float deltaTime)
 {
     Scene::Update(deltaTime);
 
+    m_pShaun->Update(deltaTime);
+
 	ControlsMenu();
 
 	if (m_showStart)
@@ -182,8 +187,8 @@ void Assignment1Scene::Update(float deltaTime)
 			{
 				m_meteors.back()->SetState(true);
 				m_meteors.back()->SetPosition(randPos);
-				m_meteors.back()->ApplyImpulse(randDirect);
-				m_meteors.back()->ApplyTorque(randTorque);
+				m_meteors.back()->GetComponent<fw::PhysicsBodyComponent>()->ApplyImpulse(randDirect);
+				m_meteors.back()->GetComponent<fw::PhysicsBodyComponent>()->ApplyTorque(randTorque);
 				m_Objects.push_back(m_meteors.back());
 				m_meteors.pop_back();
 			}
@@ -243,8 +248,8 @@ void Assignment1Scene::SpawnDebris(vec3 pos)
 
 		(*it)->SetState(true);
 		(*it)->SetPosition(pos);
-		(*it)->ApplyImpulse(randDirect);
-		(*it)->ApplyTorque(randTorque);
+		(*it)->GetComponent<fw::PhysicsBodyComponent>()->ApplyImpulse(randDirect);
+		(*it)->GetComponent<fw::PhysicsBodyComponent>()->ApplyTorque(randTorque);
 		m_Objects.push_back((*it));
 		it = m_debris.erase(it);
 	}
@@ -258,12 +263,10 @@ void Assignment1Scene::SetupPlatform()
 	
 	fw::MeshComponent* pPlatformMesh = new fw::MeshComponent(m_pResourceManager->GetMesh("Platform"), m_pResourceManager->GetMaterial("PlatformCenter"));
 	
-	//pPlatformMesh->SetUVScale(m_pResourceManager->GetSpriteSheet("NiceDaysWalk")->GetSpriteByName("Ground_02")->uvScale);
-	//pPlatformMesh->SetUVOffset(m_pResourceManager->GetSpriteSheet("NiceDaysWalk")->GetSpriteByName("Ground_02")->uvOffset);
-	
 	pPlatform->AddComponent(pPlatformMesh);
 	pPlatform->SetScale(vec3(20.f, 2.f, 0.f));
-	pPlatform->CreateBody(m_pPhysicsWorld, false, vec3(20.0f, 2.0f, 2.0f), 1.f);
+    pPlatform->AddComponent(new fw::PhysicsBodyComponent());
+	pPlatform->GetComponent<fw::PhysicsBodyComponent>()->CreateBody(m_pPhysicsWorld, false, vec3(20.0f, 2.0f, 2.0f), 1.f);
 	pPlatform->SetName("Platform");
 	m_Objects.push_back(pPlatform);
 	
@@ -275,7 +278,8 @@ void Assignment1Scene::SetupPlatform()
 	pLeftEdgeMesh->SetUVOffset(m_pResourceManager->GetSpriteSheet("NiceDaysWalk")->GetSpriteByName("Ground_01")->uvOffset);
 	pLeftEdge->AddComponent(pLeftEdgeMesh);
 	pLeftEdge->SetScale(vec3(2.f, 2.f, 0.f));
-	pLeftEdge->CreateBody(m_pPhysicsWorld, false, vec3(2.0f, 2.0f, 2.0f), 1.f);
+    pLeftEdge->AddComponent(new fw::PhysicsBodyComponent());
+    pLeftEdge->GetComponent<fw::PhysicsBodyComponent>()->CreateBody(m_pPhysicsWorld, false, vec3(2.0f, 2.0f, 2.0f), 1.f);
 	pLeftEdge->SetName("Platform");
 	m_Objects.push_back(pLeftEdge);
 	
@@ -287,7 +291,8 @@ void Assignment1Scene::SetupPlatform()
 	pRightEdgeMesh->SetUVOffset(m_pResourceManager->GetSpriteSheet("NiceDaysWalk")->GetSpriteByName("Ground_03")->uvOffset);
 	pRightEdge->AddComponent(pRightEdgeMesh);
 	pRightEdge->SetScale(vec3(2.f, 2.f, 0.f));
-	pRightEdge->CreateBody(m_pPhysicsWorld, false, vec3(2.0f, 2.0f, 2.0f), 1.f);
+    pRightEdge->AddComponent(new fw::PhysicsBodyComponent());
+    pLeftEdge->GetComponent<fw::PhysicsBodyComponent>()->CreateBody(m_pPhysicsWorld, false, vec3(2.0f, 2.0f, 2.0f), 1.f);
 	pRightEdge->SetName("Platform");
 	m_Objects.push_back(pRightEdge);
 }
@@ -298,7 +303,8 @@ void Assignment1Scene::FillDebrisPool()
 	{
 		fw::GameObject* pDebris = new fw::GameObject(this, vec2(c_centerOfScreen.x - 5.f, c_centerOfScreen.y), vec3());
 		fw::MeshComponent* pDebrisMesh = new fw::MeshComponent(m_pResourceManager->GetMesh("Sprite"), m_pResourceManager->GetMaterial("NiceDaysWalk"));
-		pDebris->CreateBody(m_pPhysicsWorld, true, 0.4f, 1.f);
+        pDebris->AddComponent(new fw::PhysicsBodyComponent());
+        pDebris->GetComponent<fw::PhysicsBodyComponent>()->CreateBody(m_pPhysicsWorld, true, 0.4f, 1.f);
 
 		if (i < 2)
 		{
@@ -307,11 +313,11 @@ void Assignment1Scene::FillDebrisPool()
 
 			if (i == 0)
 			{
-				pDebris->ApplyImpulse(vec3(0.81f, 0.58f, 0.f) * 4);
+				pDebris->GetComponent<fw::PhysicsBodyComponent>()->ApplyImpulse(vec3(0.81f, 0.58f, 0.f) * 4);
 			}
 			if (i == 1)
 			{
-				pDebris->ApplyImpulse(vec3(-0.81f, 0.58f, 0.f) * 4);
+				pDebris->GetComponent<fw::PhysicsBodyComponent>()->ApplyImpulse(vec3(-0.81f, 0.58f, 0.f) * 4);
 			}
 		}
 		else if (i < 4)
@@ -321,42 +327,42 @@ void Assignment1Scene::FillDebrisPool()
 
 			if (i == 2)
 			{
-				pDebris->ApplyImpulse(vec3(0.58f, 0.81f, 0.f) * 4);
+				pDebris->GetComponent<fw::PhysicsBodyComponent>()->ApplyImpulse(vec3(0.58f, 0.81f, 0.f) * 4);
 			}
 			if (i == 3)
 			{
-				pDebris->ApplyImpulse(vec3(-0.58f, 0.81f, 0.f) * 4);
+				pDebris->GetComponent<fw::PhysicsBodyComponent>()->ApplyImpulse(vec3(-0.58f, 0.81f, 0.f) * 4);
 			}
 		}
 		else if (i == 4)
 		{
 			pDebrisMesh->SetUVScale(m_pResourceManager->GetSpriteSheet("NiceDaysWalk")->GetSpriteByName("Leg_01")->uvScale);
 			pDebrisMesh->SetUVOffset(m_pResourceManager->GetSpriteSheet("NiceDaysWalk")->GetSpriteByName("Leg_01")->uvOffset);
-			pDebris->ApplyImpulse(vec3(0.95f, 0.3f, 0.f) * 4);
+			pDebris->GetComponent<fw::PhysicsBodyComponent>()->ApplyImpulse(vec3(0.95f, 0.3f, 0.f) * 4);
 		}
 		else if (i == 5)
 		{
 			pDebrisMesh->SetUVScale(m_pResourceManager->GetSpriteSheet("NiceDaysWalk")->GetSpriteByName("Leg_02")->uvScale);
 			pDebrisMesh->SetUVOffset(m_pResourceManager->GetSpriteSheet("NiceDaysWalk")->GetSpriteByName("Leg_02")->uvOffset);
-			pDebris->ApplyImpulse(vec3(0.3f, 0.95f, 0.f) * 4);
+			pDebris->GetComponent<fw::PhysicsBodyComponent>()->ApplyImpulse(vec3(0.3f, 0.95f, 0.f) * 4);
 		}
 		else if (i == 6)
 		{
 			pDebrisMesh->SetUVScale(m_pResourceManager->GetSpriteSheet("NiceDaysWalk")->GetSpriteByName("Leg_03")->uvScale);
 			pDebrisMesh->SetUVOffset(m_pResourceManager->GetSpriteSheet("NiceDaysWalk")->GetSpriteByName("Leg_03")->uvOffset);
-			pDebris->ApplyImpulse(vec3(-0.95f, 0.3f, 0.f) * 4);
+			pDebris->GetComponent<fw::PhysicsBodyComponent>()->ApplyImpulse(vec3(-0.95f, 0.3f, 0.f) * 4);
 		}
 		else if (i == 7)
 		{
 			pDebrisMesh->SetUVScale(m_pResourceManager->GetSpriteSheet("NiceDaysWalk")->GetSpriteByName("Leg_04")->uvScale);
 			pDebrisMesh->SetUVOffset(m_pResourceManager->GetSpriteSheet("NiceDaysWalk")->GetSpriteByName("Leg_04")->uvOffset);
-			pDebris->ApplyImpulse(vec3(-0.3f, 0.95f, 0.f) * 4);
+			pDebris->GetComponent<fw::PhysicsBodyComponent>()->ApplyImpulse(vec3(-0.3f, 0.95f, 0.f) * 4);
 		}
 		else if (i == 8)
 		{
 			pDebrisMesh->SetUVScale(m_pResourceManager->GetSpriteSheet("NiceDaysWalk")->GetSpriteByName("Wool_Chunck_01")->uvScale);
 			pDebrisMesh->SetUVOffset(m_pResourceManager->GetSpriteSheet("NiceDaysWalk")->GetSpriteByName("Wool_Chunck_01")->uvOffset);
-			pDebris->ApplyImpulse(vec3(0.f, 1.f, 0.f) * 4);
+			pDebris->GetComponent<fw::PhysicsBodyComponent>()->ApplyImpulse(vec3(0.f, 1.f, 0.f) * 4);
 		}
 
 		pDebris->AddComponent(pDebrisMesh);
@@ -371,7 +377,8 @@ void Assignment1Scene::FillMeteorPool()
 	for (int i = 0; i < 10; i++)
 	{
 		Meteor* pMeteor = new Meteor(this, m_pResourceManager->GetMesh("Sprite"), m_pResourceManager->GetMaterial("NiceDaysWalk"), m_pResourceManager->GetSpriteSheet("NiceDaysWalk"), vec2(c_centerOfScreen.x + 5.f, c_centerOfScreen.y), vec3());
-		pMeteor->CreateBody(m_pPhysicsWorld, true, 1.f);
+		pMeteor->AddComponent(new fw::PhysicsBodyComponent());
+        pMeteor->GetComponent<fw::PhysicsBodyComponent>()->CreateBody(m_pPhysicsWorld, true, 1.f);
 		pMeteor->SetName("Meteor");
 		pMeteor->SetState(false);
 		m_meteors.push_back(pMeteor);

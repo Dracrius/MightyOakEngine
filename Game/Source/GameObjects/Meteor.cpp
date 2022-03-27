@@ -8,7 +8,6 @@ Meteor::Meteor(fw::Scene* pScene, fw::Mesh* pMesh, fw::Material* pMaterial, fw::
 	fw::MeshComponent* pMeshComp = new fw::MeshComponent(pMesh, pMaterial);
 	AddComponent(pMeshComp);
 
-
 	int rand = fw::Random::GetInt(10);
 
 	if (rand <= 3)
@@ -20,7 +19,7 @@ Meteor::Meteor(fw::Scene* pScene, fw::Mesh* pMesh, fw::Material* pMaterial, fw::
 	}
 	else
 	{
-		m_pTramsform->SetScale(vec3(2.f, 2.f, 0.f));
+        m_pTransform->SetScale(vec3(2.f, 2.f, 0.f));
 		pMeshComp->SetUVScale(m_pSpriteSheet->GetSpriteByName("Meteor_02")->uvScale);
 		pMeshComp->SetUVOffset(m_pSpriteSheet->GetSpriteByName("Meteor_02")->uvOffset);
 
@@ -30,15 +29,5 @@ Meteor::Meteor(fw::Scene* pScene, fw::Mesh* pMesh, fw::Material* pMaterial, fw::
 
 Meteor::~Meteor()
 {
-}
-
-void Meteor::Update(float deltaTime)
-{
-	GameObject::Update(deltaTime);
-}
-
-void Meteor::CreateBody(fw::PhysicsWorld* pWorld, bool isDynamic, float density)
-{
-	fw::GameObject::CreateBody(pWorld, isDynamic, m_radius, density);
 }
 

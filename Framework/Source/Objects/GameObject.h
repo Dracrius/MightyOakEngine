@@ -1,6 +1,5 @@
 #pragma once
 
-#include "..\Libraries\box2d\include\box2d\box2d.h"
 #include "Math/Vector.h"
 #include "Math/Matrix.h"
 #include "Components/TransformComponent.h"
@@ -13,8 +12,7 @@ class MeshComponent;
 class GameCore;
 class Mesh;
 class Material;
-class PhysicsWorld;
-class PhysicsBody;
+
 class Scene;
 
 class GameObject
@@ -23,10 +21,7 @@ protected:
 	std::string m_name;
     Scene* m_pScene = nullptr;
 
-    //Physics Comp
-    PhysicsBody* m_pPhysicsBody = nullptr;
-
-	TransformComponent* m_pTramsform = nullptr;
+	TransformComponent* m_pTransform = nullptr;
     std::vector<Component*> m_pComponents;
 
 	bool m_enabled = true;
@@ -35,13 +30,7 @@ public:
     GameObject(Scene* pScene, vec3 pos, vec3 rot);
     virtual ~GameObject();
 
-    virtual void Update(float deltaTime);
-
 	void SetState(bool isEnabled);
-
-	virtual void CreateBody(PhysicsWorld* pWorld, bool isDynamic, float density);
-	virtual void CreateBody(PhysicsWorld* pWorld, bool isDynamic, float radius, float density);
-	virtual void CreateBody(PhysicsWorld* pWorld, bool isDynamic, vec3 size, float density);
 
     void AddComponent(Component* pComponent);
 	void AddCompFromManager(Component* pComponent);
@@ -62,14 +51,15 @@ public:
 	}
 
     // Getters.
-	TransformComponent* GetTransform() { return m_pTramsform; }
-	PhysicsBody* GetPhysicsBody() { return m_pPhysicsBody; }
+	TransformComponent* GetTransform() { return m_pTransform; }
 
 	std::string GetName() { return m_name; }
 
-    vec3 GetPosition() { return m_pTramsform->GetPosition(); }
-    vec3 GetRotation() { return  m_pTramsform->GetRotation(); }
-    vec3 GetScale() { return  m_pTramsform->GetScale(); }
+    bool GetState() { return m_enabled; }
+
+    vec3 GetPosition() { return m_pTransform->GetPosition(); }
+    vec3 GetRotation() { return  m_pTransform->GetRotation(); }
+    vec3 GetScale() { return  m_pTransform->GetScale(); }
 
     Scene* GetScene() { return m_pScene; }
 
@@ -80,13 +70,9 @@ public:
 
 	void SetPosition(vec3 pos);
 	void SetRotation(vec3 rot);
-    void SetScale(vec3 scale) { m_pTramsform->SetScale(scale); }
-
-	virtual void ApplyImpulse(const vec3& impulse);
-	virtual void ApplyTorque(const vec3& torque);
+    void SetScale(vec3 scale) { m_pTransform->SetScale(scale); }
 
 	void Editor_OutputObjectDetails();
-
 };
 
 } // namespace fw

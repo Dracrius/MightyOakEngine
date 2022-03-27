@@ -17,8 +17,6 @@ Player::~Player()
 
 void Player::Update(float deltaTime)
 {
-    GameObject::Update(deltaTime);
-
     m_timePassed += deltaTime;
 
     if (m_jumpTimer > 0.f)
@@ -26,12 +24,20 @@ void Player::Update(float deltaTime)
         m_jumpTimer -= deltaTime;
     }
 
+    fw::PhysicsBody* pPhysicsBody = GetComponent<fw::PhysicsBodyComponent>()->GetPhysicsBody();
+    if (pPhysicsBody)
+    {
+        GetComponent<fw::PhysicsBodyComponent>()->Update(deltaTime);
+    }
+
     //Check Control States
 	//Jump
     if( m_pPlayerController->WasPressed( PlayerController::Action::Up ) && m_jumpTimer <= 0.f )
     {
-        m_pPhysicsBody->ApplyLinearImpulse(vec3(0.f, c_playerSpeed * deltaTime, 0.f), true);
-
+        if (pPhysicsBody)
+        {
+            pPhysicsBody->ApplyLinearImpulse(vec3(0.f, c_playerSpeed, 0.f), true);
+        }
         m_jumpTimer = c_jumpTimer;
     }
 
@@ -44,22 +50,34 @@ void Player::Update(float deltaTime)
 	//Move Left & Right
     if( m_pPlayerController->IsHeld( PlayerController::Action::Left ) )
     {
-        m_pPhysicsBody->ApplyForce(vec3(-(c_playerSpeed * deltaTime), 0.f, 0.f), true);
+        if (pPhysicsBody)
+        {
+            pPhysicsBody->ApplyForce(vec3(-(c_playerSpeed), 0.f, 0.f), true);
+        }
     }
     if( m_pPlayerController->IsHeld( PlayerController::Action::Right ) )
     {
-        m_pPhysicsBody->ApplyForce(vec3((c_playerSpeed * deltaTime), 0.f, 0.f), true);
+        if (pPhysicsBody)
+        {
+            pPhysicsBody->ApplyForce(vec3(c_playerSpeed, 0.f, 0.f), true);
+        }
     }
 
 	//Teleport
     if( m_pPlayerController->WasPressed( PlayerController::Action::Teleport ) )
     {
-		m_pTramsform->SetPosition(vec2( rand()/(float)RAND_MAX * 15, rand()/(float)RAND_MAX * 15 ));
+        m_pTransform->SetPosition(vec2( rand()/(float)RAND_MAX * 15, rand()/(float)RAND_MAX * 15 ));
 
-        m_pPhysicsBody->SetTransform(m_pTramsform->GetPosition(), vec3());
+        if (pPhysicsBody)
+        {
+            pPhysicsBody->SetTransform(m_pTransform->GetPosition(), vec3());
+        }
     }
 
-    m_velocity = m_pPhysicsBody->GetVelocity();
+    if (pPhysicsBody)
+    {
+        m_velocity = pPhysicsBody->GetVelocity();
+    }
 
 	//Set Sprite
     if (m_pSpriteSheet)

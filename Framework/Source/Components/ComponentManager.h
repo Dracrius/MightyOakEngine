@@ -17,7 +17,7 @@ public:
     void AddComponent(Component* pComponent);
     void RemoveComponent(Component* pComponent);
 
-    std::vector<Component*> GetComponentsOfType(const char* type);
+    std::vector<Component*>& GetComponentsOfType(const char* type);
 
 protected:
     std::map<const char*, std::vector<Component*>> m_Components;

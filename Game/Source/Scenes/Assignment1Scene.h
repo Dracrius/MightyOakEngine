@@ -2,7 +2,8 @@
 #include "DefaultSettings.h"
 
 class Game;
-class PlayerController;
+class PlayerController; 
+class Shaun;
 
 class Assignment1Scene : public fw::Scene
 {
@@ -11,6 +12,8 @@ protected:
 
 	std::vector<fw::GameObject*> m_meteors;
 	std::vector<fw::GameObject*> m_debris;
+
+    Shaun* m_pShaun = nullptr;
 
 	float m_meteorTimer = c_meteorSpawnDelay;
 	float m_debrisTimer = c_debrisLifeSpan;

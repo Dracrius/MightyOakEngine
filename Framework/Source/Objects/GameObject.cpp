@@ -1,22 +1,27 @@
-#include "Framework.h"
+#include "CoreHeaders.h"
 
+#include "../Libraries/imgui/imgui.h"
 #include "GameObject.h"
 #include "Math/Matrix.h"
 #include "Material.h"
+#include "Components/MeshComponent.h"
+#include "Components/TransformComponent.h"
+#include "Components/PhysicsBodyComponent.h"
+#include "Components/ComponentManager.h"
+#include "Physics/PhysicsBody.h"
+#include "Scene.h"
 
 namespace fw {
 
 GameObject::GameObject(Scene* pScene, vec3 pos, vec3 rot)
     : m_pScene(pScene)
 {
-	m_pTramsform = new TransformComponent(pos, rot, vec3(1));
-	AddComponent(m_pTramsform);
+	m_pTransform = new TransformComponent(pos, rot, vec3(1));
+	AddComponent(m_pTransform);
 }
 
 GameObject::~GameObject()
 {
-    delete m_pPhysicsBody;
-
     for (auto pComponent : m_pComponents)
     {
         if (pComponent != nullptr)
@@ -37,22 +42,15 @@ GameObject::~GameObject()
     }
 }
 
-void GameObject::Update(float deltaTime)
-{
-    if (m_pPhysicsBody)
-    {
-		m_pTramsform->SetPosition(m_pPhysicsBody->GetPosition());
-		m_pTramsform->SetRotation(m_pPhysicsBody->GetRotation());
-    }
-}
-
 void GameObject::SetState(bool isEnabled)
 {
 	if (isEnabled != m_enabled)
 	{
-		if (m_pPhysicsBody)
+        PhysicsBodyComponent* pPhysicsBody = GetComponent<fw::PhysicsBodyComponent>();
+
+		if (pPhysicsBody)
 		{
-			m_pPhysicsBody->SetState(isEnabled);
+            pPhysicsBody->GetPhysicsBody()->SetState(isEnabled);
 		}
 
 		MeshComponent* pMesh = GetComponent<fw::MeshComponent>();
@@ -71,31 +69,6 @@ void GameObject::SetState(bool isEnabled)
 	}
 
 	m_enabled = isEnabled;
-}
-
-void GameObject::CreateBody(PhysicsWorld* pWorld, bool isDynamic, float density)
-{
-    CreateBody(pWorld, isDynamic, m_pTramsform->GetScale(), density);
-}
-
-void GameObject::CreateBody(PhysicsWorld* pWorld, bool isDynamic, vec3 size, float density)
-{
-    m_pPhysicsBody = pWorld->CreateBody(this, isDynamic, size, density, m_pTramsform->GetPosition(), m_pTramsform->GetRotation());
-
-	if (!m_enabled)
-	{
-		m_pPhysicsBody->SetState(false);
-	}
-}
-
-void GameObject::CreateBody(PhysicsWorld* pWorld, bool isDynamic, float radius, float density)
-{
-	m_pPhysicsBody = pWorld->CreateBody(this, isDynamic, radius, density, m_pTramsform->GetPosition(), m_pTramsform->GetRotation());
-
-	if (!m_enabled)
-	{
-		m_pPhysicsBody->SetState(false);
-	}
 }
 
 void GameObject::AddComponent(Component* pComponent)
@@ -133,44 +106,34 @@ Component* GameObject::GetComponent(const char* component)
 
 void GameObject::SetPosition(vec3 pos)
 {
-	m_pTramsform->SetPosition(pos);
-	if (m_pPhysicsBody)
-	{
-		m_pPhysicsBody->SetPosition(pos);
-	}
+	m_pTransform->SetPosition(pos);
+
+    PhysicsBodyComponent* pPhysicsBody = GetComponent<fw::PhysicsBodyComponent>();
+
+    if (pPhysicsBody)
+    {
+        pPhysicsBody->GetPhysicsBody()->SetPosition(pos);
+    }
 }
 
 void GameObject::SetRotation(vec3 rot)
 {
-	m_pTramsform->SetRotation(rot);
-	if (m_pPhysicsBody)
-	{
-		m_pPhysicsBody->SetTransform(m_pTramsform->GetPosition(), rot);
-	}
-}
+	m_pTransform->SetRotation(rot);
 
-void GameObject::ApplyImpulse(const vec3& impulse)
-{
-	if (m_pPhysicsBody)
-	{
-		m_pPhysicsBody->ApplyLinearImpulse(impulse, true);
-	}
-}
+    PhysicsBodyComponent* pPhysicsBody = GetComponent<fw::PhysicsBodyComponent>();
 
-void GameObject::ApplyTorque(const vec3& torque)
-{
-	if (m_pPhysicsBody)
-	{
-		m_pPhysicsBody->ApplyTorque(torque, true);
-	}
+    if (pPhysicsBody)
+    {
+        pPhysicsBody->GetPhysicsBody()->SetTransform(m_pTransform->GetPosition(), rot);
+    }
 }
 
 void GameObject::Editor_OutputObjectDetails()
 {
-	vec3 pos = m_pTramsform->GetPosition();
-	vec3 rot = m_pTramsform->GetRotation();
-	vec3 scale = m_pTramsform->GetScale();
-	bool hasPhysBody = m_pPhysicsBody ? true : false;
+	vec3 pos = m_pTransform->GetPosition();
+	vec3 rot = m_pTransform->GetRotation();
+	vec3 scale = m_pTransform->GetScale();
+	bool hasPhysBody = GetComponent<fw::PhysicsBodyComponent>() ? true : false;
 
 	ImGui::Text("Name: %s", m_name.c_str());
 	ImGui::Separator();
@@ -190,24 +153,26 @@ void GameObject::Editor_OutputObjectDetails()
 
 	ImGui::Checkbox("Has Physics Body", &hasPhysBody);
 
-	if (m_pPhysicsBody)
-	{
-		m_pPhysicsBody->Editor_OutputBodyDetails();
+    PhysicsBodyComponent* pPhysicsBody = GetComponent<fw::PhysicsBodyComponent>();
 
-		if (pos != m_pTramsform->GetPosition())
+	if (pPhysicsBody)
+	{
+        pPhysicsBody->GetPhysicsBody()->Editor_OutputBodyDetails();
+
+		if (pos != m_pTransform->GetPosition())
 		{
-			m_pPhysicsBody->SetPosition(pos);
+            pPhysicsBody->GetPhysicsBody()->SetPosition(pos);
 		}
-		if (rot != m_pTramsform->GetRotation())
+		if (rot != m_pTransform->GetRotation())
 		{
-			m_pPhysicsBody->SetTransform(pos, rot);
+            pPhysicsBody->GetPhysicsBody()->SetTransform(pos, rot);
 		}
 	}
 	else
 	{
-		m_pTramsform->SetPosition(pos);
-		m_pTramsform->SetRotation(rot);
-		m_pTramsform->SetScale(scale);
+		m_pTransform->SetPosition(pos);
+		m_pTransform->SetRotation(rot);
+		m_pTransform->SetScale(scale);
 	}
 
 }
