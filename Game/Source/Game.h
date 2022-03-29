@@ -9,6 +9,8 @@ protected:
     fw::FWCore& m_FWCore;
     fw::ImGuiManager* m_pImGuiManager = nullptr;
 
+    fw::FrameBufferObject* m_pOffScreenFBO = nullptr;
+
     std::map<std::string, fw::Scene*> m_Scenes;
 
     fw::Scene* m_pCurrentScene = nullptr;

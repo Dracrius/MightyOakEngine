@@ -50,6 +50,9 @@ void Game::Init()
     glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
     glFrontFace(GL_CW);
 
+    // Setup Frame Budffer
+    m_pOffScreenFBO = new fw::FrameBufferObject(c_glRenderSize.x, c_glRenderSize.y, { fw::FrameBufferObject::FBOColorFormat_RGBA_UByte });
+
     // Setup Meshes 
 	m_pResourceManager->CreateMesh("Sprite", GL_TRIANGLES, g_SpriteVerts, g_SpriteIndices);
 	m_pResourceManager->CreateMesh("Background");
@@ -163,9 +166,21 @@ void Game::Update(float deltaTime)
 
 void Game::Draw()
 {
-    glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-
+    // Off-Screen
+    m_pOffScreenFBO->Bind();
+    glViewport(0, 0, m_pOffScreenFBO->GetRequestedWidth(), m_pOffScreenFBO->GetRequestedHeight());
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     m_pCurrentScene->Draw();
+    m_pOffScreenFBO->Unbind();
+
+    // On-Screen
+    glViewport(0,0, c_windowSize.x, c_windowSize.y);
+    glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+    
+    ImGui::Begin("Scene");
+    ImTextureID textureID = (ImTextureID)(intptr_t)m_pOffScreenFBO->GetColorTextureHandle(0);
+    ImGui::Image(textureID, ImVec2(c_glRenderSize.x, c_glRenderSize.y), ImVec2(0, c_glRenderSize.y/1024.f), ImVec2(c_glRenderSize.x/1024.f,0));
+    ImGui::End();
 
     m_pImGuiManager->EndFrame();
 }

@@ -86,6 +86,7 @@ extern PFNGLGENFRAMEBUFFERSPROC             glGenFramebuffers;
 extern PFNGLBINDFRAMEBUFFERPROC             glBindFramebuffer;
 extern PFNGLFRAMEBUFFERTEXTURE2DPROC        glFramebufferTexture2D;
 extern PFNGLCHECKFRAMEBUFFERSTATUSPROC      glCheckFramebufferStatus;
+extern PFNGLDRAWBUFFERSPROC                 glDrawBuffers;
 
 extern PFNGLGENRENDERBUFFERSPROC            glGenRenderbuffers;
 extern PFNGLBINDRENDERBUFFERPROC            glBindRenderbuffer;

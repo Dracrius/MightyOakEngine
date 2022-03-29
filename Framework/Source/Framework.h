@@ -30,6 +30,7 @@
 #include "Objects/SpriteSheet.h"
 #include "Objects/Texture.h"
 #include "Objects/Material.h"
+#include "Objects/FrameBufferObject.h"
 #include "Physics/Box2D/PhysicsWorldBox2D.h"
 #include "Physics/Box2D/PhysicsBodyBox2D.h"
 #include "Physics/Bullet/PhysicsWorldBullet.h"
