@@ -22,6 +22,7 @@ protected:
 	fw::Color4f m_backupColor = c_defaultBackground;
 public:
     Game(fw::FWCore& fwCore);
+    Game(const Game& other) = delete; //Removes Copy Constructor
     virtual ~Game() override;
 
     void Init();

@@ -1,3 +1,6 @@
 [submodule "Framework/Libraries/box2d"]
 	path = Framework/Libraries/box2d
 	url = https://github.com/erincatto/box2d.git
+[submodule "Framework/Libraries/imgui"]
+	path = Framework/Libraries/imgui
+	url = https://github.com/ocornut/imgui.git

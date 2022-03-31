@@ -116,6 +116,16 @@ void Game::StartFrame(float deltaTime)
 {
     m_pImGuiManager->StartFrame( deltaTime );
 
+	ImGuiWindowFlags flags = ImGuiWindowFlags_NoDocking;
+	flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
+	flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+	ImGuiViewport* viewport = ImGui::GetMainViewport();
+	ImGui::SetNextWindowPos(viewport->WorkPos);
+	ImGui::SetNextWindowSize(viewport->WorkSize);
+	ImGui::Begin("Main Dock", nullptr, flags);
+	ImGui::DockSpace(ImGui::GetID("Game Dockspace"));
+	ImGui::End();
+
     m_pCurrentScene->StartFrame(deltaTime);
 }
 

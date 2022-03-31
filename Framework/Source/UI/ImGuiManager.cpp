@@ -1,3 +1,4 @@
+
 #include "CoreHeaders.h"
 
 #include "FWCore.h"
@@ -30,6 +31,7 @@ void ImGuiManager::Init()
     io.DisplaySize.x = (float)m_pFramework->GetWindowWidth();
     io.DisplaySize.y = (float)m_pFramework->GetWindowHeight();
     io.IniFilename = "imgui.ini";
+    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
         
     // Keyboard mapping.  ImGui will use those indices to peek into the io.KeyDown[] array.
     io.KeyMap[ImGuiKey_Tab] = VK_TAB;
