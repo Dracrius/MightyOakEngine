@@ -41,7 +41,8 @@ void Camera::Update(float deltaTime)
 	}
 	if (m_perspectiveMode) //Check that Perspective Mode is enabled
 	{
-		m_ProjecMatrix.CreatePerspectiveVFoV(45.f, m_aspectRatio, 0.01f, 100.f);
+		m_ProjecMatrix.CreatePerspectiveVFoV(45.f, m_aspectRatio, 0.01f, 100.f);  //45.f = Vertical FOV
+		//m_ProjecMatrix.CreatePerspectiveHFoV(90.f, m_aspectRatio, 0.01f, 100.f);  //90.f = Horizontal FOV
 	}
 	else //If not use Ortho Projection
 	{

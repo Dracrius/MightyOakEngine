@@ -235,7 +235,7 @@ bool FrameBufferObject::Create()
 
 bool FrameBufferObject::Resize(unsigned int width, unsigned int height)
 {
-    if( width < 64 || height < 64 || width > 4096 || height > 4096 )
+    if( width < 64 || height < 64 || width > 8192 || height > 8192)
         return false;
 
     if( width < m_TextureWidth && height < m_TextureHeight )

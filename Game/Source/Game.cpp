@@ -178,8 +178,19 @@ void Game::Draw()
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
     
     ImGui::Begin("Scene");
+	ImVec2 windowMin = ImGui::GetWindowContentRegionMin();
+	ImVec2 windowMax = ImGui::GetWindowContentRegionMax();
+	ImVec2 windowSize(windowMax.x - windowMin.x, windowMax.y - windowMin.y);
+
+	m_pCurrentScene->GetCamera()->SetAspectRatio(windowSize.x / windowSize.y);
+	m_pOffScreenFBO->Resize(windowSize.x, windowSize.y);
+
     ImTextureID textureID = (ImTextureID)(intptr_t)m_pOffScreenFBO->GetColorTextureHandle(0);
-    ImGui::Image(textureID, ImVec2(c_glRenderSize.x, c_glRenderSize.y), ImVec2(0, c_glRenderSize.y/1024.f), ImVec2(c_glRenderSize.x/1024.f,0));
+
+	ImVec2 uv0 = ImVec2(0, m_pOffScreenFBO->GetHeightRatio());
+	ImVec2 uv1 = ImVec2(m_pOffScreenFBO->GetWidthRatio(), 0);
+
+    ImGui::Image(textureID, windowSize, uv0, uv1);
     ImGui::End();
 
     m_pImGuiManager->EndFrame();

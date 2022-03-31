@@ -23,6 +23,7 @@ endif()
 include(GNUInstallDirs)
 add_subdirectory(Framework/Libraries/box2d/src)
 
+set_target_properties( box2d PROPERTIES FOLDER "Physics Libraries" )
 
 ###################
 # Bullet Libraries
@@ -37,6 +38,10 @@ set( BULLET_PHYSICS_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Framework/Libraries/b
 add_subdirectory( Framework/Libraries/bullet/src/BulletCollision )
 add_subdirectory( Framework/Libraries/bullet/src/BulletDynamics )
 add_subdirectory( Framework/Libraries/bullet/src/LinearMath )
+
+set_target_properties( BulletCollision PROPERTIES FOLDER "Physics Libraries" )
+set_target_properties( BulletDynamics PROPERTIES FOLDER "Physics Libraries" )
+set_target_properties( LinearMath PROPERTIES FOLDER "Physics Libraries" )
 
 add_compile_options(/w44244)
 add_compile_options(/w44267)
@@ -86,6 +91,7 @@ file( GLOB_RECURSE GameSourceFiles
 	GenerateProjectFiles.bat
 )
 source_group( TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${GameSourceFiles} )
+
 # Project Creation
 add_executable( GameProject WIN32 ${GameSourceFiles} )
 
