@@ -80,6 +80,7 @@ void Mesh::Draw(Camera* pCamera, Material* pMaterial, const matrix& worldMat, ve
     SetupAttribute(pShader, "a_Position", 3, GL_FLOAT, GL_FALSE, sizeof(VertexFormat), offsetof(VertexFormat, pos));
     SetupAttribute(pShader, "a_Color", 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(VertexFormat), offsetof(VertexFormat, color));
     SetupAttribute(pShader, "a_UVCoord", 2, GL_FLOAT, GL_FALSE, sizeof(VertexFormat), offsetof(VertexFormat, uv));
+    SetupAttribute(pShader, "a_Normal", 3, GL_FLOAT, GL_FALSE, sizeof(VertexFormat), offsetof(VertexFormat, normal));
 
     // Setup the uniforms.
     glUseProgram(pShader->GetProgram());
@@ -96,7 +97,10 @@ void Mesh::Draw(Camera* pCamera, Material* pMaterial, const matrix& worldMat, ve
     // Misc uniforms.
     SetupUniform(pShader, "u_Time", (float)GetSystemTimeSinceGameStart());
 
+    Color4f AverageLightColor = Color4f(1.f, 1.f, 1.f, 1.f);
+
     SetupUniform(pShader, "u_MaterialColor", vec4(pMaterial->GetColor().r, pMaterial->GetColor().g, pMaterial->GetColor().b, pMaterial->GetColor().a));
+    SetupUniform(pShader, "u_LightColor", vec4(AverageLightColor.r, AverageLightColor.g, AverageLightColor.b, AverageLightColor.a));
 
     GLint hasTexture = glGetUniformLocation(pShader->GetProgram(), "u_HasTexture");
 
@@ -230,8 +234,8 @@ void Mesh::LoadObj(const char* filename)
 void Mesh::LoadObj(const char* filename, bool righthanded)
 {
     std::vector<vec3> positions;
-    std::vector <vec2> uvs;
-    std::vector <vec3> normals;
+    std::vector<vec2> uvs;
+    std::vector<vec3> normals;
 
     std::vector<fw::VertexFormat> verts;
     //std::vector<unsigned int> indices;
@@ -286,16 +290,16 @@ void Mesh::LoadObj(const char* filename, bool righthanded)
             {
                 for (int i = 0; i < 3; i++)
                 {
-                    verts.push_back({ positions[f[0] - 1],  255,255,255,255,  uvs[f[1] - 1] }); //normals[f[2] - 1]
+                    verts.push_back({ positions[f[0] - 1],  255,255,255,255,  uvs[f[1] - 1], normals[f[2] - 1] });
                     if (righthanded)
                     {
-                        verts.push_back({ positions[f[6] - 1],  255,255,255,255,  uvs[f[7] - 1] }); //normals[f[8] - 1]
-                        verts.push_back({ positions[f[3] - 1],  255,255,255,255,  uvs[f[4] - 1] }); //normals[f[5] - 1]
+                        verts.push_back({ positions[f[6] - 1],  255,255,255,255,  uvs[f[7] - 1], normals[f[8] - 1] });
+                        verts.push_back({ positions[f[3] - 1],  255,255,255,255,  uvs[f[4] - 1], normals[f[5] - 1] });
                     }
                     else
                     {
-                        verts.push_back({ positions[f[3] - 1],  255,255,255,255,  uvs[f[4] - 1] }); //normals[f[5] - 1]
-                        verts.push_back({ positions[f[6] - 1],  255,255,255,255,  uvs[f[7] - 1] }); //normals[f[8] - 1]
+                        verts.push_back({ positions[f[3] - 1],  255,255,255,255,  uvs[f[4] - 1], normals[f[5] - 1] });
+                        verts.push_back({ positions[f[6] - 1],  255,255,255,255,  uvs[f[7] - 1], normals[f[8] - 1] });
                     }
                     
                 }
@@ -304,16 +308,16 @@ void Mesh::LoadObj(const char* filename, bool righthanded)
             {
                 for (int i = 0; i < 3; i++)
                 {
-                    verts.push_back({ positions[f[0] - 1],  255,255,255,255,  vec2() }); //normals[f[2] - 1]
+                    verts.push_back({ positions[f[0] - 1],  255,255,255,255,  vec2(), normals[f[2] - 1] });
                     if (righthanded)
                     {
-                        verts.push_back({ positions[f[6] - 1],  255,255,255,255,  vec2() }); //normals[f[8] - 1]
-                        verts.push_back({ positions[f[3] - 1],  255,255,255,255,  vec2() }); //normals[f[5] - 1]
+                        verts.push_back({ positions[f[6] - 1],  255,255,255,255,  vec2(), normals[f[8] - 1] });
+                        verts.push_back({ positions[f[3] - 1],  255,255,255,255,  vec2(), normals[f[5] - 1] });
                     }
                     else
                     {
-                        verts.push_back({ positions[f[3] - 1],  255,255,255,255,  vec2() }); //normals[f[5] - 1]
-                        verts.push_back({ positions[f[6] - 1],  255,255,255,255,  vec2() }); //normals[f[8] - 1]
+                        verts.push_back({ positions[f[3] - 1],  255,255,255,255,  vec2(), normals[f[5] - 1] });
+                        verts.push_back({ positions[f[6] - 1],  255,255,255,255,  vec2(), normals[f[8] - 1] });
                     }
                 }
             }

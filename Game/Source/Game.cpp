@@ -70,6 +70,7 @@ void Game::Init()
 	m_pResourceManager->CreateShader("Basic", "Data/Shaders/Basic.vert", "Data/Shaders/Basic.frag");
 	m_pResourceManager->CreateShader("Water", "Data/Shaders/Water.vert", "Data/Shaders/Water.frag");
 	m_pResourceManager->CreateShader("SolidColor", "Data/Shaders/SolidColor.vert", "Data/Shaders/SolidColor.frag");
+	m_pResourceManager->CreateShader("Lit-Color", "Data/Shaders/Light-SolidColor.vert", "Data/Shaders/Light-SolidColor.frag");
 
     // Setup Textures
 	m_pResourceManager->CreateTexture("Sprites", "Data/Textures/Sprites.png");
@@ -86,14 +87,21 @@ void Game::Init()
 	m_pResourceManager->CreateSpriteSheet("NiceDaysWalk", "Data/Textures/NiceDaysWalk.json", m_pResourceManager->GetTexture("NiceDaysWalk"));
 
     // Setup Materials
-	m_pResourceManager->CreateMaterial("Sokoban", m_pResourceManager->GetShader("Basic"), m_pResourceManager->GetTexture("Sprites"), fw::Color4f::Red());
-	m_pResourceManager->CreateMaterial("Cube", m_pResourceManager->GetShader("Basic"), m_pResourceManager->GetTexture("Cube"), fw::Color4f::Green());
-	m_pResourceManager->CreateMaterial("Water", m_pResourceManager->GetShader("Water"), m_pResourceManager->GetTexture("Water"), c_defaultWaterColor);
 	m_pResourceManager->CreateMaterial("SolidColor", m_pResourceManager->GetShader("SolidColor"), c_defaultObjColor);
     m_pResourceManager->CreateMaterial("Red", m_pResourceManager->GetShader("SolidColor"), fw::Color4f::Red());
     m_pResourceManager->CreateMaterial("Green", m_pResourceManager->GetShader("SolidColor"), fw::Color4f::Green());
     m_pResourceManager->CreateMaterial("Blue", m_pResourceManager->GetShader("SolidColor"), fw::Color4f::Blue());
     m_pResourceManager->CreateMaterial("White", m_pResourceManager->GetShader("SolidColor"), fw::Color4f::White());
+
+	m_pResourceManager->CreateMaterial("Lit-SolidColor", m_pResourceManager->GetShader("Lit-Color"), c_defaultObjColor);
+	m_pResourceManager->CreateMaterial("Lit-Red", m_pResourceManager->GetShader("Lit-Color"), fw::Color4f::Red());
+	m_pResourceManager->CreateMaterial("Lit-Green", m_pResourceManager->GetShader("Lit-Color"), fw::Color4f::Green());
+	m_pResourceManager->CreateMaterial("Lit-Blue", m_pResourceManager->GetShader("Lit-Color"), fw::Color4f::Blue());
+	m_pResourceManager->CreateMaterial("Lit-White", m_pResourceManager->GetShader("Lit-Color"), fw::Color4f::White());
+
+	m_pResourceManager->CreateMaterial("Sokoban", m_pResourceManager->GetShader("Basic"), m_pResourceManager->GetTexture("Sprites"), fw::Color4f::Red());
+	m_pResourceManager->CreateMaterial("Cube", m_pResourceManager->GetShader("Basic"), m_pResourceManager->GetTexture("Cube"), fw::Color4f::Green());
+	m_pResourceManager->CreateMaterial("Water", m_pResourceManager->GetShader("Water"), m_pResourceManager->GetTexture("Water"), c_defaultWaterColor);
 	m_pResourceManager->CreateMaterial("Arcade_Cabinet", m_pResourceManager->GetShader("Basic"), m_pResourceManager->GetTexture("Arcade_Cabinet"), c_defaultObjColor);
 	m_pResourceManager->CreateMaterial("Arcade_Floor", m_pResourceManager->GetShader("Basic"), m_pResourceManager->GetTexture("Arcade_Floor"), c_defaultObjColor);
 	m_pResourceManager->CreateMaterial("Background", m_pResourceManager->GetShader("Basic"), m_pResourceManager->GetTexture("Background"), c_defaultWaterColor);

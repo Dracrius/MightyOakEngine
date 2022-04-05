@@ -97,7 +97,7 @@ PhysicsScene::PhysicsScene(Game* pGame) : fw::Scene(pGame)
     m_pPlayer->SetSpriteSheet(m_pResourceManager->GetSpriteSheet("Sprites"));
     m_pPlayer->AddComponent(new fw::PhysicsBodyComponent());
     m_pPlayer->GetComponent<fw::PhysicsBodyComponent>()->CreateBody(m_pPhysicsWorld, true, vec3(c_playerCollider.x, c_playerCollider.y, c_playerCollider.y), 1.f);
-	m_pPhysicsWorld->CreateJoint(m_pPlayer->GetComponent<fw::PhysicsBodyComponent>()->GetPhysicsBody(), vec2(7.5f, 8.0f)); //Kept to Demo
+	//m_pPhysicsWorld->CreateJoint(m_pPlayer->GetComponent<fw::PhysicsBodyComponent>()->GetPhysicsBody(), vec2(7.5f, 8.0f)); //Kept to Demo
     m_pPlayer->SetName("Player");
 
 	m_pCamera->AttachTo(m_pPlayer);

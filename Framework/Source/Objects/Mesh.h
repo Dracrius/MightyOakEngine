@@ -15,6 +15,7 @@ struct VertexFormat
     vec3 pos;
     unsigned char color[4];
     vec2 uv;
+    vec3 normal;
 };
 
 class Mesh

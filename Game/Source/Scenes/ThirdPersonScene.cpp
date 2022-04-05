@@ -34,29 +34,29 @@ ThirdPersonScene::ThirdPersonScene(Game* pGame) : fw::Scene(pGame)
 	vec3 rot = vec3(-90.f, 0.f, 0.f);
 
     fw::GameObject* pObj= new fw::GameObject(this, pos, vec3());
-    pObj->AddComponent(new fw::MeshComponent(m_pResourceManager->GetMesh("Obj"), m_pResourceManager->GetMaterial("Arcade_Cabinet")));
+    pObj->AddComponent(new fw::MeshComponent(m_pResourceManager->GetMesh("Obj"), m_pResourceManager->GetMaterial("Lit-White")));
 	pObj->SetName("Loaded Obj");
     m_Objects.push_back(pObj);
 
     m_pResourceManager->GetMesh("Obj")->LoadObj(m_lastObj.c_str(), true);
 
 	fw::GameObject* pCube = new fw::GameObject(this, c_centerOfScreen + vec3(-10.f, -3.f, 1.f), vec3());
-	pCube->AddComponent(new fw::MeshComponent(m_pResourceManager->GetMesh("Cube"), m_pResourceManager->GetMaterial("White")));
+	pCube->AddComponent(new fw::MeshComponent(m_pResourceManager->GetMesh("Cube"), m_pResourceManager->GetMaterial("Lit-White")));
 	pCube->SetName("White Cube");
 	m_Objects.push_back(pCube);
 
 	pCube = new fw::GameObject(this, c_centerOfScreen + vec3(4.f, -3.f, 2.f), vec3());
-	pCube->AddComponent(new fw::MeshComponent(m_pResourceManager->GetMesh("Cube"), m_pResourceManager->GetMaterial("Red")));
+	pCube->AddComponent(new fw::MeshComponent(m_pResourceManager->GetMesh("Cube"), m_pResourceManager->GetMaterial("Lit-Red")));
 	pCube->SetName("Red Cube");
 	m_Objects.push_back(pCube);
 
 	pCube = new fw::GameObject(this, c_centerOfScreen + vec3(6.f, -3.f, 3.f), vec3());
-	pCube->AddComponent(new fw::MeshComponent(m_pResourceManager->GetMesh("Cube"), m_pResourceManager->GetMaterial("White")));
+	pCube->AddComponent(new fw::MeshComponent(m_pResourceManager->GetMesh("Cube"), m_pResourceManager->GetMaterial("Lit-White")));
 	pCube->SetName("White Cube");
 	m_Objects.push_back(pCube);
 
     fw::GameObject* pPlayer = new fw::GameObject(this, c_centerOfScreen + vec3(-6.f, -3.5f, -3.f), rot);
-    pPlayer->AddComponent(new fw::MeshComponent(m_pResourceManager->GetMesh("Facehugger"), m_pResourceManager->GetMaterial("Green")));
+    pPlayer->AddComponent(new fw::MeshComponent(m_pResourceManager->GetMesh("Facehugger"), m_pResourceManager->GetMaterial("Lit-Green")));
     pPlayer->SetRotation(vec3(-90.f, -180.f, 0.f));
     pPlayer->SetScale(vec3(0.1f, 0.1f, 0.1f));
     pPlayer->AddComponent(new SimplePlayerMovementComponent(m_pPlayerController));
@@ -66,7 +66,7 @@ ThirdPersonScene::ThirdPersonScene(Game* pGame) : fw::Scene(pGame)
 	m_pCamera->AttachTo(pPlayer);
 
     fw::GameObject* pFloor = new fw::GameObject(this, pos, rot);
-    pFloor->AddComponent(new fw::MeshComponent(m_pResourceManager->GetMesh("Sprite"), m_pResourceManager->GetMaterial("Arcade_Floor")));
+    pFloor->AddComponent(new fw::MeshComponent(m_pResourceManager->GetMesh("Sprite"), m_pResourceManager->GetMaterial("Lit-SolidColor")));
     pFloor->SetScale(vec3(28.f));
 	pFloor->SetName("Floor");
     m_Objects.push_back(pFloor);
