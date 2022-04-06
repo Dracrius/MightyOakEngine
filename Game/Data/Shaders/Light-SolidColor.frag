@@ -1,5 +1,13 @@
+/*struct Light {    
+    vec3 position;
+    vec3 diffuse;
+};  
+uniform int numLights; 
+uniform Light lights[];*/
+
 uniform vec4 u_MaterialColor;
 uniform vec4 u_LightColor;
+uniform vec3 u_LightPos;
 
 varying vec3 v_Normal;
 varying vec3 v_SurfacePos;
@@ -9,10 +17,10 @@ void main()
     vec3 materialColor = vec3(u_MaterialColor.x,u_MaterialColor.y,u_MaterialColor.z);
     vec3 lightColor = vec3(u_LightColor.x,u_LightColor.y,u_LightColor.z);
 
-    vec3 lightPos = vec3(9.5,12,0);
-    vec3 normal = vec3(0,1,0);
+    //vec3 lightPos = vec3(9.5,12,0);
+    //vec3 normal = vec3(0,1,0);
 
-    vec3 dirToLight = lightPos - v_SurfacePos;
+    vec3 dirToLight = u_LightPos - v_SurfacePos;
     vec3 normalizedDirToLight = normalize(dirToLight);
     vec3 normalizeNormal = normalize(v_Normal); 
 

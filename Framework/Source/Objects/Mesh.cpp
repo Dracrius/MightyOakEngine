@@ -44,6 +44,12 @@ void Mesh::SetupUniform(ShaderProgram* pShader, char* name, vec2 value)
     glUniform2f( location, value.x, value.y );
 }
 
+void Mesh::SetupUniform(ShaderProgram* pShader, char* name, vec3 value)
+{
+    GLint location = glGetUniformLocation(pShader->GetProgram(), name);
+    glUniform3f(location, value.x, value.y, value.z);
+}
+
 void Mesh::SetupUniform(ShaderProgram* pShader, char* name, vec4 value)
 {
     GLint location = glGetUniformLocation(pShader->GetProgram(), name);
@@ -97,10 +103,13 @@ void Mesh::Draw(Camera* pCamera, Material* pMaterial, const matrix& worldMat, ve
     // Misc uniforms.
     SetupUniform(pShader, "u_Time", (float)GetSystemTimeSinceGameStart());
 
-    Color4f AverageLightColor = Color4f(1.f, 1.f, 1.f, 1.f);
-
     SetupUniform(pShader, "u_MaterialColor", vec4(pMaterial->GetColor().r, pMaterial->GetColor().g, pMaterial->GetColor().b, pMaterial->GetColor().a));
+
+    Color4f AverageLightColor = Color4f(1.f, 1.f, 1.f, 1.f);
+    vec3 lightPos = vec3(9.5f, 12.f, 0.f);
+
     SetupUniform(pShader, "u_LightColor", vec4(AverageLightColor.r, AverageLightColor.g, AverageLightColor.b, AverageLightColor.a));
+    SetupUniform(pShader, "u_LightPos", lightPos);
 
     GLint hasTexture = glGetUniformLocation(pShader->GetProgram(), "u_HasTexture");
 

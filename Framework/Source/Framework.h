@@ -16,6 +16,7 @@
 #include "Components/MeshComponent.h"
 #include "Components/TransformComponent.h"
 #include "Components/PhysicsBodyComponent.h"
+#include "Components/LightComponent.h"
 #include "Events/Event.h"
 #include "Events/EventManager.h"
 #include "Math/Matrix.h"

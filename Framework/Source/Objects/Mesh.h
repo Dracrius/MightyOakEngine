@@ -28,6 +28,7 @@ public:
 
     void SetupUniform(ShaderProgram* pShader, char* name, float value);
     void SetupUniform(ShaderProgram* pShader, char* name, vec2 value);
+    void SetupUniform(ShaderProgram* pShader, char* name, vec3 value);
     void SetupUniform(ShaderProgram* pShader, char* name, vec4 value);
     void SetupUniform(ShaderProgram* pShader, char* name, matrix matrix);
     void SetupAttribute(ShaderProgram* pShader, char* name, int size, GLenum type, GLboolean normalize, int stride, int64_t startIndex);
