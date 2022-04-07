@@ -33,6 +33,11 @@ ThirdPersonScene::ThirdPersonScene(Game* pGame) : fw::Scene(pGame)
 	vec3 pos = c_centerOfScreen + vec3(0.f, heightOffset, 0.f);
 	vec3 rot = vec3(-90.f, 0.f, 0.f);
 
+	fw::GameObject* pLight = new fw::GameObject(this, c_centerOfScreen + vec3(0.f, 0.f, 0.f), vec3());
+	pLight->AddComponent(new fw::LightComponent(fw::LightType::PointLight, Color4f(1.f, 1.f, 1.f, 1.f), 10.f));
+	pLight->SetName("Light");
+	m_Objects.push_back(pLight);
+
     fw::GameObject* pObj= new fw::GameObject(this, pos, vec3());
     pObj->AddComponent(new fw::MeshComponent(m_pResourceManager->GetMesh("Obj"), m_pResourceManager->GetMaterial("Lit-White")));
 	pObj->SetName("Loaded Obj");

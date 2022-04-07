@@ -2,6 +2,9 @@
 
 #include "Camera.h"
 #include "Mesh.h"
+#include "Components/LightComponent.h"
+#include "Components/ComponentManager.h"
+#include "Objects/Scene.h"
 #include "ShaderProgram.h"
 #include "Texture.h"
 #include "Material.h"
@@ -105,8 +108,22 @@ void Mesh::Draw(Camera* pCamera, Material* pMaterial, const matrix& worldMat, ve
 
     SetupUniform(pShader, "u_MaterialColor", vec4(pMaterial->GetColor().r, pMaterial->GetColor().g, pMaterial->GetColor().b, pMaterial->GetColor().a));
 
-    Color4f AverageLightColor = Color4f(1.f, 1.f, 1.f, 1.f);
+    Color4f AverageLightColor = Color4f(0.f, 0.f, 0.f, 1.f);
     vec3 lightPos = vec3(9.5f, 12.f, 0.f);
+
+    std::vector<Component*>& lights = pCamera->GetScene()->GetComponentManager()->GetComponentsOfType(LightComponent::GetStaticType());
+
+    if (!lights.empty())
+    {
+        for (fw::Component* pComponent : lights)
+        {
+            LightComponent* light = static_cast<LightComponent*>(pComponent);
+            Color4f lightColor = light->GetDetails().diffuse;
+            AverageLightColor = AverageLightColor + Color4f(lightColor.r, lightColor.g, lightColor.b, 0.f);
+            lightPos = light->GetGameObject()->GetTransform()->GetPosition();
+        }
+    }
+
 
     SetupUniform(pShader, "u_LightColor", vec4(AverageLightColor.r, AverageLightColor.g, AverageLightColor.b, AverageLightColor.a));
     SetupUniform(pShader, "u_LightPos", lightPos);

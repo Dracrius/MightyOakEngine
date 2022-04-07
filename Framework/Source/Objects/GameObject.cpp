@@ -4,6 +4,7 @@
 #include "GameObject.h"
 #include "Components/MeshComponent.h"
 #include "Components/TransformComponent.h"
+#include "Components/LightComponent.h"
 #include "Components/PhysicsBodyComponent.h"
 #include "Components/ComponentManager.h"
 #include "Physics/PhysicsBody.h"
@@ -132,6 +133,7 @@ void GameObject::Editor_OutputObjectDetails()
 	vec3 rot = m_pTransform->GetRotation();
 	vec3 scale = m_pTransform->GetScale();
 	bool hasPhysBody = GetComponent<fw::PhysicsBodyComponent>() ? true : false;
+	bool isLight = GetComponent<fw::LightComponent>() ? true : false;
 
 	ImGui::Text("Name: %s", m_name.c_str());
 	ImGui::Separator();
@@ -147,6 +149,17 @@ void GameObject::Editor_OutputObjectDetails()
 		ImGui::DragFloat2("Scale", &scale.x, 0.01f);
 	}
 	ImGui::Separator();
+	if (isLight)
+	{
+		Color4f lightColor = GetComponent<fw::LightComponent>()->GetDetails().diffuse;
+		vec3 sliderColor = vec3(lightColor.r, lightColor.g, lightColor.b);
+		ImGui::DragFloat3("Colour", &sliderColor.x, 0.01f);
+
+		if (sliderColor != vec3(lightColor.r, lightColor.g, lightColor.b))
+		{
+			GetComponent<fw::LightComponent>()->SetDiffuse(Color4f(sliderColor.x, sliderColor.y, sliderColor.z, 1.f));
+		}
+	}
 
 
 	ImGui::Checkbox("Has Physics Body", &hasPhysBody);
