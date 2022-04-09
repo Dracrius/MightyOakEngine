@@ -12,15 +12,17 @@ ThirdPersonScene::ThirdPersonScene(Game* pGame) : fw::Scene(pGame)
 {
 	m_pPlayerController = new PlayerController(pGame->GetFramework()->GetEventManager());
 
-    vec3 cameraOffset = vec3(0.f, 0.f, -12.f);
+    vec3 cameraOffset = vec3(0.f, 3.f, 0.f);
 	float heightOffset = -3.5f;
 
 	m_openPos[0] = c_centerOfScreen.x;
 	m_openPos[1] = c_centerOfScreen.y + heightOffset;
 	m_openPos[2] = c_centerOfScreen.z;
 
-    m_pCamera = new fw::Camera(this, c_centerOfScreen + cameraOffset);
+    m_pCamera = new fw::Camera(this, c_centerOfScreen);
 	m_pCamera->SetAspectRatio(c_aspectRatio);
+	m_pCamera->SetThirdPersonOffset(cameraOffset);
+	m_pCamera->SetRotation(vec3(-10.f,0.f,0.f));
 
 	char filename[260] = "Data/Models/Arcade_Cabinet.obj";
 	strcpy_s(m_filename, filename);
@@ -33,8 +35,8 @@ ThirdPersonScene::ThirdPersonScene(Game* pGame) : fw::Scene(pGame)
 	vec3 pos = c_centerOfScreen + vec3(0.f, heightOffset, 0.f);
 	vec3 rot = vec3(-90.f, 0.f, 0.f);
 
-	fw::GameObject* pLight = new fw::GameObject(this, c_centerOfScreen + vec3(0.f, 0.f, 0.f), vec3());
-	pLight->AddComponent(new fw::LightComponent(fw::LightType::PointLight, Color4f(1.f, 1.f, 1.f, 1.f), 10.f));
+	fw::GameObject* pLight = new fw::GameObject(this, c_centerOfScreen + vec3(0.f, 6.f, 0.f), vec3());
+	pLight->AddComponent(new fw::LightComponent(fw::LightType::PointLight, Color4f(1.f, 1.f, 1.f, 1.f), 25.f, 2.f));
 	pLight->SetName("Light");
 	m_Objects.push_back(pLight);
 

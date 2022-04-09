@@ -33,8 +33,17 @@ void ComponentManager::Draw(Camera* pCamera)
     for (Component* pComponent : m_Components[MeshComponent::GetStaticType()])
     {
         MeshComponent* pMeshComponent = static_cast<MeshComponent*>(pComponent);
+
+        // Create rotation matrix to rotate normals.
+        vec3 rot = pMeshComponent->GetGameObject()->GetTransform()->GetRotation();
+        matrix normalMatrix;
+        normalMatrix.CreateRotation(rot);
+
+        // Get the world matrix.
         const matrix& worldTransform = pMeshComponent->GetGameObject()->GetTransform()->GetWorldTransform();
-        pMeshComponent->Draw(pCamera, worldTransform);
+
+        // Draw our mesh.
+        pMeshComponent->Draw(pCamera, worldTransform, normalMatrix);
     }
 }
 

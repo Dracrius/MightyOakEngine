@@ -4,9 +4,9 @@
 
 namespace fw {
 
-LightComponent::LightComponent(LightType type, Color4f color, float powerFactor): m_type(type)
+LightComponent::LightComponent(LightType type, Color4f color, float radius, float powerFactor)
 {
-	m_light = { color * 0.1f, color, color * 0.5f,  powerFactor };
+	m_light = { type, color * 0.1f, color, color * 0.5f, radius, powerFactor };
 }
 
 LightComponent::~LightComponent()

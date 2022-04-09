@@ -75,7 +75,7 @@ void Mesh::SetupAttribute(ShaderProgram* pShader, char* name, int size, GLenum t
     }
 }
 
-void Mesh::Draw(Camera* pCamera, Material* pMaterial, const matrix& worldMat, vec2 uvScale, vec2 uvOffset, float time)
+void Mesh::Draw(Camera* pCamera, Material* pMaterial, const matrix& worldMat, const matrix& normalMat, vec2 uvScale, vec2 uvOffset, float time)
 {
     ShaderProgram* pShader = pMaterial->GetShader();
     Texture* pTexture = pMaterial->GetTexture();
@@ -98,6 +98,7 @@ void Mesh::Draw(Camera* pCamera, Material* pMaterial, const matrix& worldMat, ve
     SetupUniform(pShader, "u_WorldMatrix", worldMat);
     SetupUniform(pShader, "u_ViewMatrix", pCamera->GetViewMatrix());
     SetupUniform(pShader, "u_ProjecMatrix", pCamera->GetProjecMatrix());
+    SetupUniform(pShader, "u_NormalMatrix", normalMat);
 
     // UV uniforms.
     SetupUniform( pShader, "u_UVScale", uvScale );
@@ -110,6 +111,8 @@ void Mesh::Draw(Camera* pCamera, Material* pMaterial, const matrix& worldMat, ve
 
     Color4f AverageLightColor = Color4f(0.f, 0.f, 0.f, 1.f);
     vec3 lightPos = vec3(9.5f, 12.f, 0.f);
+    float lightRadius = 20.f;
+    float lightPowerFactor = 2.f;
 
     std::vector<Component*>& lights = pCamera->GetScene()->GetComponentManager()->GetComponentsOfType(LightComponent::GetStaticType());
 
@@ -118,15 +121,23 @@ void Mesh::Draw(Camera* pCamera, Material* pMaterial, const matrix& worldMat, ve
         for (fw::Component* pComponent : lights)
         {
             LightComponent* light = static_cast<LightComponent*>(pComponent);
-            Color4f lightColor = light->GetDetails().diffuse;
-            AverageLightColor = AverageLightColor + Color4f(lightColor.r, lightColor.g, lightColor.b, 0.f);
+
             lightPos = light->GetGameObject()->GetTransform()->GetPosition();
+
+            LightFixture* fixture = light->GetDetails();
+            lightRadius = fixture->radius;
+            lightPowerFactor = fixture->powerFactor;
+            Color4f lightColor = fixture->diffuse;
+            
+            AverageLightColor = AverageLightColor + Color4f(lightColor.r, lightColor.g, lightColor.b, 0.f);
         }
     }
 
 
     SetupUniform(pShader, "u_LightColor", vec4(AverageLightColor.r, AverageLightColor.g, AverageLightColor.b, AverageLightColor.a));
     SetupUniform(pShader, "u_LightPos", lightPos);
+    SetupUniform(pShader, "u_LightRadius", lightRadius);
+    SetupUniform(pShader, "u_LightPowerFactor", lightPowerFactor);
 
     GLint hasTexture = glGetUniformLocation(pShader->GetProgram(), "u_HasTexture");
 

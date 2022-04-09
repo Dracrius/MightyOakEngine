@@ -151,14 +151,20 @@ void GameObject::Editor_OutputObjectDetails()
 	ImGui::Separator();
 	if (isLight)
 	{
-		Color4f lightColor = GetComponent<fw::LightComponent>()->GetDetails().diffuse;
+		LightFixture* fixture = GetComponent<fw::LightComponent>()->GetDetails();
+
+		ImGui::DragFloat("Radius", &fixture->radius, 0.01f);
+		ImGui::DragFloat("Power Factor", &fixture->powerFactor, 0.01f);
+		Color4f lightColor = fixture->diffuse;
 		vec3 sliderColor = vec3(lightColor.r, lightColor.g, lightColor.b);
-		ImGui::DragFloat3("Colour", &sliderColor.x, 0.01f);
+		//ImGui::DragFloat3("Colour", &sliderColor.x, 0.01f);
+		ImGui::ColorEdit3("Colour", &sliderColor.x, ImGuiColorEditFlags_Float);
 
 		if (sliderColor != vec3(lightColor.r, lightColor.g, lightColor.b))
 		{
 			GetComponent<fw::LightComponent>()->SetDiffuse(Color4f(sliderColor.x, sliderColor.y, sliderColor.z, 1.f));
 		}
+		ImGui::Separator();
 	}
 
 

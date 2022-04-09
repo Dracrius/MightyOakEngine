@@ -6,6 +6,7 @@ attribute vec3 a_Normal;
 uniform mat4 u_WorldMatrix;
 uniform mat4 u_ViewMatrix;
 uniform mat4 u_ProjecMatrix;
+uniform mat4 u_NormalMatrix;
 
 uniform vec2 u_UVScale;
 uniform vec2 u_UVOffset;
@@ -29,6 +30,7 @@ void main()
     
     v_UVCoord = a_UVCoord * u_UVScale + u_UVOffset;
     v_Color = a_Color;
-    v_Normal = a_Normal;
+
+    v_Normal = u_NormalMatrix * vec4(a_Normal, 0 );
     v_SurfacePos = worldSpacePosition.xyz;
 }

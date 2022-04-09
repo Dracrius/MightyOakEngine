@@ -13,9 +13,9 @@ MeshComponent::~MeshComponent()
 {
 }
 
-void MeshComponent::Draw(Camera* pCamera, const matrix& worldMat)
+void MeshComponent::Draw(Camera* pCamera, const matrix& worldMat, const matrix& normalMat)
 {
-		m_pMesh->Draw(pCamera, m_pMaterial, worldMat, m_UVScale, m_UVOffset, 0.0f);
+		m_pMesh->Draw(pCamera, m_pMaterial, worldMat, normalMat, m_UVScale, m_UVOffset, 0.0f);
 }
 
 } // namespace fw

@@ -5,10 +5,10 @@
 
 const std::vector<fw::VertexFormat> g_SpriteVerts =
 {
-    { vec3(-0.5f,-0.5f,0.f),  255,255,255,255,  vec2(0.0f,0.0f), vec3(0.f,1.f,0.f) }, // bottom left
-    { vec3(-0.5f,0.5f,0.f),  255,255,255,255,  vec2(0.0f,1.0f), vec3(0.f,1.f,0.f) }, // top left
-    { vec3(0.5f,-0.5f,0.f),  255,255,255,255,  vec2(1.0f,0.0f), vec3(0.f,1.f,0.f) }, // bottom right
-    { vec3(0.5f,0.5f,0.f),  255,255,255,255,  vec2(1.0f,1.0f), vec3(0.f,1.f,0.f) }, // top right
+    { vec3(-0.5f,-0.5f,0.f),  255,255,255,255,  vec2(0.0f,0.0f), vec3(0.f,0.f,-1.f) }, // bottom left //chage Normals to vec3(0.f,0.f,-1.f)
+    { vec3(-0.5f,0.5f,0.f),  255,255,255,255,  vec2(0.0f,1.0f), vec3(0.f,0.f,-1.f) }, // top left
+    { vec3(0.5f,-0.5f,0.f),  255,255,255,255,  vec2(1.0f,0.0f), vec3(0.f,0.f,-1.f) }, // bottom right
+    { vec3(0.5f,0.5f,0.f),  255,255,255,255,  vec2(1.0f,1.0f), vec3(0.f,0.f,-1.f) }, // top right
 };
 
 const std::vector<unsigned int> g_SpriteIndices =
@@ -18,10 +18,10 @@ const std::vector<unsigned int> g_SpriteIndices =
 
 const std::vector<fw::VertexFormat> g_BackgroundVerts =
 {
-	{ vec3(-0.5f,-0.5f,0.f),  255,255,255,255,  vec2(0.0f,0.0f), vec3(0.f,0.f,1.f) }, // bottom left
-	{ vec3(-0.5f,0.5f,0.f),  255,255,255,255,  vec2(0.0f,1.0f), vec3(0.f,0.f,1.f) }, // top left
-	{ vec3(0.5f,-0.5f,0.f),  255,255,255,255,  vec2(10.0f,0.0f), vec3(0.f,0.f,1.f) }, // bottom right
-	{ vec3(0.5f,0.5f,0.f),  255,255,255,255,  vec2(10.0f,1.0f), vec3(0.f,0.f,1.f) }, // top right
+	{ vec3(-0.5f,-0.5f,0.f),  255,255,255,255,  vec2(0.0f,0.0f), vec3(0.f,0.f,-1.f) }, // bottom left
+	{ vec3(-0.5f,0.5f,0.f),  255,255,255,255,  vec2(0.0f,1.0f), vec3(0.f,0.f,-1.f) }, // top left
+	{ vec3(0.5f,-0.5f,0.f),  255,255,255,255,  vec2(10.0f,0.0f), vec3(0.f,0.f,-1.f) }, // bottom right
+	{ vec3(0.5f,0.5f,0.f),  255,255,255,255,  vec2(10.0f,1.0f), vec3(0.f,0.f,-1.f) }, // top right
 };
 
 const std::vector<unsigned int> g_BackgroundIndices =
