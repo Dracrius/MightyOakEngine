@@ -54,12 +54,26 @@ void Scene::Update(float deltaTime)
 
 	if (m_showObjectList)
 	{
-		Editor_ShowObjectList();
-
-		if (m_showObjectDetails)
+		if (m_showObjectDetails.size() < m_Objects.size())
 		{
-			Editor_ShowObjectDetails();
+			m_showObjectDetails.clear();
+			m_showObjectDetails.resize(m_Objects.size());
 		}
+
+		Editor_ShowObjectList();
+	}
+
+	for (int i = 0; i < m_showObjectDetails.size(); i++)
+	{
+		if (m_showObjectDetails[i])
+		{
+			Editor_ShowObjectDetails(i);
+		}
+	}
+
+	if (m_showObjectPopoutList)
+	{
+		Editor_ShowObjectPopoutList();
 	}
 }
 void Scene::Draw()
@@ -79,23 +93,21 @@ void Scene::Editor_ShowObjectList()
 		{
 			if(ImGui::BeginMenu("Scene Objects"))
 			{
-				for (GameObject* pObject : m_Objects)
+				if (!m_Objects.empty())
 				{
-					char name[30];
-					sprintf_s(name, 30, "%s", pObject->GetName().c_str());
-
-					if (ImGui::MenuItem(name, "", &m_showObjectDetails))
+					for (int i = 0; i < m_Objects.size(); i++)
 					{
-						m_pEditor_SelectedObject = pObject;
+						char name[30];
+						sprintf_s(name, 30, "%s", m_Objects[i]->GetName().c_str());
 
-						if (!m_showObjectDetails)
-						{
-							m_showObjectDetails = !m_showObjectDetails;
-						}
+						bool toggle = m_showObjectDetails[i];
+						if (ImGui::MenuItem(name, "", &toggle)) { m_showObjectDetails[i] = true; }
 					}
 				}
 				ImGui::EndMenu();
 			}
+			if (ImGui::MenuItem("Scene Objects List", "", &m_showObjectPopoutList)) {}
+
 			ImGui::Separator();
 			ImGui::EndMenu();
 		}
@@ -103,20 +115,49 @@ void Scene::Editor_ShowObjectList()
 		ImGui::EndMainMenuBar();
 	}
 }
-void Scene::Editor_ShowObjectDetails()
+
+void Scene::Editor_ShowObjectPopoutList()
 {
 	//ImGui::SetNextWindowSize(ImVec2(260, 250), ImGuiCond_Always);
 
-	char name[30];
-	sprintf_s(name, 30, "%s Details", m_pEditor_SelectedObject->GetName().c_str());
-
-	if (!ImGui::Begin(name, &m_showObjectDetails))
+	if (!ImGui::Begin("Scene Objects List", &m_showObjectPopoutList))
 	{
 		ImGui::End();
 		return;
 	}
-	m_pEditor_SelectedObject->Editor_OutputObjectDetails();
+
+	for (int i = 0; i < m_Objects.size(); i++)
+	{
+		char name[30];
+		sprintf_s(name, 30, "%s", m_Objects[i]->GetName().c_str());
+
+		if (ImGui::CollapsingHeader(name))
+		{
+			m_Objects[i]->Editor_OutputObjectDetails();
+		}
+	}
+	//m_Objects[index]->Editor_OutputObjectDetails();
 
 	ImGui::End();
 }
+
+void Scene::Editor_ShowObjectDetails(int index)
+{
+	//ImGui::SetNextWindowSize(ImVec2(260, 250), ImGuiCond_Always);
+
+	char name[30];
+	sprintf_s(name, 30, "%s", m_Objects[index]->GetName().c_str());
+	
+	bool toggle = m_showObjectDetails[index];
+	if (!ImGui::Begin(name, &toggle))
+	{
+		ImGui::End();
+		return;
+	}
+	m_showObjectDetails[index] = toggle;
+	m_Objects[index]->Editor_OutputObjectDetails();
+
+	ImGui::End();
+}
+
 } // namespace fw

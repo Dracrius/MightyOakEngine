@@ -43,7 +43,7 @@ PhysicsScene::PhysicsScene(Game* pGame) : fw::Scene(pGame)
 			pos += vec3(0.f, 2.f, 0.f);
 		}
 
-		std::string name = "Numbered Box " + i;
+		std::string name = "Numbered Box " + std::to_string(i + 1);
 		fw::GameObject* pBox = new fw::GameObject(this, pos, vec3());
 		pBox->AddComponent(new fw::MeshComponent(m_pResourceManager->GetMesh("Cube"), m_pResourceManager->GetMaterial("Cube")));
         pBox->AddComponent(new fw::PhysicsBodyComponent());
@@ -89,7 +89,7 @@ PhysicsScene::PhysicsScene(Game* pGame) : fw::Scene(pGame)
 		pRightEdge->SetScale(vec3(2.f, 2.f, 0.f));
         pRightEdge->AddComponent(new fw::PhysicsBodyComponent());
 		pRightEdge->GetComponent<fw::PhysicsBodyComponent>()->CreateBody(m_pPhysicsWorld, false, vec3(2.0f, 2.0f, 2.0f), 1.f);
-		pRightEdge->SetName("Platform Left Edge");
+		pRightEdge->SetName("Platform Right Edge");
 		m_Objects.push_back(pRightEdge);
 	}
 

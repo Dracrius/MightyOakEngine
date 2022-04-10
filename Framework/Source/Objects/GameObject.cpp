@@ -134,55 +134,74 @@ void GameObject::Editor_OutputObjectDetails()
 	vec3 scale = m_pTransform->GetScale();
 	bool hasPhysBody = GetComponent<fw::PhysicsBodyComponent>() ? true : false;
 	bool isLight = GetComponent<fw::LightComponent>() ? true : false;
+	PhysicsBodyComponent* pPhysicsBody = GetComponent<fw::PhysicsBodyComponent>();
 
-	ImGui::Text("Name: %s", m_name.c_str());
-	ImGui::Separator();
-	ImGui::DragFloat3("Position", &pos.x, 0.01f);
-	if (hasPhysBody)
+	if (ImGui::BeginTabBar(m_name.c_str()))
 	{
-		ImGui::DragFloat("Rotation", &rot.z, 0.01f);
-		//ImGui::DragFloat2("Scale", &scale.x, 0.01f; //Save For Experimenting
-	}
-	else
-	{
-		ImGui::DragFloat3("Rotation", &rot.x, 0.01f);
-		ImGui::DragFloat2("Scale", &scale.x, 0.01f);
-	}
-	ImGui::Separator();
-	if (isLight)
-	{
-		LightFixture* fixture = GetComponent<fw::LightComponent>()->GetDetails();
-
-		ImGui::DragFloat("Radius", &fixture->radius, 0.01f);
-		ImGui::DragFloat("Power Factor", &fixture->powerFactor, 0.01f);
-		Color4f lightColor = fixture->diffuse;
-		vec3 sliderColor = vec3(lightColor.r, lightColor.g, lightColor.b);
-		//ImGui::DragFloat3("Colour", &sliderColor.x, 0.01f);
-		ImGui::ColorEdit3("Colour", &sliderColor.x, ImGuiColorEditFlags_Float);
-
-		if (sliderColor != vec3(lightColor.r, lightColor.g, lightColor.b))
+		if (ImGui::BeginTabItem("Transform"))
 		{
-			GetComponent<fw::LightComponent>()->SetDiffuse(Color4f(sliderColor.x, sliderColor.y, sliderColor.z, 1.f));
+			//ImGui::Text("Name: %s", m_name.c_str());
+			//ImGui::Separator();
+			ImGui::DragFloat3("Position", &pos.x, 0.01f);
+			if (hasPhysBody)
+			{
+				ImGui::DragFloat("Rotation", &rot.z, 0.01f);
+				//ImGui::DragFloat2("Scale", &scale.x, 0.01f; //Save For Experimenting
+			}
+			else
+			{
+				ImGui::DragFloat3("Rotation", &rot.x, 0.01f);
+				ImGui::DragFloat2("Scale", &scale.x, 0.01f);
+			}
+
+			ImGui::EndTabItem();
 		}
-		ImGui::Separator();
+		if (isLight)
+		{
+			if (ImGui::BeginTabItem("Light Setting"))
+			{
+				LightFixture* fixture = GetComponent<fw::LightComponent>()->GetDetails();
+
+				ImGui::DragFloat("Radius", &fixture->radius, 0.01f);
+				ImGui::DragFloat("Power Factor", &fixture->powerFactor, 0.01f);
+				Color4f lightColor = fixture->diffuse;
+				vec3 sliderColor = vec3(lightColor.r, lightColor.g, lightColor.b);
+				//ImGui::DragFloat3("Colour", &sliderColor.x, 0.01f);
+				ImGui::ColorEdit3("Colour", &sliderColor.x, ImGuiColorEditFlags_Float);
+
+				if (sliderColor != vec3(lightColor.r, lightColor.g, lightColor.b))
+				{
+					GetComponent<fw::LightComponent>()->SetDiffuse(Color4f(sliderColor.x, sliderColor.y, sliderColor.z, 1.f));
+				}
+
+				ImGui::EndTabItem();
+			}
+		}
+
+		if (hasPhysBody)
+		{
+			if (ImGui::BeginTabItem("Physics"))
+			{
+				ImGui::Checkbox("Has Physics Body", &hasPhysBody);
+				pPhysicsBody->GetPhysicsBody()->Editor_OutputBodyDetails();
+
+				ImGui::EndTabItem();
+			}
+		}
+
+		ImGui::EndTabBar();
 	}
 
-
-	ImGui::Checkbox("Has Physics Body", &hasPhysBody);
-
-    PhysicsBodyComponent* pPhysicsBody = GetComponent<fw::PhysicsBodyComponent>();
 
 	if (pPhysicsBody)
 	{
-        pPhysicsBody->GetPhysicsBody()->Editor_OutputBodyDetails();
-
 		if (pos != m_pTransform->GetPosition())
 		{
-            pPhysicsBody->GetPhysicsBody()->SetPosition(pos);
+			pPhysicsBody->GetPhysicsBody()->SetPosition(pos);
 		}
 		if (rot != m_pTransform->GetRotation())
 		{
-            pPhysicsBody->GetPhysicsBody()->SetTransform(pos, rot);
+			pPhysicsBody->GetPhysicsBody()->SetTransform(pos, rot);
 		}
 	}
 	else
@@ -191,7 +210,6 @@ void GameObject::Editor_OutputObjectDetails()
 		m_pTransform->SetRotation(rot);
 		m_pTransform->SetScale(scale);
 	}
-
 }
 
 } // namespace fw

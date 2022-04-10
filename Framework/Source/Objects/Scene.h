@@ -26,8 +26,8 @@ protected:
 	bool m_debugDraw = false;
 
 	bool m_showObjectList = true;
-	bool m_showObjectDetails = false;
-	GameObject* m_pEditor_SelectedObject = nullptr;
+    bool m_showObjectPopoutList = false;
+	std::vector<bool> m_showObjectDetails;
 public:
     Scene(GameCore* pGameCore);
     virtual ~Scene();
@@ -48,7 +48,8 @@ public:
 	virtual void Editor_ToggleShowGObjList() { m_showObjectList = !m_showObjectList; }
 
 	void Editor_ShowObjectList();
-	void Editor_ShowObjectDetails();
+    void Editor_ShowObjectPopoutList();
+	void Editor_ShowObjectDetails(int index);
 
     ComponentManager* GetComponentManager() { return m_pComponentManager; }
 };

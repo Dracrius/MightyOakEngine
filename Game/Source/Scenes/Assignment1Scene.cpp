@@ -278,7 +278,7 @@ void Assignment1Scene::SetupPlatform()
 	pLeftEdge->SetScale(vec3(2.f, 2.f, 0.f));
     pLeftEdge->AddComponent(new fw::PhysicsBodyComponent());
     pLeftEdge->GetComponent<fw::PhysicsBodyComponent>()->CreateBody(m_pPhysicsWorld, false, vec3(2.0f, 2.0f, 2.0f), 1.f);
-	pLeftEdge->SetName("Platform");
+	pLeftEdge->SetName("Platform Left Edge");
 	m_Objects.push_back(pLeftEdge);
 	
 	fw::GameObject* pRightEdge = new fw::GameObject(this, c_centerOfScreen + vec3(10.9f, -5.f, 0.f), vec3());
@@ -291,7 +291,7 @@ void Assignment1Scene::SetupPlatform()
 	pRightEdge->SetScale(vec3(2.f, 2.f, 0.f));
     pRightEdge->AddComponent(new fw::PhysicsBodyComponent());
     pLeftEdge->GetComponent<fw::PhysicsBodyComponent>()->CreateBody(m_pPhysicsWorld, false, vec3(2.0f, 2.0f, 2.0f), 1.f);
-	pRightEdge->SetName("Platform");
+	pRightEdge->SetName("Platform Right Edge");
 	m_Objects.push_back(pRightEdge);
 }
 
