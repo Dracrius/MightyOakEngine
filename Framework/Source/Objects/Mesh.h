@@ -9,6 +9,7 @@ class ShaderProgram;
 class Texture;
 class Material;
 class matrix;
+class GameObject;
 
 struct VertexFormat
 {
@@ -31,8 +32,14 @@ public:
     void SetupUniform(ShaderProgram* pShader, char* name, vec3 value);
     void SetupUniform(ShaderProgram* pShader, char* name, vec4 value);
     void SetupUniform(ShaderProgram* pShader, char* name, matrix matrix);
+
+    void SetupUniform(ShaderProgram* pShader, char* name, std::vector<float> value);
+    void SetupUniform(ShaderProgram* pShader, char* name, std::vector<vec2> value);
+    void SetupUniform(ShaderProgram* pShader, char* name, std::vector<vec3> value);
+    void SetupUniform(ShaderProgram* pShader, char* name, std::vector<vec4> value);
+
     void SetupAttribute(ShaderProgram* pShader, char* name, int size, GLenum type, GLboolean normalize, int stride, int64_t startIndex);
-    void Draw(Camera* pCamera, Material* pMaterial, const matrix& worldMat, const matrix& normalMat, vec2 uvScale, vec2 uvOffset, float time);
+    void Draw(GameObject* pParent, Camera* pCamera, Material* pMaterial, const matrix& worldMat, const matrix& normalMat, vec2 uvScale, vec2 uvOffset, float time);
 
     void Rebuild(GLenum primitiveType, const std::vector<VertexFormat>& verts);
     void Rebuild(GLenum primitiveType, const std::vector<VertexFormat>& verts, const std::vector<unsigned int>& indices);

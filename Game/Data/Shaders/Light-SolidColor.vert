@@ -31,6 +31,7 @@ void main()
     v_UVCoord = a_UVCoord * u_UVScale + u_UVOffset;
     v_Color = a_Color;
 
-    v_Normal = u_NormalMatrix * vec4(a_Normal, 0 );
+    vec4 normal = u_NormalMatrix * vec4(a_Normal, 0 );
+    v_Normal = normal.xyz;
     v_SurfacePos = worldSpacePosition.xyz;
 }

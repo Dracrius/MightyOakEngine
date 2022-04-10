@@ -74,6 +74,7 @@ PFNGLGENBUFFERSPROC                 glGenBuffers = nullptr;
 PFNGLBINDBUFFERPROC                 glBindBuffer = nullptr;
 PFNGLBUFFERDATAPROC                 glBufferData = nullptr;
 PFNGLBUFFERSUBDATAPROC              glBufferSubData = nullptr;
+PFNGLGETBUFFERSUBDATAPROC           glGetBufferSubData = nullptr;
 PFNGLDELETEBUFFERSPROC              glDeleteBuffers = nullptr;
 
 PFNGLBLENDFUNCSEPARATEPROC          glBlendFuncSeparate = nullptr;
@@ -166,6 +167,7 @@ void OpenGL_InitExtensions()
     glBindBuffer                    = (PFNGLBINDBUFFERPROC)                 wglGetProcAddress( "glBindBuffer" );
     glBufferData                    = (PFNGLBUFFERDATAPROC)                 wglGetProcAddress( "glBufferData" );
     glBufferSubData                 = (PFNGLBUFFERSUBDATAPROC)              wglGetProcAddress( "glBufferSubData" );
+    glGetBufferSubData              = (PFNGLGETBUFFERSUBDATAPROC)           wglGetProcAddress( "glGetBufferSubData" );
     glDeleteBuffers                 = (PFNGLDELETEBUFFERSPROC)              wglGetProcAddress( "glDeleteBuffers" );
 
     glBlendFuncSeparate             = (PFNGLBLENDFUNCSEPARATEPROC)          wglGetProcAddress( "glBlendFuncSeparate" );

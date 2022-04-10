@@ -38,7 +38,7 @@ void DebugDrawBox2D::Draw(Camera* pCamera, Material* pMaterial)
 
 	if (m_debugMesh)
 	{
-		m_debugMesh->Draw(pCamera, pMaterial, worldMat, matrix(), vec2(), vec2(), 0.f);
+		m_debugMesh->Draw(nullptr, pCamera, pMaterial, worldMat, matrix(), vec2(), vec2(), 0.f);
 
 		m_verts.clear();
 	}

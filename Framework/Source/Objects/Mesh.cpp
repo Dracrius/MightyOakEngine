@@ -65,6 +65,30 @@ void Mesh::SetupUniform(ShaderProgram* pShader, char* name, matrix matrix)
     glUniformMatrix4fv(location, 1, false, &matrix.m11);
 }
 
+void Mesh::SetupUniform(ShaderProgram* pShader, char* name, std::vector<float> value)
+{
+    GLint location = glGetUniformLocation(pShader->GetProgram(), name);
+    glUniform1fv(location, value.size(), &value[0]);
+}
+
+void Mesh::SetupUniform(ShaderProgram* pShader, char* name, std::vector<vec2> value)
+{
+    GLint location = glGetUniformLocation(pShader->GetProgram(), name);
+    glUniform2fv(location, value.size(), &value[0].x);
+}
+
+void Mesh::SetupUniform(ShaderProgram* pShader, char* name, std::vector<vec3> value)
+{
+    GLint location = glGetUniformLocation(pShader->GetProgram(), name);
+    glUniform3fv(location, value.size(), &value[0].x);
+}
+
+void Mesh::SetupUniform(ShaderProgram* pShader, char* name, std::vector<vec4> value)
+{
+    GLint location = glGetUniformLocation(pShader->GetProgram(), name);
+    glUniform4fv(location, value.size(), &value[0].x);
+}
+
 void Mesh::SetupAttribute(ShaderProgram* pShader, char* name, int size, GLenum type, GLboolean normalize, int stride, int64_t startIndex)
 {
     GLint location = glGetAttribLocation( pShader->GetProgram(), name );
@@ -75,7 +99,7 @@ void Mesh::SetupAttribute(ShaderProgram* pShader, char* name, int size, GLenum t
     }
 }
 
-void Mesh::Draw(Camera* pCamera, Material* pMaterial, const matrix& worldMat, const matrix& normalMat, vec2 uvScale, vec2 uvOffset, float time)
+void Mesh::Draw(GameObject* pParent, Camera* pCamera, Material* pMaterial, const matrix& worldMat, const matrix& normalMat, vec2 uvScale, vec2 uvOffset, float time)
 {
     ShaderProgram* pShader = pMaterial->GetShader();
     Texture* pTexture = pMaterial->GetTexture();
@@ -109,35 +133,62 @@ void Mesh::Draw(Camera* pCamera, Material* pMaterial, const matrix& worldMat, co
 
     SetupUniform(pShader, "u_MaterialColor", vec4(pMaterial->GetColor().r, pMaterial->GetColor().g, pMaterial->GetColor().b, pMaterial->GetColor().a));
 
-    Color4f AverageLightColor = Color4f(0.f, 0.f, 0.f, 1.f);
-    vec3 lightPos = vec3(9.5f, 12.f, 0.f);
-    float lightRadius = 20.f;
-    float lightPowerFactor = 2.f;
-
-    std::vector<Component*>& lights = pCamera->GetScene()->GetComponentManager()->GetComponentsOfType(LightComponent::GetStaticType());
-
-    if (!lights.empty())
+    if (pParent)
     {
-        for (fw::Component* pComponent : lights)
+        vec3 objectPos = pParent->GetTransform()->GetPosition();
+
+        std::vector<Component*>& lights = pCamera->GetScene()->GetComponentManager()->GetComponentsOfType(LightComponent::GetStaticType());
+
+        std::vector<vec4> lightColors(lights.size(), vec4());
+        std::vector<vec3> lightPositions(lights.size(), vec3());
+        std::vector<float> lightRadii(lights.size(), 0.f);
+        std::vector<float> lightPowerFactors(lights.size(), 0.f);
+
+        std::vector<int> closestLights{ 0,1,2,3 };
+
+        if (!lights.empty())
         {
-            LightComponent* light = static_cast<LightComponent*>(pComponent);
+            for (int i = 0; i < lights.size(); i++)
+            {
+                LightComponent* light = static_cast<LightComponent*>(lights[i]);
 
-            lightPos = light->GetGameObject()->GetTransform()->GetPosition();
+                lightPositions[i] = light->GetGameObject()->GetTransform()->GetPosition();
 
-            LightFixture* fixture = light->GetDetails();
-            lightRadius = fixture->radius;
-            lightPowerFactor = fixture->powerFactor;
-            Color4f lightColor = fixture->diffuse;
-            
-            AverageLightColor = AverageLightColor + Color4f(lightColor.r, lightColor.g, lightColor.b, 0.f);
+                LightFixture* fixture = light->GetDetails();
+                lightRadii[i] = fixture->radius;
+                lightPowerFactors[i] = fixture->powerFactor;
+                lightColors[i] = vec4(fixture->diffuse.r, fixture->diffuse.g, fixture->diffuse.b, fixture->diffuse.a);
+
+                if (lightPositions[i].DistanceFrom(objectPos) < lightPositions[closestLights[0]].DistanceFrom(objectPos))
+                {
+                    closestLights[0] = i;
+                }
+                else if (lightPositions[i].DistanceFrom(objectPos) < lightPositions[closestLights[1]].DistanceFrom(objectPos))
+                {
+                    closestLights[1] = i;
+                }
+                else if (lightPositions[i].DistanceFrom(objectPos) < lightPositions[closestLights[2]].DistanceFrom(objectPos))
+                {
+                    closestLights[2] = i;
+                }
+                else if (lightPositions[i].DistanceFrom(objectPos) < lightPositions[closestLights[3]].DistanceFrom(objectPos))
+                {
+                    closestLights[3] = i;
+                }
+            }
         }
+
+
+        SetupUniform(pShader, "u_LightColors", std::vector<vec4>{ lightColors[closestLights[0]], lightColors[closestLights[1]], lightColors[closestLights[2]], lightColors[closestLights[3]] });
+        SetupUniform(pShader, "u_LightPositions", std::vector<vec3>{ lightPositions[closestLights[0]], lightPositions[closestLights[1]], lightPositions[closestLights[2]], lightPositions[closestLights[3]] });
+        SetupUniform(pShader, "u_LightRadii", std::vector<float>{ lightRadii[closestLights[0]], lightRadii[closestLights[1]], lightRadii[closestLights[2]], lightRadii[closestLights[3]] });
+        SetupUniform(pShader, "u_LightPowerFactors", std::vector<float>{ lightPowerFactors[closestLights[0]], lightPowerFactors[closestLights[1]], lightPowerFactors[closestLights[2]], lightPowerFactors[closestLights[3]] });
+
+        SetupUniform(pShader, "u_LightColor", lightColors[0]);
+        SetupUniform(pShader, "u_LightPos", lightPositions[0]);
+        SetupUniform(pShader, "u_LightRadius", lightRadii[0]);
+        SetupUniform(pShader, "u_LightPowerFactor", lightPowerFactors[0]);
     }
-
-
-    SetupUniform(pShader, "u_LightColor", vec4(AverageLightColor.r, AverageLightColor.g, AverageLightColor.b, AverageLightColor.a));
-    SetupUniform(pShader, "u_LightPos", lightPos);
-    SetupUniform(pShader, "u_LightRadius", lightRadius);
-    SetupUniform(pShader, "u_LightPowerFactor", lightPowerFactor);
 
     GLint hasTexture = glGetUniformLocation(pShader->GetProgram(), "u_HasTexture");
 
