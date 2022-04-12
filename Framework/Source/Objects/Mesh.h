@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Math/Vector.h"
+#include "Components/LightComponent.h"
 
 namespace fw {
 
@@ -41,6 +42,9 @@ public:
     void SetupAttribute(ShaderProgram* pShader, char* name, int size, GLenum type, GLboolean normalize, int stride, int64_t startIndex);
     void Draw(GameObject* pParent, Camera* pCamera, Material* pMaterial, const matrix& worldMat, const matrix& normalMat, vec2 uvScale, vec2 uvOffset, float time);
 
+    void FindClosestLights(LightType type, std::vector<Component*>& lights, vec3& objectPos, int index);
+    void FillClosestLights(LightType type, std::vector<Component*>& lights);
+
     void Rebuild(GLenum primitiveType, const std::vector<VertexFormat>& verts);
     void Rebuild(GLenum primitiveType, const std::vector<VertexFormat>& verts, const std::vector<unsigned int>& indices);
 
@@ -56,6 +60,19 @@ protected:
     GLenum m_PrimitiveType = GL_POINTS;
     int m_NumVerts = 0;
     int m_NumIndices = 0;
+
+    unsigned int m_numDirecLights = 0;
+    unsigned int m_numPointLights = 0;
+    unsigned int m_numSpotLights = 0;
+
+    unsigned int m_closestDirecLight = 0;
+    std::vector<unsigned int> m_closestPoint{ 0,1,2,3 };
+    std::vector<unsigned int> m_closestSpot{ 4,5,6,7 };
+
+    std::vector<vec4>  m_lightColors;
+    std::vector<vec3>  m_lightPositions;
+    std::vector<float> m_lightRadii;
+    std::vector<float> m_lightPowerFactors;
 };
 
 } // namespace fw

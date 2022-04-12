@@ -2,7 +2,6 @@
 
 #include "Camera.h"
 #include "Mesh.h"
-#include "Components/LightComponent.h"
 #include "Components/ComponentManager.h"
 #include "Objects/Scene.h"
 #include "ShaderProgram.h"
@@ -141,56 +140,50 @@ void Mesh::Draw(GameObject* pParent, Camera* pCamera, Material* pMaterial, const
 
         if (!lights.empty())
         {
-            std::vector<vec4> lightColors(lights.size(), vec4());
-            std::vector<vec3> lightPositions(lights.size(), vec3());
-            std::vector<float> lightRadii(lights.size(), 0.f);
-            std::vector<float> lightPowerFactors(lights.size(), 0.f);
-
-            std::vector<int> closestLights{ 0,1,2,3 };
+            m_numDirecLights = 0;
+            m_numPointLights = 0;
+            m_numSpotLights = 0;
 
             for (int i = 0; i < lights.size(); i++)
             {
                 LightComponent* light = static_cast<LightComponent*>(lights[i]);
+                vec3 lightPos = lights[i]->GetGameObject()->GetPosition();
 
-                lightPositions[i] = light->GetGameObject()->GetTransform()->GetPosition();
-
-                LightFixture* fixture = light->GetDetails();
-                lightRadii[i] = fixture->radius;
-                lightPowerFactors[i] = fixture->powerFactor;
-                lightColors[i] = vec4(fixture->diffuse.r, fixture->diffuse.g, fixture->diffuse.b, fixture->diffuse.a);
-
-                if (i != closestLights[0] && i != closestLights[1] && i != closestLights[2] && i != closestLights[3])
+                switch (light->GetDetails()->type)
                 {
-                    if (lightPositions[i].DistanceFrom(objectPos) < lightPositions[closestLights[0]].DistanceFrom(objectPos))
-                    {
-                        closestLights[0] = i;
-                    }
-                    else if (lightPositions[i].DistanceFrom(objectPos) < lightPositions[closestLights[1]].DistanceFrom(objectPos))
-                    {
-                        closestLights[1] = i;
-                    }
-                    else if (lightPositions[i].DistanceFrom(objectPos) < lightPositions[closestLights[2]].DistanceFrom(objectPos))
-                    {
-                        closestLights[2] = i;
-                    }
-                    else if (lightPositions[i].DistanceFrom(objectPos) < lightPositions[closestLights[3]].DistanceFrom(objectPos))
-                    {
-                        closestLights[3] = i;
-                    }
+                    case LightType::Directional:
+                        FindClosestLights(LightType::Directional, lights, objectPos, i);
+                        m_numDirecLights++;
+                        break;
+                    case LightType::PointLight:
+                        FindClosestLights(LightType::PointLight, lights, objectPos, i);
+                        m_numPointLights++;
+                        break;
+                    case LightType::SpotLight:
+                        FindClosestLights(LightType::SpotLight, lights, objectPos, i);
+                        m_numSpotLights++;
+                        break;
                 }
             }
             
+            m_lightColors.clear();
+            m_lightPositions.clear();
+            m_lightRadii.clear();
+            m_lightPowerFactors.clear();
 
+            FillClosestLights(LightType::Directional, lights);
+            FillClosestLights(LightType::PointLight, lights);
+            FillClosestLights(LightType::SpotLight, lights);
 
-            SetupUniform(pShader, "u_LightColors", std::vector<vec4>{ lightColors[closestLights[0]], lightColors[closestLights[1]], lightColors[closestLights[2]], lightColors[closestLights[3]] });
-            SetupUniform(pShader, "u_LightPositions", std::vector<vec3>{ lightPositions[closestLights[0]], lightPositions[closestLights[1]], lightPositions[closestLights[2]], lightPositions[closestLights[3]] });
-            SetupUniform(pShader, "u_LightRadii", std::vector<float>{ lightRadii[closestLights[0]], lightRadii[closestLights[1]], lightRadii[closestLights[2]], lightRadii[closestLights[3]] });
-            SetupUniform(pShader, "u_LightPowerFactors", std::vector<float>{ lightPowerFactors[closestLights[0]], lightPowerFactors[closestLights[1]], lightPowerFactors[closestLights[2]], lightPowerFactors[closestLights[3]] });
+            SetupUniform(pShader, "u_LightColors", m_lightColors);
+            SetupUniform(pShader, "u_LightPositions", m_lightPositions);
+            SetupUniform(pShader, "u_LightRadii", m_lightRadii);
+            SetupUniform(pShader, "u_LightPowerFactors", m_lightPowerFactors);
 
-            SetupUniform(pShader, "u_LightColor", lightColors[0]);
-            SetupUniform(pShader, "u_LightPos", lightPositions[0]);
-            SetupUniform(pShader, "u_LightRadius", lightRadii[0]);
-            SetupUniform(pShader, "u_LightPowerFactor", lightPowerFactors[0]);
+            SetupUniform(pShader, "u_LightColor", m_lightColors[0]);
+            SetupUniform(pShader, "u_LightPos", m_lightPositions[0]);
+            SetupUniform(pShader, "u_LightRadius", m_lightRadii[0]);
+            SetupUniform(pShader, "u_LightPowerFactor", m_lightPowerFactors[0]);
         }
     }
 
@@ -217,6 +210,125 @@ void Mesh::Draw(GameObject* pParent, Camera* pCamera, Material* pMaterial, const
     else
     {
         glDrawArrays( m_PrimitiveType, 0, m_NumVerts );
+    }
+}
+
+void Mesh::FindClosestLights(LightType type, std::vector<Component*>& lights, vec3& objectPos, int index)
+{
+    LightComponent* light = static_cast<LightComponent*>(lights[index]);
+    vec3 lightPos = light->GetGameObject()->GetPosition();
+    unsigned int* closestLights;
+    unsigned int closestLightsSize;
+
+    switch (type)
+    {
+        case LightType::Directional:
+            if (index != m_closestDirecLight)
+            {
+                if (m_numDirecLights == 0 || lightPos.DistanceFrom(objectPos) < lights[m_closestDirecLight]->GetGameObject()->GetPosition().DistanceFrom(objectPos))
+                {
+                    m_closestDirecLight = index;
+                }
+            }
+            break;
+        case LightType::PointLight:
+            closestLights = &m_closestPoint[0];
+            closestLightsSize = m_closestPoint.size();
+        case LightType::SpotLight:
+            if (type == LightType::SpotLight)
+            {
+                closestLights = &m_closestSpot[0];
+                closestLightsSize = m_closestSpot.size();
+            }
+            
+            bool inPool = false;
+            for (size_t i = 0; i < closestLightsSize; i++)
+            {
+                if (index == closestLights[i])
+                {
+                    inPool = true;
+                }
+            }
+
+            if (!inPool)
+            {
+                for (size_t i = 0; i < closestLightsSize; i++)
+                {
+                    if (lightPos.DistanceFrom(objectPos) < lights[closestLights[i]]->GetGameObject()->GetPosition().DistanceFrom(objectPos))
+                    {
+                        closestLights[i] = index;
+                    }
+                }
+            }
+            break;
+    }
+}
+
+void Mesh::FillClosestLights(LightType type, std::vector<Component*>& lights)
+{
+    unsigned int* closestLights = nullptr;
+    unsigned int closestLightsSize = 0;
+    int numDummies = 0;
+
+    switch (type)
+    {
+        case fw::LightType::Directional:
+            closestLights = &m_closestDirecLight;
+            closestLightsSize = 1;
+
+            if (m_numDirecLights == 0)
+            {
+                numDummies = 1;
+            }
+            break;
+
+        case fw::LightType::PointLight:
+            closestLights = &m_closestPoint[0];
+            closestLightsSize = m_closestPoint.size();
+
+            if (m_numPointLights < 4)
+            {
+                numDummies = 4 - m_numPointLights;
+            }
+            break;
+
+        case fw::LightType::SpotLight:
+            closestLights = &m_closestSpot[0];
+            closestLightsSize = m_closestSpot.size();
+
+            if (m_numSpotLights < 4)
+            {
+                numDummies = 4 - m_numSpotLights;
+            }
+            break;
+    }
+
+    LightComponent* light;
+    Color4f color;
+    vec3 pos;
+
+    Color4f dummyColor = Color4f::Black();
+    LightComponent* dummy = new LightComponent(LightType::Directional, dummyColor, 0.0f, 0.0f);
+
+    for (size_t i = 0; i < closestLightsSize; i++)
+    {
+        if (numDummies > 0)
+        {
+            light = dummy;
+            color = dummyColor;
+            numDummies--;
+        }
+        else
+        {
+            light = static_cast<LightComponent*>(lights[closestLights[i]]);
+            color = light->GetDetails()->diffuse;
+            pos = light->GetGameObject()->GetPosition();
+        }
+
+        m_lightColors.push_back(vec4(color.r, color.g, color.b, color.a));
+        m_lightPositions.push_back(pos);
+        m_lightRadii.push_back(light->GetDetails()->radius);
+        m_lightPowerFactors.push_back(light->GetDetails()->powerFactor);
     }
 }
 

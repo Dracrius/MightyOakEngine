@@ -55,6 +55,11 @@ ThirdPersonScene::ThirdPersonScene(Game* pGame) : fw::Scene(pGame)
 	pLight->SetName("White Light");
 	m_Objects.push_back(pLight);
 
+	pLight = new fw::GameObject(this, c_centerOfScreen + vec3(-7.f, 10.f, -7.f), vec3());
+	pLight->AddComponent(new fw::LightComponent(fw::LightType::Directional, Color4f(0.025f, 0.025f, 0.025f, 1.f), 10.f, 2.f));
+	pLight->SetName("Directional Light");
+	m_Objects.push_back(pLight);
+
     fw::GameObject* pObj= new fw::GameObject(this, pos, vec3());
     pObj->AddComponent(new fw::MeshComponent(m_pResourceManager->GetMesh("Obj"), m_pResourceManager->GetMaterial("Lit-White")));
 	pObj->SetName("Loaded Obj");
