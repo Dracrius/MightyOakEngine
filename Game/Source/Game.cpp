@@ -64,6 +64,8 @@ void Game::Init()
 	m_pResourceManager->CreateMesh("Obj");
     m_pResourceManager->CreateMesh("Facehugger");
     m_pResourceManager->GetMesh("Facehugger")->LoadObj("Data/Models/Chibi_Facehugger.obj", true);
+	m_pResourceManager->CreateMesh("Sphere");
+	m_pResourceManager->GetMesh("Sphere")->LoadObj("Data/Models/sphere.obj", true);
 
 
     // Setup Shaders

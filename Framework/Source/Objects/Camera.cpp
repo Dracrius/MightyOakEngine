@@ -104,6 +104,9 @@ void Camera::Hack_ThirdPersonCam(FWCore* pFramework, float deltaTime)
 	m_ViewMatrix.Rotate(rot.x, 1, 0, 0);
 	m_ViewMatrix.Rotate(rot.y, 0, 1, 0);
 	m_ViewMatrix.Translate(m_pTransform->GetPosition());
+
+	vec3 pos = m_ViewMatrix.GetTranslation();
+	GetTransform()->SetPosition(pos);
 	m_ViewMatrix.Inverse();
 
 	m_pTransform->SetRotation(rot);

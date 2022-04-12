@@ -71,6 +71,7 @@ protected:
 
     std::vector<vec4>  m_lightColors;
     std::vector<vec3>  m_lightPositions;
+    std::vector<vec3>  m_lightRotations;
     std::vector<float> m_lightRadii;
     std::vector<float> m_lightPowerFactors;
 };
