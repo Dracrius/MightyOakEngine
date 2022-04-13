@@ -9,6 +9,11 @@ LightComponent::LightComponent(LightType type, Color4f color, float radius, floa
 	m_light = { type, color * 0.1f, color, color * 0.5f, radius, powerFactor };
 }
 
+LightComponent::LightComponent(LightType type, Color4f color, float radius, float powerFactor, float spotCutoff) : m_spotCutoff(spotCutoff)
+{
+    m_light = { type, color * 0.1f, color, color * 0.5f, radius, powerFactor };
+}
+
 LightComponent::~LightComponent()
 {
 

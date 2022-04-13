@@ -74,6 +74,7 @@ protected:
     std::vector<vec3>  m_lightRotations;
     std::vector<float> m_lightRadii;
     std::vector<float> m_lightPowerFactors;
+    std::vector<float> m_spotCutOffs;
 };
 
 } // namespace fw

@@ -9,6 +9,7 @@
 #include "Material.h"
 #include "Utility/Utility.h"
 #include "Math/Matrix.h"
+#include "Math/MathHelpers.h"
 #include <stdio.h>
 
 namespace fw {
@@ -171,6 +172,7 @@ void Mesh::Draw(GameObject* pParent, Camera* pCamera, Material* pMaterial, const
             m_lightRotations.clear();
             m_lightRadii.clear();
             m_lightPowerFactors.clear();
+            m_spotCutOffs.clear();
 
             FillClosestLights(LightType::Directional, lights);
             FillClosestLights(LightType::PointLight, lights);
@@ -183,6 +185,7 @@ void Mesh::Draw(GameObject* pParent, Camera* pCamera, Material* pMaterial, const
             SetupUniform(pShader, "u_lightRotations", m_lightRotations);
             SetupUniform(pShader, "u_LightRadii", m_lightRadii);
             SetupUniform(pShader, "u_LightPowerFactors", m_lightPowerFactors);
+            SetupUniform(pShader, "u_SpotCosCutoff", m_spotCutOffs);
 
             SetupUniform(pShader, "u_LightColor", m_lightColors[0]);
             SetupUniform(pShader, "u_LightPos", m_lightPositions[0]);
@@ -236,10 +239,12 @@ void Mesh::FindClosestLights(LightType type, std::vector<Component*>& lights, ve
                 }
             }
             break;
+
         case LightType::PointLight:
             closestLights = &m_closestPoint[0];
             closestLightsSize = m_closestPoint.size();
             numLightsFound = m_numPointLights;
+
         case LightType::SpotLight:
             if (type == LightType::SpotLight)
             {
@@ -247,25 +252,22 @@ void Mesh::FindClosestLights(LightType type, std::vector<Component*>& lights, ve
                 closestLightsSize = m_closestSpot.size();
                 numLightsFound = m_numSpotLights;
             }
-            
-            bool inPool = false;
-            for (size_t i = 0; i < closestLightsSize; i++)
-            {
-                if (index == closestLights[i])
-                {
-                    inPool = true;
-                }
-            }
 
-            if (!inPool)
+            if (numLightsFound < closestLightsSize)
+            {
+                closestLights[numLightsFound] = index;
+            }
+            else
             {
                 for (size_t i = 0; i < closestLightsSize; i++)
                 {
-                    if (i < closestLightsSize || lightPos.DistanceFrom(objectPos) < lights[closestLights[i]]->GetGameObject()->GetPosition().DistanceFrom(objectPos))
+                    if (lightPos.DistanceFrom(objectPos) < lights[closestLights[i]]->GetGameObject()->GetPosition().DistanceFrom(objectPos))
                     {
                         closestLights[i] = index;
+                        break;
                     }
                 }
+
             }
             break;
     }
@@ -314,24 +316,27 @@ void Mesh::FillClosestLights(LightType type, std::vector<Component*>& lights)
     Color4f color;
     vec3 pos;
     vec3 rot;
+    float cutOff = 0.f;
 
-    Color4f dummyColor = Color4f::Black();
-    LightComponent* dummy = new LightComponent(type, dummyColor, 0.0f, 0.0f);
+    Color4f dummyColor = Color4f(0.f, 0.f, 0.f, 1.f);
+    LightComponent* dummy = new LightComponent(type, dummyColor, 0.f, 1.f);
 
     for (size_t i = 0; i < closestLightsSize; i++)
     {
-        if (numDummies > 0)
-        {
-            light = dummy;
-            color = dummyColor;
-            numDummies--;
-        }
-        else
+        if (i < closestLightsSize - numDummies)
         {
             light = static_cast<LightComponent*>(lights[closestLights[i]]);
             color = light->GetDetails()->diffuse;
             pos = light->GetGameObject()->GetPosition();
             rot = light->GetGameObject()->GetRotation();
+            cutOff = cos(degreesToRads(light->GetCutoff() / 2));
+        }
+        else if (numDummies > 0)
+        {
+            light = dummy;
+            color = dummyColor;
+            cutOff = cos(degreesToRads(dummy->GetCutoff() / 2));
+            numDummies--;
         }
 
         m_lightColors.push_back(vec4(color.r, color.g, color.b, color.a));
@@ -339,6 +344,7 @@ void Mesh::FillClosestLights(LightType type, std::vector<Component*>& lights)
         m_lightRotations.push_back(rot);
         m_lightRadii.push_back(light->GetDetails()->radius);
         m_lightPowerFactors.push_back(light->GetDetails()->powerFactor);
+        m_spotCutOffs.push_back(cutOff);
     }
 
     delete dummy;

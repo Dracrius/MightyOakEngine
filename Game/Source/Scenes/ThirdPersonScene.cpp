@@ -12,7 +12,7 @@ ThirdPersonScene::ThirdPersonScene(Game* pGame) : fw::Scene(pGame)
 {
 	m_pPlayerController = new PlayerController(pGame->GetFramework()->GetEventManager());
 
-    vec3 cameraOffset = vec3(0.f, 0.f, 0.f);
+    vec3 cameraOffset = vec3(0.f, 1.f, 0.f);
 	float heightOffset = -3.5f;
 
 	m_openPos[0] = c_centerOfScreen.x;
@@ -35,17 +35,17 @@ ThirdPersonScene::ThirdPersonScene(Game* pGame) : fw::Scene(pGame)
 	vec3 pos = c_centerOfScreen + vec3(0.f, heightOffset, 0.f);
 	vec3 rot = vec3(-90.f, 0.f, 0.f);
 
-	fw::GameObject* pLight = new fw::GameObject(this, c_centerOfScreen + vec3(-7.f, 6.f, 7.f), vec3());
+	fw::GameObject* pLight = new fw::GameObject(this, c_centerOfScreen + vec3(-7.f, 0.f, 7.f), vec3());
 	pLight->AddComponent(new fw::LightComponent(fw::LightType::PointLight, Color4f(1.f, 0.f, 0.f, 1.f), 25.f, 2.f));
 	pLight->SetName("Red Light");
 	m_Objects.push_back(pLight);
 
-	pLight = new fw::GameObject(this, c_centerOfScreen + vec3(7.f, 6.f, -7.f), vec3());
+	pLight = new fw::GameObject(this, c_centerOfScreen + vec3(7.f, 0.f, -7.f), vec3());
 	pLight->AddComponent(new fw::LightComponent(fw::LightType::PointLight, Color4f(0.f, 1.f, 0.f, 1.f), 25.f, 2.f));
 	pLight->SetName("Green Light");
 	m_Objects.push_back(pLight);
 
-	pLight = new fw::GameObject(this, c_centerOfScreen + vec3(7.f, 6.f, 7.f), vec3());
+	pLight = new fw::GameObject(this, c_centerOfScreen + vec3(7.f, 0.f, 7.f), vec3());
 	pLight->AddComponent(new fw::LightComponent(fw::LightType::PointLight, Color4f(0.f, 0.f, 1.f, 1.f), 25.f, 2.f));
 	pLight->SetName("Blue Light");
 	m_Objects.push_back(pLight);
@@ -60,10 +60,10 @@ ThirdPersonScene::ThirdPersonScene(Game* pGame) : fw::Scene(pGame)
 	pLight->SetName("Directional Light");
 	m_Objects.push_back(pLight);
 
-	//pLight = new fw::GameObject(this, c_centerOfScreen + vec3(-7.f, 10.f, 7.f), vec3());
-	//pLight->AddComponent(new fw::LightComponent(fw::LightType::SpotLight, Color4f(1.f, 1.f, 1.f, 1.f), 10.f, 2.f));
-	//pLight->SetName("Spot Light");
-	//m_Objects.push_back(pLight);
+	pLight = new fw::GameObject(this, vec3(7.f, 5.f, -7.f), vec3(0.f,0.f,90.f));
+	pLight->AddComponent(new fw::LightComponent(fw::LightType::SpotLight, Color4f(1.f, 1.f, 1.f, 1.f), 10.f, 2.f, 60.f));
+	pLight->SetName("Spot Light");
+	m_Objects.push_back(pLight);
 
     fw::GameObject* pObj= new fw::GameObject(this, pos, vec3());
     pObj->AddComponent(new fw::MeshComponent(m_pResourceManager->GetMesh("Obj"), m_pResourceManager->GetMaterial("Lit-White")));
@@ -87,7 +87,7 @@ ThirdPersonScene::ThirdPersonScene(Game* pGame) : fw::Scene(pGame)
 	pCube->SetName("White Cube");
 	m_Objects.push_back(pCube);
 
-    fw::GameObject* pPlayer = new fw::GameObject(this, c_centerOfScreen + vec3(-6.f, 0.f -3.f), rot);
+    fw::GameObject* pPlayer = new fw::GameObject(this, c_centerOfScreen + vec3(-6.f, 0.5f -3.f), rot);
     pPlayer->AddComponent(new fw::MeshComponent(m_pResourceManager->GetMesh("Sphere"), m_pResourceManager->GetMaterial("Lit-White")));
     pPlayer->SetRotation(vec3(-90.f, -180.f, 0.f));
     //pPlayer->SetScale(vec3(0.1f, 0.1f, 0.1f));
@@ -165,10 +165,6 @@ void ThirdPersonScene::Update(float deltaTime)
 
     m_Objects[0]->SetRotation(vec3(m_Objects[0]->GetRotation().x, rot + offset, m_Objects[0]->GetRotation().z));
     m_Objects.back()->SetRotation(vec3(-90.f, rot + offset, 0.f));
-
-	vec3 pos = m_pCamera->GetTransform()->GetPosition();
-	ImGui::Text("Camera Pos: %0.2f, %0.2f, %0.2f", pos.x, pos.y, pos.z);
-
 }
 
 void ThirdPersonScene::Slider(float& rot)

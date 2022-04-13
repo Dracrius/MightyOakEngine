@@ -164,6 +164,12 @@ void GameObject::Editor_OutputObjectDetails()
 
 				ImGui::DragFloat("Radius", &fixture->radius, 0.01f);
 				ImGui::DragFloat("Power Factor", &fixture->powerFactor, 0.01f);
+                if (fixture->type == LightType::SpotLight)
+                {
+                    float cutOff = GetComponent<fw::LightComponent>()->GetCutoff();
+                    ImGui::DragFloat("Spotlight Cutoff", &cutOff, 0.01f);
+                    GetComponent<fw::LightComponent>()->SetCutoff(cutOff);
+                }
 				Color4f lightColor = fixture->diffuse;
 				vec3 sliderColor = vec3(lightColor.r, lightColor.g, lightColor.b);
 				//ImGui::DragFloat3("Colour", &sliderColor.x, 0.01f);
