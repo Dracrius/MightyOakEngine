@@ -54,6 +54,11 @@ Texture::Texture(const char* filename)
 	SetTexture(filename);
 }
 
+Texture::Texture(std::vector<const char*> filenames)
+{
+    SetCubeMapTexture(filenames);
+}
+
 Texture::~Texture()
 {
     glDeleteTextures( 1, &m_TextureID );
@@ -79,6 +84,34 @@ void Texture::SetTexture(const char* filename)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
 	stbi_image_free(pixels);
+}
+
+void Texture::SetCubeMapTexture(std::vector<const char*> filenames)
+{
+    assert(filenames.size() == 6);
+
+    glGenTextures(1, &m_TextureID);
+
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, m_TextureID);
+
+    stbi_set_flip_vertically_on_load(false);
+
+    for (int i = 0; i < 6; i++)
+    {
+        int width;
+        int height;
+        int channels;
+        unsigned char* pixels = stbi_load(filenames[i], &width, &height, &channels, 4);
+        assert(pixels != nullptr);
+
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+
+        stbi_image_free(pixels);
+    }
+
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 }
 
 } // namespace fw

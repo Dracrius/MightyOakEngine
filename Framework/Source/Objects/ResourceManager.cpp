@@ -96,6 +96,17 @@ bool ResourceManager::CreateTexture(std::string name, const char* filename)
 	return AddTexture(name, texture);
 }
 
+bool ResourceManager::CreateTexture(std::string name, std::vector<const char*> filenames)
+{
+    if (m_Textures.count(name))
+    {
+        return false;
+    }
+
+    Texture* texture = new Texture(filenames);
+    return AddTexture(name, texture);
+}
+
 bool ResourceManager::CreateMaterial(std::string name, Color4f color)
 {
 	return CreateMaterial(name, m_Shaders["Default"], color);
@@ -104,6 +115,11 @@ bool ResourceManager::CreateMaterial(std::string name, Color4f color)
 bool ResourceManager::CreateMaterial(std::string name, Texture* pTexture, Color4f color)
 {
 	return CreateMaterial(name, m_Shaders["Default"], pTexture, color);
+}
+
+bool ResourceManager::CreateMaterial(std::string name, Texture* pTexture, Color4f color, Texture* pCubemap)
+{
+    return CreateMaterial(name, m_Shaders["Default"], pTexture, color, pCubemap);
 }
 
 bool ResourceManager::CreateMaterial(std::string name, ShaderProgram* pShader, Color4f color)
@@ -126,6 +142,17 @@ bool ResourceManager::CreateMaterial(std::string name, ShaderProgram* pShader, T
 
 	Material* material = new Material(pShader, pTexture, color);
 	return AddMaterial(name, material);
+}
+
+bool ResourceManager::CreateMaterial(std::string name, ShaderProgram* pShader, Texture* pTexture, Color4f color, Texture* pCubemap)
+{
+    if (m_Materials.count(name))
+    {
+        return false;
+    }
+
+    Material* material = new Material(pShader, pTexture, color, pCubemap);
+    return AddMaterial(name, material);
 }
 
 bool ResourceManager::CreateSpriteSheet(std::string name, const char* filename, Texture* pTexture)

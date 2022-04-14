@@ -73,6 +73,7 @@ void Game::Init()
 	m_pResourceManager->CreateShader("Water", "Data/Shaders/Water.vert", "Data/Shaders/Water.frag");
 	m_pResourceManager->CreateShader("SolidColor", "Data/Shaders/SolidColor.vert", "Data/Shaders/SolidColor.frag");
 	m_pResourceManager->CreateShader("Lit-Color", "Data/Shaders/Light-SolidColor.vert", "Data/Shaders/Light-SolidColor.frag");
+    m_pResourceManager->CreateShader("Skybox", "Data/Shaders/Skybox.vert", "Data/Shaders/Skybox.frag");
 
     // Setup Textures
 	m_pResourceManager->CreateTexture("Sprites", "Data/Textures/Sprites.png");
@@ -83,6 +84,9 @@ void Game::Init()
 	m_pResourceManager->CreateTexture("Background", "Data/Textures/mayclover_meadow.png");
 	m_pResourceManager->CreateTexture("NiceDaysWalk", "Data/Textures/NiceDaysWalk.png");
 	m_pResourceManager->CreateTexture("PlatformCenter", "Data/Textures/Ground_02.png");
+
+    m_pResourceManager->CreateTexture("TestCubmap", {"Data/Textures/TestCubemap/posx.png", "Data/Textures/TestCubemap/negx.png", "Data/Textures/TestCubemap/posy.png", "Data/Textures/TestCubemap/negy.png", "Data/Textures/TestCubemap/posz.png", "Data/Textures/TestCubemap/negz.png"});
+    m_pResourceManager->CreateTexture("Yokohama2", { "Data/Textures/Yokohama2/posx.png", "Data/Textures/Yokohama2/negx.png", "Data/Textures/Yokohama2/posy.png", "Data/Textures/Yokohama2/negy.png", "Data/Textures/Yokohama2/posz.png", "Data/Textures/Yokohama2/negz.png" });
 
     // Setup Sprite Sheets
 	m_pResourceManager->CreateSpriteSheet("Sprites", "Data/Textures/Sprites.json", m_pResourceManager->GetTexture("Sprites"));
@@ -109,6 +113,9 @@ void Game::Init()
 	m_pResourceManager->CreateMaterial("Background", m_pResourceManager->GetShader("Basic"), m_pResourceManager->GetTexture("Background"), c_defaultWaterColor);
 	m_pResourceManager->CreateMaterial("NiceDaysWalk", m_pResourceManager->GetShader("Basic"), m_pResourceManager->GetTexture("NiceDaysWalk"), fw::Color4f::Red());
 	m_pResourceManager->CreateMaterial("PlatformCenter", m_pResourceManager->GetShader("Basic"), m_pResourceManager->GetTexture("PlatformCenter"), fw::Color4f::Red());
+
+    m_pResourceManager->CreateMaterial("TestSkybox", m_pResourceManager->GetShader("Skybox"), m_pResourceManager->GetTexture("Sprites"), fw::Color4f::Red(), m_pResourceManager->GetTexture("TestCubemap"));
+    m_pResourceManager->CreateMaterial("Yokohama2", m_pResourceManager->GetShader("Skybox"), m_pResourceManager->GetTexture("Sprites"), fw::Color4f::Red(), m_pResourceManager->GetTexture("Yokohama2"));
 
     // Setup Scenes
     m_Scenes["Physics"] = new PhysicsScene(this);
@@ -190,6 +197,19 @@ void Game::Draw()
     m_pOffScreenFBO->Bind();
     glViewport(0, 0, m_pOffScreenFBO->GetRequestedWidth(), m_pOffScreenFBO->GetRequestedHeight());
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    //Disable Z-Write
+    glDepthMask(false);
+    glFrontFace(GL_CCW);
+    //Render Cube
+    fw::matrix identity;
+    identity.SetIdentity();
+    m_pResourceManager->GetMesh("Cube")->Draw(nullptr, m_pCurrentScene->GetCamera(), m_pResourceManager->GetMaterial("Yokohama2"), identity, identity, 1, 0, 0);
+
+    //Re-Enable Z-Write
+    glDepthMask(true);
+    glFrontFace(GL_CW);
+
     m_pCurrentScene->Draw();
     m_pOffScreenFBO->Unbind();
 

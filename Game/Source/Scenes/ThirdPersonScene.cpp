@@ -60,7 +60,7 @@ ThirdPersonScene::ThirdPersonScene(Game* pGame) : fw::Scene(pGame)
 	pLight->SetName("Directional Light");
 	m_Objects.push_back(pLight);
 
-	pLight = new fw::GameObject(this, vec3(7.f, 5.f, -7.f), vec3(0.f,0.f,90.f));
+	pLight = new fw::GameObject(this, vec3(7.f, 5.f, -7.f), vec3(0.f,0.f,0.f));
 	pLight->AddComponent(new fw::LightComponent(fw::LightType::SpotLight, Color4f(1.f, 1.f, 1.f, 1.f), 10.f, 2.f, 60.f));
 	pLight->SetName("Spot Light");
 	m_Objects.push_back(pLight);

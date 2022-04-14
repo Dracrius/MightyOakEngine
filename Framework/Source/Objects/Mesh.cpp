@@ -201,12 +201,24 @@ void Mesh::Draw(GameObject* pParent, Camera* pCamera, Material* pMaterial, const
     {
         glUniform1i(hasTexture, true);
 
-        glActiveTexture(GL_TEXTURE0);
+        int textureUnit = 0;
+        glActiveTexture(GL_TEXTURE0 + textureUnit);
         glBindTexture(GL_TEXTURE_2D, pTexture->GetTextureID());
+        GLint location = glGetUniformLocation(pShader->GetProgram(), "u_Texture");
+        glUniform1i(location, textureUnit);
     }
     else
     {
         glUniform1i(hasTexture, false);
+    }
+
+    if (pMaterial->GetCubemap())
+    {
+        int textureUnit = 1;
+        glActiveTexture(GL_TEXTURE0 + textureUnit);
+        glBindTexture(GL_TEXTURE_CUBE_MAP, pMaterial->GetCubemap()->GetTextureID());
+        GLint location = glGetUniformLocation(pShader->GetProgram(), "u_CubemapTexture");
+        glUniform1i(location, textureUnit);
     }
 
     // Draw the primitive.
@@ -329,6 +341,17 @@ void Mesh::FillClosestLights(LightType type, std::vector<Component*>& lights)
             color = light->GetDetails()->diffuse;
             pos = light->GetGameObject()->GetPosition();
             rot = light->GetGameObject()->GetRotation();
+            matrix normalMatrix;
+            normalMatrix.CreateRotation(rot);
+            if (type == LightType::Directional)
+            {
+                rot = normalMatrix * vec3(0, 0, -1);
+            }
+            if (type == LightType::SpotLight)
+            {
+                rot = normalMatrix * vec3(0, 0, 1);
+            }
+
             cutOff = cos(degreesToRads(light->GetCutoff() / 2));
         }
         else if (numDummies > 0)

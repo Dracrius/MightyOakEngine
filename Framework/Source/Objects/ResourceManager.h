@@ -31,11 +31,14 @@ public:
 	bool CreateMesh(std::string name, GLenum primitiveType, const std::vector<VertexFormat>& verts, const std::vector<unsigned int>& indices);
 	
 	bool CreateTexture(std::string name, const char* filename);
+    bool CreateTexture(std::string name, std::vector<const char*> filenames);
 	
 	bool CreateMaterial(std::string name, Color4f color);
 	bool CreateMaterial(std::string name, Texture* pTexture, Color4f color);
+    bool CreateMaterial(std::string name, Texture* pTexture, Color4f color, Texture* pCubemap);
 	bool CreateMaterial(std::string name, ShaderProgram* pShader, Color4f color);
 	bool CreateMaterial(std::string name, ShaderProgram* pShader, Texture* pTexture, Color4f color);
+    bool CreateMaterial(std::string name, ShaderProgram* pShader, Texture* pTexture, Color4f color, Texture* pCubemap);
 	
 	bool CreateSpriteSheet(std::string name, const char* filename, Texture* pTexture);
 	
