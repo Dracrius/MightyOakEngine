@@ -2,9 +2,7 @@ attribute vec3 a_Position;
 attribute vec4 a_Color;
 attribute vec2 a_UVCoord;
 
-uniform mat4 u_WorldMatrix;
-uniform mat4 u_ViewMatrix;
-uniform mat4 u_ProjecMatrix;
+uniform mat4 u_WVPMatrix;
 
 uniform vec2 u_UVScale;
 uniform vec2 u_UVOffset;
@@ -17,12 +15,7 @@ varying vec4 v_Color;
 
 void main()
 {
-    vec4 objectSpacePosition = vec4(a_Position, 1);
-    vec4 worldSpacePosition = u_WorldMatrix * objectSpacePosition;
-    vec4 viewSpacePosition = u_ViewMatrix * worldSpacePosition;
-    vec4 clipSpacePosition = u_ProjecMatrix * viewSpacePosition;
-
-    gl_Position = clipSpacePosition;
+    gl_Position = u_WVPMatrix * vec4(a_Position, 1);
     
     v_UVCoord = a_UVCoord * u_UVScale + u_UVOffset;
     v_Color = a_Color;

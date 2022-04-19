@@ -51,6 +51,11 @@ public:
     void CreateSprite();
     void CreatePlane(vec2 size, ivec2 vertRes);
 
+    //Made in Class
+    void CreatePlane(vec3 topLeftPos, vec2 worldSize, ivec2 vertCount, vec2 uvStart, vec2 uvRange);
+    void CreateCylinder(float height, float radius, ivec2 vertCount, vec2 uvStart, vec2 uvRange);
+    void CreateSphere(float radius, ivec2 vertCount, vec2 uvStart, vec2 uvRange);
+
     void LoadObj(const char* filename);
     void LoadObj(const char* filename, bool righthanded);
 

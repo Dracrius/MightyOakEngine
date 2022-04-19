@@ -61,11 +61,15 @@ void Game::Init()
     m_pResourceManager->CreateMesh("Cube", GL_TRIANGLES, g_CubeVerts);
 	m_pResourceManager->CreateMesh("Plane");
 	m_pResourceManager->GetMesh("Plane")->CreatePlane(vec2(100.f, 100.f), ivec2(1000, 1000));
+    m_pResourceManager->CreateMesh("Cylinder");
+    m_pResourceManager->GetMesh("Cylinder")->CreateCylinder(2.f, 0.5f, ivec2(200,200), vec2(0,0), vec2(20,20));
+    m_pResourceManager->CreateMesh("Sphere");
+    m_pResourceManager->GetMesh("Sphere")->CreateSphere( 1.f, ivec2(200, 200), vec2(0, 0), vec2(20, 20));
 	m_pResourceManager->CreateMesh("Obj");
     m_pResourceManager->CreateMesh("Facehugger");
     m_pResourceManager->GetMesh("Facehugger")->LoadObj("Data/Models/Chibi_Facehugger.obj", true);
-	m_pResourceManager->CreateMesh("Sphere");
-	m_pResourceManager->GetMesh("Sphere")->LoadObj("Data/Models/sphere.obj", true);
+	m_pResourceManager->CreateMesh("SphereObj");
+	m_pResourceManager->GetMesh("SphereObj")->LoadObj("Data/Models/sphere.obj", true);
 
 
     // Setup Shaders
@@ -74,6 +78,7 @@ void Game::Init()
 	m_pResourceManager->CreateShader("SolidColor", "Data/Shaders/SolidColor.vert", "Data/Shaders/SolidColor.frag");
 	m_pResourceManager->CreateShader("Lit-Color", "Data/Shaders/Light-SolidColor.vert", "Data/Shaders/Light-SolidColor.frag");
     m_pResourceManager->CreateShader("Skybox", "Data/Shaders/Skybox.vert", "Data/Shaders/Skybox.frag");
+    m_pResourceManager->CreateShader("Reflection", "Data/Shaders/Reflection.vert", "Data/Shaders/Reflection.frag");
 
     // Setup Textures
 	m_pResourceManager->CreateTexture("Sprites", "Data/Textures/Sprites.png");
@@ -98,6 +103,7 @@ void Game::Init()
     m_pResourceManager->CreateMaterial("Green", m_pResourceManager->GetShader("SolidColor"), fw::Color4f::Green());
     m_pResourceManager->CreateMaterial("Blue", m_pResourceManager->GetShader("SolidColor"), fw::Color4f::Blue());
     m_pResourceManager->CreateMaterial("White", m_pResourceManager->GetShader("SolidColor"), fw::Color4f::White());
+    m_pResourceManager->CreateMaterial("Black", m_pResourceManager->GetShader("SolidColor"), fw::Color4f::Black());
 
 	m_pResourceManager->CreateMaterial("Lit-SolidColor", m_pResourceManager->GetShader("Lit-Color"), c_defaultObjColor);
 	m_pResourceManager->CreateMaterial("Lit-Red", m_pResourceManager->GetShader("Lit-Color"), fw::Color4f::Red());
@@ -116,6 +122,7 @@ void Game::Init()
 
     m_pResourceManager->CreateMaterial("TestSkybox", m_pResourceManager->GetShader("Skybox"), m_pResourceManager->GetTexture("Sprites"), fw::Color4f::Red(), m_pResourceManager->GetTexture("TestCubemap"));
     m_pResourceManager->CreateMaterial("Yokohama2", m_pResourceManager->GetShader("Skybox"), m_pResourceManager->GetTexture("Sprites"), fw::Color4f::Red(), m_pResourceManager->GetTexture("Yokohama2"));
+    m_pResourceManager->CreateMaterial("Reflection", m_pResourceManager->GetShader("Reflection"), m_pResourceManager->GetTexture("Sprites"), fw::Color4f::Red(), m_pResourceManager->GetTexture("Yokohama2"));
 
     // Setup Scenes
     m_Scenes["Physics"] = new PhysicsScene(this);
@@ -204,7 +211,7 @@ void Game::Draw()
     //Render Cube
     fw::matrix identity;
     identity.SetIdentity();
-    m_pResourceManager->GetMesh("Cube")->Draw(nullptr, m_pCurrentScene->GetCamera(), m_pResourceManager->GetMaterial("Yokohama2"), identity, identity, 1, 0, 0);
+    m_pResourceManager->GetMesh("Cube")->Draw(nullptr, m_pCurrentScene->GetCamera(), m_pResourceManager->GetMaterial("Black"), identity, identity, 1, 0, 0);
 
     //Re-Enable Z-Write
     glDepthMask(true);

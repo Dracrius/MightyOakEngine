@@ -103,6 +103,8 @@ PhysicsBody* PhysicsWorldBullet::CreateBody(GameObject* owner, bool isDynamic, f
 void PhysicsWorldBullet::CreateJoint(PhysicsBody* pBody, vec3 pos)
 {
     assert( false ); // implement this.
+
+   // btTypedConstraint* p2p = new btPoint2PointConstraint(pBody, pos);
 }
 
 } // namespace fw

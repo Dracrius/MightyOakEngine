@@ -122,6 +122,9 @@ void Mesh::Draw(GameObject* pParent, Camera* pCamera, Material* pMaterial, const
     SetupUniform(pShader, "u_WorldMatrix", worldMat);
     SetupUniform(pShader, "u_ViewMatrix", pCamera->GetViewMatrix());
     SetupUniform(pShader, "u_ProjecMatrix", pCamera->GetProjecMatrix());
+
+    SetupUniform(pShader, "u_WVPMatrix", pCamera->GetProjecMatrix() * pCamera->GetViewMatrix() * worldMat);
+
     SetupUniform(pShader, "u_NormalMatrix", normalMat);
 
     // UV uniforms.
@@ -427,8 +430,12 @@ void Mesh::CreatePlane(vec2 size, ivec2 vertRes)
 {
     vec2 stepSize = vec2(size.x / (vertRes.x - 1), size.y / (vertRes.y - 1));
 
+    int numVerts = vertRes.x * vertRes.y;
+    int numIndices = (vertRes.x - 1) * (vertRes.y - 1) * 6;
     std::vector<fw::VertexFormat> verts;
+    verts.reserve(numVerts);
     std::vector<unsigned int> indices;
+    indices.reserve(numIndices);
 
     //Centered
     for (int y = 0; y < vertRes.y; y++)
@@ -441,7 +448,9 @@ void Mesh::CreatePlane(vec2 size, ivec2 vertRes)
 
             uv = uv * size / 2;
 
-            verts.push_back({ pos,  255,255,255,255,  uv });
+            vec3 normal = vec3(0.f, 1.f, 0.f);
+
+            verts.push_back({ pos,  255,255,255,255,  uv , normal});
         }
     }
 
@@ -471,6 +480,128 @@ void Mesh::CreatePlane(vec2 size, ivec2 vertRes)
 
     Rebuild(GL_TRIANGLES, verts, indices);
 }
+
+void Mesh::CreatePlane(vec3 topLeftPos, vec2 worldSize, ivec2 vertCount, vec2 uvStart, vec2 uvRange)
+{
+    int numVerts = vertCount.x * vertCount.y;
+    int numIndices = (vertCount.x - 1) * (vertCount.y - 1) * 6;
+
+    std::vector<fw::VertexFormat> verts(numVerts);
+    std::vector<unsigned int> indices(numIndices);
+
+    vec3 stepSize(worldSize.x / (vertCount.x - 1), 0, worldSize.y / (vertCount.y - 1));
+    vec2 uvStepSize(uvRange.x / (vertCount.x - 1), uvRange.y / (vertCount.y - 1));
+
+    for (int y = 0; y < vertCount.y; y++)
+    {
+        for (int x = 0; x < vertCount.x; x++)
+        {
+            verts[y * vertCount.x + x].pos = topLeftPos + vec3(x, 0, y) * stepSize;
+            verts[y * vertCount.x + x].normal.Set(0, 1, 0);
+            verts[y * vertCount.x + x].uv = uvStart + vec2(x, y) * uvStepSize;
+        }
+    }
+
+    for (int y = 0; y < vertCount.y - 1; y++)
+    {
+        for (int x = 0; x < vertCount.x - 1; x++)
+        {
+            indices[(y * (vertCount.x - 1) + x) * 6 + 0] = (y * vertCount.x + x) + 0;
+            indices[(y * (vertCount.x - 1) + x) * 6 + 1] = (y * vertCount.x + x) + vertCount.x;
+            indices[(y * (vertCount.x - 1) + x) * 6 + 2] = (y * vertCount.x + x) + 1;
+
+            indices[(y * (vertCount.x - 1) + x) * 6 + 3] = (y * vertCount.x + x) + 1;
+            indices[(y * (vertCount.x - 1) + x) * 6 + 4] = (y * vertCount.x + x) + vertCount.x;
+            indices[(y * (vertCount.x - 1) + x) * 6 + 5] = (y * vertCount.x + x) + vertCount.x + 1;
+        }
+    }
+
+    Rebuild(GL_TRIANGLES, verts, indices);
+};
+void Mesh::CreateCylinder(float height, float radius, ivec2 vertCount, vec2 uvStart, vec2 uvRange)
+{
+    int numVerts = vertCount.x * vertCount.y;
+    int numIndices = (vertCount.x - 1) * (vertCount.y - 1) * 6;
+
+    std::vector<fw::VertexFormat> verts(numVerts);
+    std::vector<unsigned int> indices(numIndices);
+
+    float heightStepSize = height / (vertCount.y - 1);
+    vec2 uvStepSize(uvRange.x / (vertCount.x - 1), uvRange.y / (vertCount.y - 1));
+
+    for (int y = 0; y < vertCount.y; y++)
+    {
+        for (int x = 0; x < vertCount.x; x++)
+        {
+            float rad = (x / (float)(vertCount.x - 1)) * 2 * PI;
+            vec2 circlePos = vec2(cos(rad), sin(rad)) * radius;
+
+            verts[y * vertCount.x + x].pos = vec3(circlePos.x, y * heightStepSize, circlePos.y);
+            verts[y * vertCount.x + x].normal = vec3(circlePos.x, 0, circlePos.y);
+            verts[y * vertCount.x + x].normal.Normalize();
+            verts[y * vertCount.x + x].uv = uvStart + vec2(x, y) * uvStepSize;
+        }
+    }
+
+    for (int y = 0; y < vertCount.y - 1; y++)
+    {
+        for (int x = 0; x < vertCount.x - 1; x++)
+        {
+            indices[(y * (vertCount.x - 1) + x) * 6 + 0] = (y * vertCount.x + x) + 0;
+            indices[(y * (vertCount.x - 1) + x) * 6 + 2] = (y * vertCount.x + x) + 1;
+            indices[(y * (vertCount.x - 1) + x) * 6 + 1] = (y * vertCount.x + x) + vertCount.x;
+
+            indices[(y * (vertCount.x - 1) + x) * 6 + 3] = (y * vertCount.x + x) + 1;
+            indices[(y * (vertCount.x - 1) + x) * 6 + 5] = (y * vertCount.x + x) + vertCount.x + 1;
+            indices[(y * (vertCount.x - 1) + x) * 6 + 4] = (y * vertCount.x + x) + vertCount.x;
+        }
+    }
+
+    Rebuild(GL_TRIANGLES, verts, indices);
+};
+void Mesh::CreateSphere(float radius, ivec2 vertCount, vec2 uvStart, vec2 uvRange)
+{
+    int numVerts = vertCount.x * vertCount.y;
+    int numIndices = (vertCount.x - 1) * (vertCount.y - 1) * 6;
+
+    std::vector<fw::VertexFormat> verts(numVerts);
+    std::vector<unsigned int> indices(numIndices);
+
+    vec2 uvStepSize(uvRange.x / (vertCount.x - 1), uvRange.y / (vertCount.y - 1));
+
+    for (int y = 0; y < vertCount.y; y++)
+    {
+        float hPerc = y / ((float)vertCount.y - 1) * 2 - 1; // -1 to 1
+
+        for (int x = 0; x < vertCount.x; x++)
+        {
+            float ringRadius = sqrt(1 - hPerc * hPerc);
+            float rad = (x / (float)(vertCount.x - 1)) * 2 * PI;
+            vec2 ringPos = vec2(cos(rad), sin(rad)) * ringRadius;
+
+            verts[y * vertCount.x + x].pos = vec3(ringPos.x, hPerc * radius, ringPos.y) * radius;
+            verts[y * vertCount.x + x].normal = verts[y * vertCount.x + x].pos;
+            verts[y * vertCount.x + x].normal.Normalize();
+            verts[y * vertCount.x + x].uv = uvStart + vec2(x, y) * uvStepSize;
+        }
+    }
+
+    for (int y = 0; y < vertCount.y - 1; y++)
+    {
+        for (int x = 0; x < vertCount.x - 1; x++)
+        {
+            indices[(y * (vertCount.x - 1) + x) * 6 + 0] = (y * vertCount.x + x) + 0;
+            indices[(y * (vertCount.x - 1) + x) * 6 + 2] = (y * vertCount.x + x) + 1;
+            indices[(y * (vertCount.x - 1) + x) * 6 + 1] = (y * vertCount.x + x) + vertCount.x;
+
+            indices[(y * (vertCount.x - 1) + x) * 6 + 3] = (y * vertCount.x + x) + 1;
+            indices[(y * (vertCount.x - 1) + x) * 6 + 5] = (y * vertCount.x + x) + vertCount.x + 1;
+            indices[(y * (vertCount.x - 1) + x) * 6 + 4] = (y * vertCount.x + x) + vertCount.x;
+        }
+    }
+
+    Rebuild(GL_TRIANGLES, verts, indices);
+};
 
 void Mesh::LoadObj(const char* filename)
 {

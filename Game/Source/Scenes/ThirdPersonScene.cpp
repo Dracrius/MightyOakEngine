@@ -12,7 +12,7 @@ ThirdPersonScene::ThirdPersonScene(Game* pGame) : fw::Scene(pGame)
 {
 	m_pPlayerController = new PlayerController(pGame->GetFramework()->GetEventManager());
 
-    vec3 cameraOffset = vec3(0.f, 1.f, 0.f);
+    vec3 cameraOffset = vec3(0.f, 3.f, 0.f);
 	float heightOffset = -3.5f;
 
 	m_openPos[0] = c_centerOfScreen.x;
@@ -87,9 +87,11 @@ ThirdPersonScene::ThirdPersonScene(Game* pGame) : fw::Scene(pGame)
 	pCube->SetName("White Cube");
 	m_Objects.push_back(pCube);
 
-    fw::GameObject* pPlayer = new fw::GameObject(this, c_centerOfScreen + vec3(-6.f, 0.5f -3.f), rot);
+    fw::GameObject* pPlayer = new fw::GameObject(this, c_centerOfScreen + vec3(-6.f, 0.5f -3.f), vec3());
     pPlayer->AddComponent(new fw::MeshComponent(m_pResourceManager->GetMesh("Sphere"), m_pResourceManager->GetMaterial("Lit-White")));
-    pPlayer->SetRotation(vec3(-90.f, -180.f, 0.f));
+    //pPlayer->SetRotation(vec3(-90.f, -180.f, 0.f));
+    //pPlayer->AddComponent(new fw::LightComponent(fw::LightType::SpotLight, Color4f(1.f, 1.f, 1.f, 1.f), 10.f, 2.f, 60.f));
+    //pPlayer->SetRotation(vec3(0.f, 0.f, 0.f));
     //pPlayer->SetScale(vec3(0.1f, 0.1f, 0.1f));
     pPlayer->AddComponent(new SimplePlayerMovementComponent(m_pPlayerController));
 	pPlayer->SetName("Player");
