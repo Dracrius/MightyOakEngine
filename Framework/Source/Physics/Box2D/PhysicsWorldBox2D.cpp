@@ -174,7 +174,7 @@ void PhysicsWorldBox2D::CreateSlider(PhysicsBody* pBody, vec3 pos)
 	assert(false); // implement this.
 }
 
-void PhysicsWorldBox2D::CreateSensor(GameObject* owner, TransformComponent* pTransform)
+void PhysicsWorldBox2D::CreateSensor(GameObject* owner, TransformComponent* pTransform, bool hasCollision)
 {
     assert(false); // implement this.
 }

@@ -56,7 +56,7 @@ public:
 	virtual void CreateJoint(PhysicsBody* pBody, vec3 pos) override;
 	virtual void CreateSlider(PhysicsBody* pBody, vec3 pos) override;
 
-    virtual void CreateSensor(GameObject* owner, TransformComponent* pTransform) override;
+    virtual void CreateSensor(GameObject* owner, TransformComponent* pTransform, bool hasCollision) override;
 
     b2World* Getb2World() { return m_pWorld; }
 };

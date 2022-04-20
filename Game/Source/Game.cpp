@@ -83,6 +83,10 @@ void Game::Init()
     // Setup Textures
 	m_pResourceManager->CreateTexture("Sprites", "Data/Textures/Sprites.png");
 	m_pResourceManager->CreateTexture("Cube", "Data/Textures/CubeTexture.png");
+    m_pResourceManager->CreateTexture("On", "Data/Textures/OnCubeTexture.png");
+    m_pResourceManager->CreateTexture("Off", "Data/Textures/OffCubeTexture.png");
+    m_pResourceManager->CreateTexture("Swing", "Data/Textures/SwingCubeTexture.png");
+    m_pResourceManager->CreateTexture("Slide", "Data/Textures/SliderCubeTexture.png");
 	m_pResourceManager->CreateTexture("Water", "Data/Textures/WaterTile.png");
 	m_pResourceManager->CreateTexture("Arcade_Cabinet", "Data/Textures/Arcade_Cabinet.png");
 	m_pResourceManager->CreateTexture("Arcade_Floor", "Data/Textures/Arcade_Cabinet_Floor_Low_Light.png");
@@ -113,6 +117,10 @@ void Game::Init()
 
 	m_pResourceManager->CreateMaterial("Sokoban", m_pResourceManager->GetShader("Basic"), m_pResourceManager->GetTexture("Sprites"), fw::Color4f::Red());
 	m_pResourceManager->CreateMaterial("Cube", m_pResourceManager->GetShader("Basic"), m_pResourceManager->GetTexture("Cube"), fw::Color4f::Green());
+    m_pResourceManager->CreateMaterial("On", m_pResourceManager->GetShader("Basic"), m_pResourceManager->GetTexture("On"), fw::Color4f::Green());
+    m_pResourceManager->CreateMaterial("Off", m_pResourceManager->GetShader("Basic"), m_pResourceManager->GetTexture("Off"), fw::Color4f::Green());
+    m_pResourceManager->CreateMaterial("Swing", m_pResourceManager->GetShader("Basic"), m_pResourceManager->GetTexture("Swing"), fw::Color4f::Green());
+    m_pResourceManager->CreateMaterial("Slide", m_pResourceManager->GetShader("Basic"), m_pResourceManager->GetTexture("Slide"), fw::Color4f::Green());
 	m_pResourceManager->CreateMaterial("Water", m_pResourceManager->GetShader("Water"), m_pResourceManager->GetTexture("Water"), c_defaultWaterColor);
 	m_pResourceManager->CreateMaterial("Arcade_Cabinet", m_pResourceManager->GetShader("Basic"), m_pResourceManager->GetTexture("Arcade_Cabinet"), c_defaultObjColor);
 	m_pResourceManager->CreateMaterial("Arcade_Floor", m_pResourceManager->GetShader("Basic"), m_pResourceManager->GetTexture("Arcade_Floor"), c_defaultObjColor);

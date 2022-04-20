@@ -9,11 +9,9 @@ class Physics3DScene : public fw::Scene
 protected:
     PlayerController* m_pPlayerController = nullptr;
 
-    Player3D* m_pPlayer = nullptr;
+    fw::GameObject* m_pPlayer = nullptr;
 
     bool m_showPerspecMouseCoords = false;
-    bool m_isOnButton = false;
-    bool m_wasOnButton = false;
 
 public:
     Physics3DScene(Game* pGame);

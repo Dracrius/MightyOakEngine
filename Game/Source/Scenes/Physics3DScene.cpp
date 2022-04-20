@@ -6,6 +6,7 @@
 #include "GameObjects/PlayerController.h"
 #include "GameObjects/Player3D.h"
 #include "Game.h"
+#include "Components/Player3DMovementComponent.h"
 
 Physics3DScene::Physics3DScene(Game* pGame) : fw::Scene(pGame)
 {
@@ -21,7 +22,8 @@ Physics3DScene::Physics3DScene(Game* pGame) : fw::Scene(pGame)
 
 	vec3 pos = c_centerOfScreen + vec3(1.5f, 1.f, 2.f);
 	vec3 rot = vec3(90.f, 0.f, 0.f);
-
+    
+    //Load 6 Boxes
 	fw::GameObject* pBackground = new fw::GameObject(this, pos + vec3(0.f, 0.f, 10.f), rot);
 	pBackground->AddComponent(new fw::MeshComponent(m_pResourceManager->GetMesh("Background"), m_pResourceManager->GetMaterial("Background")));
 	pBackground->SetScale(vec3(18.8f, 0.f, 10.f));
@@ -55,8 +57,8 @@ Physics3DScene::Physics3DScene(Game* pGame) : fw::Scene(pGame)
 
 	//p2p Joint
 	std::string name = "p2p Joint Box";
-	fw::GameObject* pBox = new fw::GameObject(this, vec3(7.5f, 10.0f, 0.f), vec3());
-	pBox->AddComponent(new fw::MeshComponent(m_pResourceManager->GetMesh("Cube"), m_pResourceManager->GetMaterial("Cube")));
+	fw::GameObject* pBox = new fw::GameObject(this, vec3(12.f, 4.5f, 3.f), vec3());
+	pBox->AddComponent(new fw::MeshComponent(m_pResourceManager->GetMesh("Cube"), m_pResourceManager->GetMaterial("Swing")));
 	pBox->AddComponent(new fw::PhysicsBodyComponent());
 	pBox->GetComponent<fw::PhysicsBodyComponent>()->CreateBody(m_pPhysicsWorld, true, vec3(1.0f, 1.0f, 1.0f), 1.f);
 	pBox->SetName(name);
@@ -66,8 +68,8 @@ Physics3DScene::Physics3DScene(Game* pGame) : fw::Scene(pGame)
 
 	//Slider
 	name = "Slider Box";
-	pBox = new fw::GameObject(this, vec3(7.5f, 4.0f, -1.f), vec3());
-	pBox->AddComponent(new fw::MeshComponent(m_pResourceManager->GetMesh("Cube"), m_pResourceManager->GetMaterial("Cube")));
+	pBox = new fw::GameObject(this, vec3(2.f, 3.75f, -3.f), vec3());
+	pBox->AddComponent(new fw::MeshComponent(m_pResourceManager->GetMesh("Cube"), m_pResourceManager->GetMaterial("Slide")));
 	pBox->AddComponent(new fw::PhysicsBodyComponent());
 	pBox->GetComponent<fw::PhysicsBodyComponent>()->CreateBody(m_pPhysicsWorld, true, vec3(1.0f, 1.0f, 1.0f), 1.f);
 	pBox->SetName(name);
@@ -75,35 +77,55 @@ Physics3DScene::Physics3DScene(Game* pGame) : fw::Scene(pGame)
 
 	m_pPhysicsWorld->CreateSlider(pBox->GetComponent<fw::PhysicsBodyComponent>()->GetPhysicsBody(), vec3(2.f, 0.0f, 0.f));
 
-    //Button
-    name = "Button Box";
-    pBox = new fw::GameObject(this, vec3(3.f, 4.f, 3.f), vec3());
-    pBox->SetScale(vec3(1.f, 0.5f, 1.f));
-    pBox->AddComponent(new fw::MeshComponent(m_pResourceManager->GetMesh("Cube"), m_pResourceManager->GetMaterial("Lit-Red")));
+    //Buttons
+    name = "On Button";
+    pBox = new fw::GameObject(this, vec3(1.f, 3.25f, 3.f), vec3());
+    pBox->SetScale(vec3(1.f, 0.25f, 1.f));
+    pBox->AddComponent(new fw::MeshComponent(m_pResourceManager->GetMesh("Cube"), m_pResourceManager->GetMaterial("On")));
     pBox->SetName(name);
     m_Objects.push_back(pBox);
 
-    m_pPhysicsWorld->CreateSensor(pBox, pBox->GetTransform());
+    m_pPhysicsWorld->CreateSensor(pBox, pBox->GetTransform(), true);
 
-    fw::GameObject* pLight = new fw::GameObject(this, vec3(3.f, 10.f, 3.f), vec3(-90.f, 0.f, 0.f));
+    name = "Off Button";
+    pBox = new fw::GameObject(this, vec3(3.f, 3.25f, 3.f), vec3());
+    pBox->SetScale(vec3(1.f, 0.25f, 1.f));
+    pBox->AddComponent(new fw::MeshComponent(m_pResourceManager->GetMesh("Cube"), m_pResourceManager->GetMaterial("Off")));
+    pBox->SetName(name);
+    m_Objects.push_back(pBox);
+
+    m_pPhysicsWorld->CreateSensor(pBox, pBox->GetTransform(), true);
+
+    //Lights
+    fw::GameObject* pLight = new fw::GameObject(this, vec3(2.f, 10.f, 3.f), vec3(-90.f, 0.f, 0.f));
     pLight->AddComponent(new fw::LightComponent(fw::LightType::SpotLight, Color4f(0.f, 0.f, 0.f, 1.f), 20.f, 2.f, 60.f));
     pLight->SetName("Spot Light");
     m_Objects.push_back(pLight);
 
+    pLight = new fw::GameObject(this, c_centerOfScreen + vec3(-7.f, 10.f, -7.f), vec3(-45.f, 45.f, 0.f));
+    pLight->AddComponent(new fw::LightComponent(fw::LightType::Directional, Color4f(0.5f, 0.5f, 0.5f, 1.f), 10.f, 2.f));
+    pLight->SetName("Directional Light");
+    m_Objects.push_back(pLight);
+
+    //Platform
 	fw::GameObject* pPlatform = new fw::GameObject(this, c_centerOfScreen + vec3(0.f, -4.5f, 0.f), vec3(0.f, 0.f, 0.f));
 
 	fw::MeshComponent* pPlatformMesh = new fw::MeshComponent(m_pResourceManager->GetMesh("Cube"), m_pResourceManager->GetMaterial("Lit-SolidColor"));
 
 	pPlatform->AddComponent(pPlatformMesh);
-	pPlatform->SetScale(vec3(20.f, 1.f, 10.f));
+	pPlatform->SetScale(vec3(25.f, 0.5f, 15.f));
     pPlatform->AddComponent(new fw::PhysicsBodyComponent());
-	pPlatform->GetComponent<fw::PhysicsBodyComponent>()->CreateBody(m_pPhysicsWorld, false, vec3(20.0f, 1.0f, 10.0f), 0.f);
+	pPlatform->GetComponent<fw::PhysicsBodyComponent>()->CreateBody(m_pPhysicsWorld, false, vec3(25.0f, 0.5f, 15.0f), 0.f);
 	pPlatform->SetName("Platform");
 	m_Objects.push_back(pPlatform);
 
-    m_pPlayer = new Player3D(this, m_pResourceManager->GetMesh("Cube"), m_pResourceManager->GetMaterial("Cube"), vec2(7.5f, 16.0f), m_pPlayerController);
+    //Player
+    m_pPlayer = new fw::GameObject(this, vec2(7.5f, 16.0f), vec3());
+    m_pPlayer->SetScale(vec3(0.5f, 0.5f, 0.5f));
+    m_pPlayer->AddComponent(new fw::MeshComponent(m_pResourceManager->GetMesh("Sphere"), m_pResourceManager->GetMaterial("Lit-SolidColor")));
     m_pPlayer->AddComponent(new fw::PhysicsBodyComponent());
-    m_pPlayer->GetComponent<fw::PhysicsBodyComponent>()->CreateBody(m_pPhysicsWorld, true, vec3(1.f), 1.f);
+    m_pPlayer->GetComponent<fw::PhysicsBodyComponent>()->CreateBody(m_pPhysicsWorld, true, 0.5f, 1.f);
+    m_pPlayer->AddComponent(new Player3DMovementComponent(m_pPlayerController));
     m_pPlayer->SetName("Player");
 
 	m_pCamera->SetAspectRatio(c_aspectRatio);
@@ -124,37 +146,36 @@ void Physics3DScene::StartFrame(float deltaTime)
 
 void Physics3DScene::OnEvent(fw::Event* pEvent)
 {
-    m_wasOnButton = m_isOnButton;
-    m_isOnButton = false;
+    fw::LightComponent* pLight = nullptr;
 
     if (pEvent->GetEventType() == "CollisionEvent")
     {
         fw::CollisionEvent* pCollisionEvent = static_cast<fw::CollisionEvent*>(pEvent);
 
+        fw::GameObject* collisObjOne = pCollisionEvent->GetGameObjectOne();
         fw::GameObject* collisObjTwo = pCollisionEvent->GetGameObjectTwo();
 
-        if (collisObjTwo->GetName() == "Player")
+        if (collisObjTwo->GetName() == "Player" && collisObjOne->GetName() == "On Button")
         {
-            m_isOnButton = true;
-            if (!m_wasOnButton)
+            for (size_t i = 0; i < m_Objects.size(); i++)
             {
-                fw::LightComponent* pLight = nullptr;
-
-                for (size_t i = 0; i < m_Objects.size(); i++)
+                if (m_Objects[i]->GetName() == "Spot Light")
                 {
-                    if (m_Objects[i]->GetName() == "Spot Light")
-                    {
-                        pLight = m_Objects[i]->GetComponent<fw::LightComponent>();
+                    pLight = m_Objects[i]->GetComponent<fw::LightComponent>();
 
-                        if (pLight->GetDetails()->diffuse != Color4f::Black())
-                        {
-                            pLight->SetDiffuse(Color4f::Black());
-                        }
-                        else
-                        {
-                            pLight->SetDiffuse(Color4f::White());
-                        }
-                    }
+                    pLight->SetDiffuse(Color4f::White());
+                }
+            }
+        }
+        else if (collisObjTwo->GetName() == "Player" && collisObjOne->GetName() == "Off Button")
+        {
+            for (size_t i = 0; i < m_Objects.size(); i++)
+            {
+                if (m_Objects[i]->GetName() == "Spot Light")
+                {
+                    pLight = m_Objects[i]->GetComponent<fw::LightComponent>();
+
+                    pLight->SetDiffuse(Color4f::Black());
                 }
             }
         }
@@ -165,7 +186,12 @@ void Physics3DScene::OnEvent(fw::Event* pEvent)
 
 void Physics3DScene::Update(float deltaTime)
 {
-    m_pPlayer->Update(deltaTime);
+    std::vector<fw::Component*>& list = m_pComponentManager->GetComponentsOfType(Player3DMovementComponent::GetStaticType());
+    for (fw::Component* pComponent : list)
+    {
+        Player3DMovementComponent* pPlayerComp = static_cast<Player3DMovementComponent*>(pComponent);
+        pPlayerComp->Update(deltaTime);
+    }
 
     Scene::Update(deltaTime);
 
