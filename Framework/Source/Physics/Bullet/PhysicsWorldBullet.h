@@ -34,6 +34,8 @@ public:
 
     virtual void CreateJoint(PhysicsBody* pBody, vec3 pos) override;
 
+    virtual void CreateSlider(PhysicsBody* pBody, vec3 pos) override;
+
     // Getters
     btDynamicsWorld* GetbtWorld() { return m_pWorld; };
 

@@ -90,7 +90,7 @@ void Game::Init()
 	m_pResourceManager->CreateTexture("NiceDaysWalk", "Data/Textures/NiceDaysWalk.png");
 	m_pResourceManager->CreateTexture("PlatformCenter", "Data/Textures/Ground_02.png");
 
-    m_pResourceManager->CreateTexture("TestCubmap", {"Data/Textures/TestCubemap/posx.png", "Data/Textures/TestCubemap/negx.png", "Data/Textures/TestCubemap/posy.png", "Data/Textures/TestCubemap/negy.png", "Data/Textures/TestCubemap/posz.png", "Data/Textures/TestCubemap/negz.png"});
+    m_pResourceManager->CreateTexture("TestCubemap", {"Data/Textures/TestCubemap/posx.png", "Data/Textures/TestCubemap/negx.png", "Data/Textures/TestCubemap/posy.png", "Data/Textures/TestCubemap/negy.png", "Data/Textures/TestCubemap/posz.png", "Data/Textures/TestCubemap/negz.png"});
     m_pResourceManager->CreateTexture("Yokohama2", { "Data/Textures/Yokohama2/posx.png", "Data/Textures/Yokohama2/negx.png", "Data/Textures/Yokohama2/posy.png", "Data/Textures/Yokohama2/negy.png", "Data/Textures/Yokohama2/posz.png", "Data/Textures/Yokohama2/negz.png" });
 
     // Setup Sprite Sheets
@@ -211,7 +211,7 @@ void Game::Draw()
     //Render Cube
     fw::matrix identity;
     identity.SetIdentity();
-    m_pResourceManager->GetMesh("Cube")->Draw(nullptr, m_pCurrentScene->GetCamera(), m_pResourceManager->GetMaterial("Black"), identity, identity, 1, 0, 0);
+    m_pResourceManager->GetMesh("Cube")->Draw(nullptr, m_pCurrentScene->GetCamera(), m_pResourceManager->GetMaterial("TestSkybox"), identity, identity, 1, 0, 0);
 
     //Re-Enable Z-Write
     glDepthMask(true);

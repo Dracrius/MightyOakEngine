@@ -51,6 +51,28 @@ Physics3DScene::Physics3DScene(Game* pGame) : fw::Scene(pGame)
 		m_Objects.push_back(pBox);
 	}
 
+	//p2p Joint
+	std::string name = "p2p Joint Box ";
+	fw::GameObject* pBox = new fw::GameObject(this, vec3(7.5f, 10.0f, 0.f), vec3());
+	pBox->AddComponent(new fw::MeshComponent(m_pResourceManager->GetMesh("Cube"), m_pResourceManager->GetMaterial("Cube")));
+	pBox->AddComponent(new fw::PhysicsBodyComponent());
+	pBox->GetComponent<fw::PhysicsBodyComponent>()->CreateBody(m_pPhysicsWorld, true, vec3(1.0f, 1.0f, 1.0f), 1.f);
+	pBox->SetName(name);
+	m_Objects.push_back(pBox);
+
+	m_pPhysicsWorld->CreateJoint(pBox->GetComponent<fw::PhysicsBodyComponent>()->GetPhysicsBody(), vec3(0.f, 10.0f, 0.f));
+
+	//Slider
+	name = "Slider Box ";
+	pBox = new fw::GameObject(this, vec3(7.5f, 4.0f, -1.f), vec3());
+	pBox->AddComponent(new fw::MeshComponent(m_pResourceManager->GetMesh("Cube"), m_pResourceManager->GetMaterial("Cube")));
+	pBox->AddComponent(new fw::PhysicsBodyComponent());
+	pBox->GetComponent<fw::PhysicsBodyComponent>()->CreateBody(m_pPhysicsWorld, true, vec3(1.0f, 1.0f, 1.0f), 1.f);
+	pBox->SetName(name);
+	m_Objects.push_back(pBox);
+
+	m_pPhysicsWorld->CreateSlider(pBox->GetComponent<fw::PhysicsBodyComponent>()->GetPhysicsBody(), vec3(2.f, 0.0f, 0.f));
+
 
 
 	fw::GameObject* pPlatform = new fw::GameObject(this, c_centerOfScreen + vec3(0.f, -4.5f, 0.f), vec3(0.f, 0.f, 0.f));

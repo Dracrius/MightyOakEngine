@@ -169,4 +169,9 @@ void PhysicsWorldBox2D::CreateJoint(PhysicsBody* pBody, vec3 pos)
 	b2Joint* pJoint = m_pWorld->CreateJoint(&jointDef);
 }
 
+void PhysicsWorldBox2D::CreateSlider(PhysicsBody* pBody, vec3 pos)
+{
+	assert(false); // implement this.
+}
+
 } // namespace fw

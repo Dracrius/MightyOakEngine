@@ -32,6 +32,7 @@ public:
     virtual PhysicsBody* CreateBody(GameObject* owner, bool isDynamic, float density, TransformComponent* pTransform) = 0;
 
 	virtual void CreateJoint(PhysicsBody* pBody, vec3 pos) = 0;
+    virtual void CreateSlider(PhysicsBody* pBody, vec3 pos) = 0;
 };
 
 } // namespace fw

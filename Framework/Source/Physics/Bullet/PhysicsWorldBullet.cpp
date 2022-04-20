@@ -102,9 +102,29 @@ PhysicsBody* PhysicsWorldBullet::CreateBody(GameObject* owner, bool isDynamic, f
 
 void PhysicsWorldBullet::CreateJoint(PhysicsBody* pBody, vec3 pos)
 {
-    assert( false ); // implement this.
+    //assert( false ); // implement this.
 
-   // btTypedConstraint* p2p = new btPoint2PointConstraint(pBody, pos);
+    btRigidBody* bodyA = static_cast<PhysicsBodyBullet*>(pBody)->GetbtBody();
+    btVector3 btPos = btVector3(pos.x, pos.y, pos.z);
+
+    btTypedConstraint* p2p = new btPoint2PointConstraint(*bodyA, btPos);
+    m_pWorld->addConstraint(p2p);
+}
+
+void PhysicsWorldBullet::CreateSlider(PhysicsBody* pBody, vec3 pos)
+{
+    //assert( false ); // implement this.
+
+    btRigidBody* bodyA = static_cast<PhysicsBodyBullet*>(pBody)->GetbtBody();
+    btVector3 btPos = btVector3(pos.x, pos.y, pos.z);
+    btTransform frameInA;
+    frameInA = btTransform::getIdentity();
+    frameInA.setOrigin(btPos);
+
+    btTypedConstraint* slider = new btSliderConstraint(*bodyA, frameInA,true);
+    static_cast<btSliderConstraint*>(slider)->setLowerLinLimit(btScalar(-pos.x));
+    static_cast<btSliderConstraint*>(slider)->setUpperLinLimit(btScalar(pos.x));
+    m_pWorld->addConstraint(slider);
 }
 
 } // namespace fw
