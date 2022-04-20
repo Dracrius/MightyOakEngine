@@ -33,6 +33,8 @@ public:
 
 	virtual void CreateJoint(PhysicsBody* pBody, vec3 pos) = 0;
     virtual void CreateSlider(PhysicsBody* pBody, vec3 pos) = 0;
+
+    virtual void CreateSensor(GameObject* owner, TransformComponent* pTransform) = 0;
 };
 
 } // namespace fw

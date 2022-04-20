@@ -54,8 +54,9 @@ public:
     virtual PhysicsBody* CreateBody(GameObject* owner, bool isDynamic, float density, TransformComponent* pTransform) override;
 
 	virtual void CreateJoint(PhysicsBody* pBody, vec3 pos) override;
-
 	virtual void CreateSlider(PhysicsBody* pBody, vec3 pos) override;
+
+    virtual void CreateSensor(GameObject* owner, TransformComponent* pTransform) override;
 
     b2World* Getb2World() { return m_pWorld; }
 };

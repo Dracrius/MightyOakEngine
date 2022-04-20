@@ -7,9 +7,16 @@
 #include "Components/TransformComponent.h"
 
 #include "btBulletDynamicsCommon.h"
+#include "BulletCollision/CollisionDispatch/btGhostObject.h"
 
 namespace fw {
 
+static PhysicsWorldBullet* btWorld;
+
+void Callback(btDynamicsWorld* world, btScalar timeStep)
+{
+    btWorld->PreTickCallback(world, timeStep);
+}
 
 PhysicsWorldBullet::PhysicsWorldBullet(EventManager* pEventManager) : PhysicsWorld(pEventManager)
 {
@@ -20,6 +27,10 @@ PhysicsWorldBullet::PhysicsWorldBullet(EventManager* pEventManager) : PhysicsWor
 
     m_pWorld = new btDiscreteDynamicsWorld( m_pDispatcher, m_pBroadphase, m_pConstraintSolver, m_pCollisionConfiguration );
     m_pWorld->setGravity( btVector3(c_defaultGravity.x, c_defaultGravity.y, c_defaultGravity.z) );
+    m_pWorld->getBroadphase()->getOverlappingPairCache()->setInternalGhostPairCallback(new btGhostPairCallback());
+
+    btWorld = this;
+    //void(*btInternalTickCallback)(btDynamicsWorld * world, btScalar timeStep) { &PreTickCallback };
 }
 
 PhysicsWorldBullet::~PhysicsWorldBullet()
@@ -30,6 +41,11 @@ PhysicsWorldBullet::~PhysicsWorldBullet()
     delete m_pBroadphase;
     delete m_pDispatcher;
     delete m_pCollisionConfiguration;
+
+    for (btGhostObject* pGhostObject : m_ghostObjects)
+    {
+        delete pGhostObject;
+    }
 }
 
 void PhysicsWorldBullet::Update(float deltaTime)
@@ -76,6 +92,7 @@ PhysicsBody* PhysicsWorldBullet::CreateBody(GameObject* owner, bool isDynamic, v
     btRigidBody::btRigidBodyConstructionInfo rbInfo(density, pMotionState, pShape, localInertia);
     btRigidBody* pRigidBody = new btRigidBody(rbInfo);
     pRigidBody->setUserPointer(owner);
+    pRigidBody->setContactProcessingThreshold(2.f);
 
     // Add it to the world.
     m_pWorld->addRigidBody(pRigidBody);
@@ -125,6 +142,51 @@ void PhysicsWorldBullet::CreateSlider(PhysicsBody* pBody, vec3 pos)
     static_cast<btSliderConstraint*>(slider)->setLowerLinLimit(btScalar(-pos.x));
     static_cast<btSliderConstraint*>(slider)->setUpperLinLimit(btScalar(pos.x));
     m_pWorld->addConstraint(slider);
+}
+
+void PhysicsWorldBullet::CreateSensor(GameObject* owner, TransformComponent* pTransform)
+{
+    vec3 pos = pTransform->GetPosition();
+    vec3 rot = pTransform->GetRotation();
+    vec3 scale = pTransform->GetScale();
+
+    // Setup the position and orientation transform for the object.
+    btTransform transform;
+    transform.setIdentity();
+    transform.setOrigin(btVector3(pos.x, pos.y, pos.z));
+    transform.setRotation(btQuaternion(rot.x, rot.y, rot.z));
+
+    // Create the shape, ideally these would be shared between objects.
+    btCollisionShape* pShape = new btBoxShape(btVector3(scale.x, scale.y, scale.z) / 2);
+
+    btGhostObject* sensor = new btGhostObject();
+    sensor->setCollisionShape(pShape);
+    sensor->setCollisionFlags(sensor->getCollisionFlags() | btCollisionObject::CF_NO_CONTACT_RESPONSE);
+    sensor->setWorldTransform(transform);
+    sensor->setUserPointer(owner);
+    // Add it to the world.
+    m_pWorld->addCollisionObject(sensor, btBroadphaseProxy::AllFilter);
+
+    m_ghostObjects.push_back(sensor);
+
+    m_pWorld->setInternalTickCallback(Callback, this, true);
+}
+
+void PhysicsWorldBullet::PreTickCallback(btDynamicsWorld* world, btScalar timeStep)
+{
+    for (size_t index = 0; index < m_ghostObjects.size(); index++)
+    {
+        for (int i = 0; i < m_ghostObjects[index]->getNumOverlappingObjects(); i++)
+        {
+            btRigidBody* pRigidBody = dynamic_cast<btRigidBody*>(m_ghostObjects[index]->getOverlappingObject(i));
+
+            GameObject* pObjectA = reinterpret_cast<GameObject*>(m_ghostObjects[index]->getUserPointer());
+            GameObject* pObjectB = reinterpret_cast<GameObject*>(pRigidBody->getUserPointer());
+
+            CollisionEvent* pCollisionEvent = new CollisionEvent(pObjectA, pObjectB, ContactState::Begin);
+            m_pEventManager->AddEvent(pCollisionEvent);
+        }
+    }
 }
 
 } // namespace fw

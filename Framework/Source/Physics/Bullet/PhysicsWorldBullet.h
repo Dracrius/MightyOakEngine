@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Physics/PhysicsWorld.h"
+#include "btBulletCollisionCommon.h"
 
 class btBroadphaseInterface;
 class btCollisionConfiguration;
@@ -8,6 +9,7 @@ class btCollisionShape;
 class btConstraintSolver;
 class btDispatcher;
 class btDynamicsWorld;
+class btGhostObject;
 
 namespace fw {
 
@@ -33,8 +35,10 @@ public:
     virtual PhysicsBody* CreateBody(GameObject* owner, bool isDynamic, float density, TransformComponent* pTransform) override;
 
     virtual void CreateJoint(PhysicsBody* pBody, vec3 pos) override;
-
     virtual void CreateSlider(PhysicsBody* pBody, vec3 pos) override;
+
+    virtual void CreateSensor(GameObject* owner, TransformComponent* pTransform) override;
+    void PreTickCallback(btDynamicsWorld* world, btScalar timeStep);
 
     // Getters
     btDynamicsWorld* GetbtWorld() { return m_pWorld; };
@@ -46,6 +50,8 @@ protected:
     btDispatcher* m_pDispatcher = nullptr;
     btBroadphaseInterface* m_pBroadphase = nullptr;
     btConstraintSolver* m_pConstraintSolver = nullptr;
+
+    std::vector<btGhostObject*> m_ghostObjects;
 };
 
 } // namespace fw
