@@ -1,0 +1,24 @@
+{
+	"Texture":	"RockPaperScissors.png",
+	"Width":	512,
+	"Height":	128,
+	"Sprites":	[{
+			"Name":	"rock",
+			"X":	17,
+			"Y":	4,
+			"W":	133,
+			"H":	117
+		}, {
+			"Name":	"paper",
+			"X":	173,
+			"Y":	4,
+			"W":	133,
+			"H":	117
+		}, {
+			"Name":	"scissors",
+			"X":	365,
+			"Y":	4,
+			"W":	133,
+			"H":	117
+		}]
+}

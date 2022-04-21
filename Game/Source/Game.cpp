@@ -11,6 +11,7 @@
 #include "Scenes/PhysicsScene.h"
 #include "Scenes/ThirdPersonScene.h"
 #include "Scenes/WaterScene.h"
+#include "Scenes/RockPaperScissors.h"
 
 Game::Game(fw::FWCore& fwCore)
     : m_FWCore( fwCore )
@@ -95,6 +96,8 @@ void Game::Init()
 	m_pResourceManager->CreateTexture("Background", "Data/Textures/mayclover_meadow.png");
 	m_pResourceManager->CreateTexture("NiceDaysWalk", "Data/Textures/NiceDaysWalk.png");
 	m_pResourceManager->CreateTexture("PlatformCenter", "Data/Textures/Ground_02.png");
+    m_pResourceManager->CreateTexture("RockPaperScissors", "Data/Textures/RockPaperScissors.png");
+
     m_pResourceManager->CreateTexture("Imperfect", "Data/Textures/surface-imperfection.png");
 
     m_pResourceManager->CreateTexture("TestCubemap", {"Data/Textures/TestCubemap/posx.png", "Data/Textures/TestCubemap/negx.png", "Data/Textures/TestCubemap/posy.png", "Data/Textures/TestCubemap/negy.png", "Data/Textures/TestCubemap/posz.png", "Data/Textures/TestCubemap/negz.png"});
@@ -105,6 +108,7 @@ void Game::Init()
     // Setup Sprite Sheets
 	m_pResourceManager->CreateSpriteSheet("Sprites", "Data/Textures/Sprites.json", m_pResourceManager->GetTexture("Sprites"));
 	m_pResourceManager->CreateSpriteSheet("NiceDaysWalk", "Data/Textures/NiceDaysWalk.json", m_pResourceManager->GetTexture("NiceDaysWalk"));
+    m_pResourceManager->CreateSpriteSheet("RockPaperScissors", "Data/Textures/RockPaperScissors.json", m_pResourceManager->GetTexture("RockPaperScissors"));
 
     // Setup Materials
 	m_pResourceManager->CreateMaterial("SolidColor", m_pResourceManager->GetShader("SolidColor"), c_defaultObjColor);
@@ -122,6 +126,7 @@ void Game::Init()
     m_pResourceManager->CreateMaterial("Lit-DarkPurple", m_pResourceManager->GetShader("Lit-Color"), fw::Color4f(0.15f, 0.14f, 0.15f, 1.f));
 
 	m_pResourceManager->CreateMaterial("Sokoban", m_pResourceManager->GetShader("Basic"), m_pResourceManager->GetTexture("Sprites"), fw::Color4f::Red());
+    m_pResourceManager->CreateMaterial("RockPaperScissors", m_pResourceManager->GetShader("Basic"), m_pResourceManager->GetTexture("RockPaperScissors"), fw::Color4f::Red());
 	m_pResourceManager->CreateMaterial("Cube", m_pResourceManager->GetShader("Basic"), m_pResourceManager->GetTexture("Cube"), fw::Color4f::Green());
     m_pResourceManager->CreateMaterial("Lit-Cube", m_pResourceManager->GetShader("Lit-Texture"), m_pResourceManager->GetTexture("Cube"), fw::Color4f::Green());
     m_pResourceManager->CreateMaterial("On", m_pResourceManager->GetShader("Lit-Texture"), m_pResourceManager->GetTexture("On"), fw::Color4f::Green());
@@ -153,6 +158,7 @@ void Game::Init()
 	m_Scenes["ThirdPerson"] = new ThirdPersonScene(this);
 	m_Scenes["Assignment1"] = new Assignment1Scene(this);
     m_Scenes["Assignment2"] = new Physics3DScene(this);
+    m_Scenes["RockPaperScissors"] = new RockPaperScissors(this);
 
     SetCurrentScene(c_defaultScene);
 }
@@ -425,6 +431,12 @@ void Game::MainMenu()
 					SceneChangeEvent* pSceneChange = new SceneChangeEvent("Physics");
 					m_FWCore.GetEventManager()->AddEvent(pSceneChange);
 				}
+
+                if (ImGui::MenuItem("Rock Paper Scissors", "Ctrl+r"))
+                {
+                    SceneChangeEvent* pSceneChange = new SceneChangeEvent("RockPaperScissors");
+                    m_FWCore.GetEventManager()->AddEvent(pSceneChange);
+                }
 
 				if (ImGui::MenuItem("Water Shader Demo", "Ctrl+W"))
 				{
