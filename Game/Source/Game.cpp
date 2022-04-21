@@ -64,7 +64,7 @@ void Game::Init()
     m_pResourceManager->CreateMesh("Cylinder");
     m_pResourceManager->GetMesh("Cylinder")->CreateCylinder(2.f, 0.5f, ivec2(200,200), vec2(0,0), vec2(20,20));
     m_pResourceManager->CreateMesh("Sphere");
-    m_pResourceManager->GetMesh("Sphere")->CreateSphere( 1.f, ivec2(200, 200), vec2(0, 0), vec2(20, 20));
+    m_pResourceManager->GetMesh("Sphere")->CreateSphere( 1.f, ivec2(200, 200), vec2(0, 0), vec2(1, 1));
 	m_pResourceManager->CreateMesh("Obj");
     m_pResourceManager->CreateMesh("Facehugger");
     m_pResourceManager->GetMesh("Facehugger")->LoadObj("Data/Models/Chibi_Facehugger.obj", true);
@@ -78,6 +78,7 @@ void Game::Init()
 	m_pResourceManager->CreateShader("SolidColor", "Data/Shaders/SolidColor.vert", "Data/Shaders/SolidColor.frag");
 	m_pResourceManager->CreateShader("Lit-Color", "Data/Shaders/Light-SolidColor.vert", "Data/Shaders/Light-SolidColor.frag");
     m_pResourceManager->CreateShader("Lit-Texture", "Data/Shaders/Light-Texture.vert", "Data/Shaders/Light-Texture.frag");
+    m_pResourceManager->CreateShader("Lit-Reflection", "Data/Shaders/Light-Reflection.vert", "Data/Shaders/Light-Reflection.frag");
     m_pResourceManager->CreateShader("Skybox", "Data/Shaders/Skybox.vert", "Data/Shaders/Skybox.frag");
     m_pResourceManager->CreateShader("Reflection", "Data/Shaders/Reflection.vert", "Data/Shaders/Reflection.frag");
 
@@ -94,6 +95,7 @@ void Game::Init()
 	m_pResourceManager->CreateTexture("Background", "Data/Textures/mayclover_meadow.png");
 	m_pResourceManager->CreateTexture("NiceDaysWalk", "Data/Textures/NiceDaysWalk.png");
 	m_pResourceManager->CreateTexture("PlatformCenter", "Data/Textures/Ground_02.png");
+    m_pResourceManager->CreateTexture("Imperfect", "Data/Textures/surface-imperfection.png");
 
     m_pResourceManager->CreateTexture("TestCubemap", {"Data/Textures/TestCubemap/posx.png", "Data/Textures/TestCubemap/negx.png", "Data/Textures/TestCubemap/posy.png", "Data/Textures/TestCubemap/negy.png", "Data/Textures/TestCubemap/posz.png", "Data/Textures/TestCubemap/negz.png"});
     m_pResourceManager->CreateTexture("Yokohama2", { "Data/Textures/Yokohama2/posx.png", "Data/Textures/Yokohama2/negx.png", "Data/Textures/Yokohama2/posy.png", "Data/Textures/Yokohama2/negy.png", "Data/Textures/Yokohama2/posz.png", "Data/Textures/Yokohama2/negz.png" });
@@ -133,6 +135,7 @@ void Game::Init()
 	m_pResourceManager->CreateMaterial("Background", m_pResourceManager->GetShader("Basic"), m_pResourceManager->GetTexture("Background"), c_defaultWaterColor);
 	m_pResourceManager->CreateMaterial("NiceDaysWalk", m_pResourceManager->GetShader("Basic"), m_pResourceManager->GetTexture("NiceDaysWalk"), fw::Color4f::Red());
 	m_pResourceManager->CreateMaterial("PlatformCenter", m_pResourceManager->GetShader("Basic"), m_pResourceManager->GetTexture("PlatformCenter"), fw::Color4f::Red());
+    m_pResourceManager->CreateMaterial("Lit-Imperfect", m_pResourceManager->GetShader("Lit-Texture"), m_pResourceManager->GetTexture("Imperfect"), c_defaultObjColor);
 
     m_pResourceManager->CreateMaterial("TestSkybox", m_pResourceManager->GetShader("Skybox"), m_pResourceManager->GetTexture("Sprites"), fw::Color4f::Red(), m_pResourceManager->GetTexture("TestCubemap"));
     m_pResourceManager->CreateMaterial("Yokohama2", m_pResourceManager->GetShader("Skybox"), m_pResourceManager->GetTexture("Sprites"), fw::Color4f::Red(), m_pResourceManager->GetTexture("Yokohama2"));
@@ -140,6 +143,7 @@ void Game::Init()
     m_pResourceManager->CreateMaterial("NightMeadow", m_pResourceManager->GetShader("Skybox"), m_pResourceManager->GetTexture("Sprites"), fw::Color4f::Red(), m_pResourceManager->GetTexture("NightMeadow"));
 
     m_pResourceManager->CreateMaterial("Reflection", m_pResourceManager->GetShader("Reflection"), m_pResourceManager->GetTexture("Sprites"), fw::Color4f::Red(), m_pResourceManager->GetTexture("Yokohama2"));
+    m_pResourceManager->CreateMaterial("Lit-Reflection", m_pResourceManager->GetShader("Lit-Reflection"), m_pResourceManager->GetTexture("Sprites"), fw::Color4f::Red(), m_pResourceManager->GetTexture("NightMeadow"));
 
     // Setup Scenes
     m_Scenes["Physics"] = new PhysicsScene(this);

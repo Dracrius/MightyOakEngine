@@ -168,7 +168,7 @@ Physics3DScene::Physics3DScene(Game* pGame) : fw::Scene(pGame)
     //Player
     m_pPlayer = new fw::GameObject(this, vec2(7.5f, 16.0f), vec3());
     m_pPlayer->SetScale(vec3(0.5f, 0.5f, 0.5f));
-    m_pPlayer->AddComponent(new fw::MeshComponent(m_pResourceManager->GetMesh("Sphere"), m_pResourceManager->GetMaterial("Lit-SolidColor")));
+    m_pPlayer->AddComponent(new fw::MeshComponent(m_pResourceManager->GetMesh("Sphere"), m_pResourceManager->GetMaterial("Lit-Imperfect")));
     m_pPlayer->AddComponent(new fw::PhysicsBodyComponent());
     m_pPlayer->GetComponent<fw::PhysicsBodyComponent>()->CreateBody(m_pPhysicsWorld, true, 0.5f, 1.f);
     m_pPlayer->AddComponent(new Player3DMovementComponent(m_pPlayerController));
