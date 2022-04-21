@@ -20,6 +20,9 @@ protected:
 	bool m_wireframeToggle = false;
 	fw::Color4f m_backgroundColor = fw::Color4f::Black();
 	fw::Color4f m_backupColor = c_defaultBackground;
+
+    bool m_useCubeMap = false;
+    std::string m_activeCubeMap = "TestSkybox";
 public:
     Game(fw::FWCore& fwCore);
     Game(const Game& other) = delete; //Removes Copy Constructor
@@ -33,6 +36,9 @@ public:
 
 	virtual void SetCurrentScene(std::string scene);
 	virtual void ResetBackgroundColor(bool toBlack);
+
+    virtual void SetCurrentCubeMap(std::string cubeMap) { m_activeCubeMap = cubeMap; }
+    virtual void SetUsingCubeMap(bool useCubeMap) { m_useCubeMap = useCubeMap; }
 
     // Getters.
 	fw::FWCore* GetFramework() { return &m_FWCore; }

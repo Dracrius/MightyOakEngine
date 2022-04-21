@@ -15,21 +15,20 @@ Physics3DScene::Physics3DScene(Game* pGame) : fw::Scene(pGame)
 	m_pPhysicsWorld = new fw::PhysicsWorldBullet(pGame->GetFramework()->GetEventManager());
 	m_pPhysicsWorld->SetGravity(c_gravity);
 
+    vec3 cameraOffset = vec3(0.f, 1.f, 0.f);
+
 	m_pCamera = new fw::Camera(this, c_centerOfScreen + c_cameraOffset);
 	m_pCamera->SetPerspective(true);
+    m_pCamera->SetAspectRatio(c_aspectRatio);
+    m_pCamera->SetThirdPersonOffset(cameraOffset);
+    m_pCamera->SetRotation(vec3(-10.f, 0.f, 0.f));
 
 	m_pPlayerController = new PlayerController(pGame->GetFramework()->GetEventManager());
 
 	vec3 pos = c_centerOfScreen + vec3(1.5f, 1.f, 2.f);
 	vec3 rot = vec3(90.f, 0.f, 0.f);
-    
-    //Load 6 Boxes
-	fw::GameObject* pBackground = new fw::GameObject(this, pos + vec3(0.f, 0.f, 10.f), rot);
-	pBackground->AddComponent(new fw::MeshComponent(m_pResourceManager->GetMesh("Background"), m_pResourceManager->GetMaterial("Background")));
-	pBackground->SetScale(vec3(18.8f, 0.f, 10.f));
-	pBackground->SetName("Background");
-	m_Objects.push_back(pBackground);
 
+    //Load 6 Boxes
 	for (int i = 0; i < 6; i++)
 	{
 		vec3 pos = c_centerOfScreen;
@@ -48,7 +47,7 @@ Physics3DScene::Physics3DScene(Game* pGame) : fw::Scene(pGame)
 
 		std::string name = "Numbered Box " + std::to_string(i + 1);
 		fw::GameObject* pBox = new fw::GameObject(this, pos, vec3());
-		pBox->AddComponent(new fw::MeshComponent(m_pResourceManager->GetMesh("Cube"), m_pResourceManager->GetMaterial("Cube")));
+		pBox->AddComponent(new fw::MeshComponent(m_pResourceManager->GetMesh("Cube"), m_pResourceManager->GetMaterial("Lit-Cube")));
         pBox->AddComponent(new fw::PhysicsBodyComponent());
         pBox->GetComponent<fw::PhysicsBodyComponent>()->CreateBody(m_pPhysicsWorld, true, vec3(1.0f, 1.0f, 1.0f), 1.f);
 		pBox->SetName(name);
@@ -102,6 +101,21 @@ Physics3DScene::Physics3DScene(Game* pGame) : fw::Scene(pGame)
     pLight->SetName("Spot Light");
     m_Objects.push_back(pLight);
 
+    pLight = new fw::GameObject(this, vec3(-9.f, 10.f, -3.f), vec3(-30.f, -90.f, 0.f));
+    pLight->AddComponent(new fw::LightComponent(fw::LightType::SpotLight, Color4f(2.f, 2.f, 2.f, 1.f), 40.f, 2.f, 20.f));
+    pLight->SetName("Slider Light");
+    m_Objects.push_back(pLight);
+
+    pLight = new fw::GameObject(this, vec3(9.f, 10.f, -3.f), vec3());
+    pLight->AddComponent(new fw::LightComponent(fw::LightType::PointLight, Color4f(0.2f, 0.f, 0.3f, 1.f), 40.f, 2.f, 20.f));
+    pLight->SetName("Area Light");
+    m_Objects.push_back(pLight);
+
+    pLight = new fw::GameObject(this, vec3(12.f, 10.f, 3.f), vec3(-90.f, 0.f, 0.f));
+    pLight->AddComponent(new fw::LightComponent(fw::LightType::SpotLight, Color4f(1.f, 1.f, 1.f, 1.f), 20.f, 2.f, 60.f));
+    pLight->SetName("Joint Light");
+    m_Objects.push_back(pLight);
+
     pLight = new fw::GameObject(this, c_centerOfScreen + vec3(-7.f, 10.f, -7.f), vec3(-45.f, 45.f, 0.f));
     pLight->AddComponent(new fw::LightComponent(fw::LightType::Directional, Color4f(0.5f, 0.5f, 0.5f, 1.f), 10.f, 2.f));
     pLight->SetName("Directional Light");
@@ -110,7 +124,7 @@ Physics3DScene::Physics3DScene(Game* pGame) : fw::Scene(pGame)
     //Platform
 	fw::GameObject* pPlatform = new fw::GameObject(this, c_centerOfScreen + vec3(0.f, -4.5f, 0.f), vec3(0.f, 0.f, 0.f));
 
-	fw::MeshComponent* pPlatformMesh = new fw::MeshComponent(m_pResourceManager->GetMesh("Cube"), m_pResourceManager->GetMaterial("Lit-SolidColor"));
+	fw::MeshComponent* pPlatformMesh = new fw::MeshComponent(m_pResourceManager->GetMesh("Cube"), m_pResourceManager->GetMaterial("Lit-DarkPurple"));
 
 	pPlatform->AddComponent(pPlatformMesh);
 	pPlatform->SetScale(vec3(25.f, 0.5f, 15.f));
@@ -118,6 +132,38 @@ Physics3DScene::Physics3DScene(Game* pGame) : fw::Scene(pGame)
 	pPlatform->GetComponent<fw::PhysicsBodyComponent>()->CreateBody(m_pPhysicsWorld, false, vec3(25.0f, 0.5f, 15.0f), 0.f);
 	pPlatform->SetName("Platform");
 	m_Objects.push_back(pPlatform);
+
+    fw::GameObject* pWall = new fw::GameObject(this, c_centerOfScreen + vec3(0.f, -4.5f, 8.f), vec3(0.f, 0.f, 0.f));
+    pWall->AddComponent(new fw::MeshComponent(m_pResourceManager->GetMesh("Cube"), m_pResourceManager->GetMaterial("Lit-DarkPurple")));
+    pWall->SetScale(vec3(25.0f, 1.f, 1.f));
+    pWall->AddComponent(new fw::PhysicsBodyComponent());
+    pWall->GetComponent<fw::PhysicsBodyComponent>()->CreateBody(m_pPhysicsWorld, false, vec3(25.0f, 2.f, 1.0f), 0.f);
+    pWall->SetName("Back Wall");
+    m_Objects.push_back(pWall);
+
+    pWall = new fw::GameObject(this, c_centerOfScreen + vec3(0.f, -4.5f, -8.f), vec3(0.f, 0.f, 0.f));
+    pWall->AddComponent(new fw::MeshComponent(m_pResourceManager->GetMesh("Cube"), m_pResourceManager->GetMaterial("Lit-DarkPurple")));
+    pWall->SetScale(vec3(25.0f, 1.f, 1.f));
+    pWall->AddComponent(new fw::PhysicsBodyComponent());
+    pWall->GetComponent<fw::PhysicsBodyComponent>()->CreateBody(m_pPhysicsWorld, false, vec3(25.0f, 2.f, 1.0f), 0.f);
+    pWall->SetName("Front Wall");
+    m_Objects.push_back(pWall);
+
+    pWall = new fw::GameObject(this, c_centerOfScreen + vec3(-13.f, -4.5f, 0.f), vec3(0.f, 0.f, 0.f));
+    pWall->AddComponent(new fw::MeshComponent(m_pResourceManager->GetMesh("Cube"), m_pResourceManager->GetMaterial("Lit-DarkPurple")));
+    pWall->SetScale(vec3(1.f, 1.f, 17.f));
+    pWall->AddComponent(new fw::PhysicsBodyComponent());
+    pWall->GetComponent<fw::PhysicsBodyComponent>()->CreateBody(m_pPhysicsWorld, false, vec3(1.f, 2.f, 17.f), 0.f);
+    pWall->SetName("Left Wall");
+    m_Objects.push_back(pWall);
+
+    pWall = new fw::GameObject(this, c_centerOfScreen + vec3(13.f, -4.5f, 0.f), vec3(0.f, 0.f, 0.f));
+    pWall->AddComponent(new fw::MeshComponent(m_pResourceManager->GetMesh("Cube"), m_pResourceManager->GetMaterial("Lit-DarkPurple")));
+    pWall->SetScale(vec3(1.f, 1.f, 17.f));
+    pWall->AddComponent(new fw::PhysicsBodyComponent());
+    pWall->GetComponent<fw::PhysicsBodyComponent>()->CreateBody(m_pPhysicsWorld, false, vec3(1.f, 2.f, 17.f), 0.f);
+    pWall->SetName("Right Wall");
+    m_Objects.push_back(pWall);
 
     //Player
     m_pPlayer = new fw::GameObject(this, vec2(7.5f, 16.0f), vec3());
@@ -128,7 +174,6 @@ Physics3DScene::Physics3DScene(Game* pGame) : fw::Scene(pGame)
     m_pPlayer->AddComponent(new Player3DMovementComponent(m_pPlayerController));
     m_pPlayer->SetName("Player");
 
-	m_pCamera->SetAspectRatio(c_aspectRatio);
     m_pCamera->AttachTo(m_pPlayer);
 }
 
@@ -186,6 +231,9 @@ void Physics3DScene::OnEvent(fw::Event* pEvent)
 
 void Physics3DScene::Update(float deltaTime)
 {
+    static_cast<Game*>(m_pGame)->SetUsingCubeMap(true);
+    static_cast<Game*>(m_pGame)->SetCurrentCubeMap("NightMeadow");
+
     std::vector<fw::Component*>& list = m_pComponentManager->GetComponentsOfType(Player3DMovementComponent::GetStaticType());
     for (fw::Component* pComponent : list)
     {
@@ -285,27 +333,29 @@ void Physics3DScene::ControlsMenu()
 		}
 		if (ImGui::BeginMenu("Settings"))
 		{
-            if (ImGui::MenuItem("Show Perspective Mouse Coords", "", &m_showPerspecMouseCoords)) {};
+            //if (ImGui::MenuItem("Show Perspective Mouse Coords", "", &m_showPerspecMouseCoords)) {};
 
-            ImGui::Separator();
+            //ImGui::Separator();
 
-			if (ImGui::MenuItem("Enable Debug Draw", "", &m_debugDraw)) {}
+			if (ImGui::MenuItem("Enable Debug Draw", NULL, false, false)) {};//&m_debugDraw)) {}
 
 			ImGui::EndMenu();
 		}
 		if (ImGui::BeginMenu("Controls"))
 		{
-			ImGui::Text("Forward = Up or W");
-			ImGui::Text("Back = Down or S");
+			ImGui::Text("Forward          = W");
+			ImGui::Text("Backward         = S");
+            ImGui::Text("Strafe Left      = A");
+            ImGui::Text("Strafe Right     = D");
             ImGui::Separator();
-			ImGui::Text("Camera Rotate Left = J");
-			ImGui::Text("Camera Rotate Right = L");
-            ImGui::Text("Camera Tilt Up = I");
-            ImGui::Text("Camera Tilt Down = K");
+            ImGui::Text("Camera Tilt Up   = I  or  Up");
+            ImGui::Text("Camera Tilt Down = K  or  Down");
+			ImGui::Text("Camera Pan Left  = J  or  Left");
+			ImGui::Text("Camera Pan Right = L  or  Right");
 
 			ImGui::EndMenu();
 		}
-		ImGui::MenuItem("Physics Scene", NULL, false, false);
+		ImGui::MenuItem("Assignment 2 Scene - 3D Physics Playground", NULL, false, false);
 
 		ImGui::EndMainMenuBar();
 	}

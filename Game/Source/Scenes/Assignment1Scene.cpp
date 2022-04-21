@@ -143,6 +143,8 @@ void Assignment1Scene::OnEvent(fw::Event* pEvent)
 
 void Assignment1Scene::Update(float deltaTime)
 {
+    static_cast<Game*>(m_pGame)->SetUsingCubeMap(false);
+
     m_pShaun->Update(deltaTime);
 
     Scene::Update(deltaTime);
@@ -528,7 +530,7 @@ void Assignment1Scene::ControlsMenu()
 
 			ImGui::EndMenu();
 		}
-		ImGui::MenuItem("Assignment 1 Scene", NULL, false, false);
+		ImGui::MenuItem("Assignment 1 Scene - Shaun's Great Escape", NULL, false, false);
 
 		ImGui::EndMainMenuBar();
 	}

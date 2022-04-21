@@ -56,6 +56,8 @@ void ObjScene::OnEvent(fw::Event* pEvent)
 
 void ObjScene::Update(float deltaTime)
 {
+    static_cast<Game*>(m_pGame)->SetUsingCubeMap(false);
+
     Scene::Update(deltaTime);
 
 	float rot = m_Objects[0]->GetRotation().y;

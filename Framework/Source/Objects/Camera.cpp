@@ -81,20 +81,20 @@ void Camera::Hack_ThirdPersonCam(FWCore* pFramework, float deltaTime)
 
 	vec3 rot = m_pTransform->GetRotation();
 
-	if (pFramework->IsKeyDown('J'))
+	if (pFramework->IsKeyDown('J') || pFramework->IsKeyDown(37))
 	{
 		rot.y += deltaTime * speed;
 	}
-	if (pFramework->IsKeyDown('L'))
+	if (pFramework->IsKeyDown('L') || pFramework->IsKeyDown(39))
 	{
 		rot.y -= deltaTime * speed;
 	}
 
-	if (pFramework->IsKeyDown('I'))
+	if (pFramework->IsKeyDown('I') || pFramework->IsKeyDown(38))
 	{
 		rot.x -= deltaTime * speed;
 	}
-	if (pFramework->IsKeyDown('K'))
+	if (pFramework->IsKeyDown('K') || pFramework->IsKeyDown(40))
 	{
 		rot.x += deltaTime * speed;
 	}

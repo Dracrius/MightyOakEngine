@@ -34,6 +34,9 @@ void WaterScene::OnEvent(fw::Event* pEvent)
 
 void WaterScene::Update(float deltaTime)
 {
+    static_cast<Game*>(m_pGame)->SetUsingCubeMap(true);
+    static_cast<Game*>(m_pGame)->SetCurrentCubeMap("Yokohama2");
+
     Scene::Update(deltaTime);
 
 	if (m_showSlider)
@@ -91,7 +94,7 @@ void WaterScene::SettingsMenu()
             ImGui::EndMenu();
         }
 
-		ImGui::MenuItem("Cube Scene", NULL, false, false);
+		ImGui::MenuItem("Water Shader Scene", NULL, false, false);
 		ImGui::EndMainMenuBar();
 	}
 }

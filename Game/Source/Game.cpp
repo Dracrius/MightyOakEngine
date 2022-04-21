@@ -77,6 +77,7 @@ void Game::Init()
 	m_pResourceManager->CreateShader("Water", "Data/Shaders/Water.vert", "Data/Shaders/Water.frag");
 	m_pResourceManager->CreateShader("SolidColor", "Data/Shaders/SolidColor.vert", "Data/Shaders/SolidColor.frag");
 	m_pResourceManager->CreateShader("Lit-Color", "Data/Shaders/Light-SolidColor.vert", "Data/Shaders/Light-SolidColor.frag");
+    m_pResourceManager->CreateShader("Lit-Texture", "Data/Shaders/Light-Texture.vert", "Data/Shaders/Light-Texture.frag");
     m_pResourceManager->CreateShader("Skybox", "Data/Shaders/Skybox.vert", "Data/Shaders/Skybox.frag");
     m_pResourceManager->CreateShader("Reflection", "Data/Shaders/Reflection.vert", "Data/Shaders/Reflection.frag");
 
@@ -96,6 +97,8 @@ void Game::Init()
 
     m_pResourceManager->CreateTexture("TestCubemap", {"Data/Textures/TestCubemap/posx.png", "Data/Textures/TestCubemap/negx.png", "Data/Textures/TestCubemap/posy.png", "Data/Textures/TestCubemap/negy.png", "Data/Textures/TestCubemap/posz.png", "Data/Textures/TestCubemap/negz.png"});
     m_pResourceManager->CreateTexture("Yokohama2", { "Data/Textures/Yokohama2/posx.png", "Data/Textures/Yokohama2/negx.png", "Data/Textures/Yokohama2/posy.png", "Data/Textures/Yokohama2/negy.png", "Data/Textures/Yokohama2/posz.png", "Data/Textures/Yokohama2/negz.png" });
+    m_pResourceManager->CreateTexture("DayMeadow", { "Data/Textures/DayMeadow/posx.png", "Data/Textures/DayMeadow/negx.png", "Data/Textures/DayMeadow/posy.png", "Data/Textures/DayMeadow/negy.png", "Data/Textures/DayMeadow/posz.png", "Data/Textures/DayMeadow/negz.png" });
+    m_pResourceManager->CreateTexture("NightMeadow", { "Data/Textures/NightMeadow/posx.png", "Data/Textures/NightMeadow/negx.png", "Data/Textures/NightMeadow/posy.png", "Data/Textures/NightMeadow/negy.png", "Data/Textures/NightMeadow/posz.png", "Data/Textures/NightMeadow/negz.png" });
 
     // Setup Sprite Sheets
 	m_pResourceManager->CreateSpriteSheet("Sprites", "Data/Textures/Sprites.json", m_pResourceManager->GetTexture("Sprites"));
@@ -114,15 +117,18 @@ void Game::Init()
 	m_pResourceManager->CreateMaterial("Lit-Green", m_pResourceManager->GetShader("Lit-Color"), fw::Color4f::Green());
 	m_pResourceManager->CreateMaterial("Lit-Blue", m_pResourceManager->GetShader("Lit-Color"), fw::Color4f::Blue());
 	m_pResourceManager->CreateMaterial("Lit-White", m_pResourceManager->GetShader("Lit-Color"), fw::Color4f::White());
+    m_pResourceManager->CreateMaterial("Lit-DarkPurple", m_pResourceManager->GetShader("Lit-Color"), fw::Color4f(0.15f, 0.14f, 0.15f, 1.f));
 
 	m_pResourceManager->CreateMaterial("Sokoban", m_pResourceManager->GetShader("Basic"), m_pResourceManager->GetTexture("Sprites"), fw::Color4f::Red());
 	m_pResourceManager->CreateMaterial("Cube", m_pResourceManager->GetShader("Basic"), m_pResourceManager->GetTexture("Cube"), fw::Color4f::Green());
-    m_pResourceManager->CreateMaterial("On", m_pResourceManager->GetShader("Basic"), m_pResourceManager->GetTexture("On"), fw::Color4f::Green());
-    m_pResourceManager->CreateMaterial("Off", m_pResourceManager->GetShader("Basic"), m_pResourceManager->GetTexture("Off"), fw::Color4f::Green());
-    m_pResourceManager->CreateMaterial("Swing", m_pResourceManager->GetShader("Basic"), m_pResourceManager->GetTexture("Swing"), fw::Color4f::Green());
-    m_pResourceManager->CreateMaterial("Slide", m_pResourceManager->GetShader("Basic"), m_pResourceManager->GetTexture("Slide"), fw::Color4f::Green());
+    m_pResourceManager->CreateMaterial("Lit-Cube", m_pResourceManager->GetShader("Lit-Texture"), m_pResourceManager->GetTexture("Cube"), fw::Color4f::Green());
+    m_pResourceManager->CreateMaterial("On", m_pResourceManager->GetShader("Lit-Texture"), m_pResourceManager->GetTexture("On"), fw::Color4f::Green());
+    m_pResourceManager->CreateMaterial("Off", m_pResourceManager->GetShader("Lit-Texture"), m_pResourceManager->GetTexture("Off"), fw::Color4f::Green());
+    m_pResourceManager->CreateMaterial("Swing", m_pResourceManager->GetShader("Lit-Texture"), m_pResourceManager->GetTexture("Swing"), fw::Color4f::Green());
+    m_pResourceManager->CreateMaterial("Slide", m_pResourceManager->GetShader("Lit-Texture"), m_pResourceManager->GetTexture("Slide"), fw::Color4f::Green());
 	m_pResourceManager->CreateMaterial("Water", m_pResourceManager->GetShader("Water"), m_pResourceManager->GetTexture("Water"), c_defaultWaterColor);
 	m_pResourceManager->CreateMaterial("Arcade_Cabinet", m_pResourceManager->GetShader("Basic"), m_pResourceManager->GetTexture("Arcade_Cabinet"), c_defaultObjColor);
+    m_pResourceManager->CreateMaterial("Lit-Arcade_Cabinet", m_pResourceManager->GetShader("Lit-Texture"), m_pResourceManager->GetTexture("Arcade_Cabinet"), c_defaultObjColor);
 	m_pResourceManager->CreateMaterial("Arcade_Floor", m_pResourceManager->GetShader("Basic"), m_pResourceManager->GetTexture("Arcade_Floor"), c_defaultObjColor);
 	m_pResourceManager->CreateMaterial("Background", m_pResourceManager->GetShader("Basic"), m_pResourceManager->GetTexture("Background"), c_defaultWaterColor);
 	m_pResourceManager->CreateMaterial("NiceDaysWalk", m_pResourceManager->GetShader("Basic"), m_pResourceManager->GetTexture("NiceDaysWalk"), fw::Color4f::Red());
@@ -130,6 +136,9 @@ void Game::Init()
 
     m_pResourceManager->CreateMaterial("TestSkybox", m_pResourceManager->GetShader("Skybox"), m_pResourceManager->GetTexture("Sprites"), fw::Color4f::Red(), m_pResourceManager->GetTexture("TestCubemap"));
     m_pResourceManager->CreateMaterial("Yokohama2", m_pResourceManager->GetShader("Skybox"), m_pResourceManager->GetTexture("Sprites"), fw::Color4f::Red(), m_pResourceManager->GetTexture("Yokohama2"));
+    m_pResourceManager->CreateMaterial("DayMeadow", m_pResourceManager->GetShader("Skybox"), m_pResourceManager->GetTexture("Sprites"), fw::Color4f::Red(), m_pResourceManager->GetTexture("DayMeadow"));
+    m_pResourceManager->CreateMaterial("NightMeadow", m_pResourceManager->GetShader("Skybox"), m_pResourceManager->GetTexture("Sprites"), fw::Color4f::Red(), m_pResourceManager->GetTexture("NightMeadow"));
+
     m_pResourceManager->CreateMaterial("Reflection", m_pResourceManager->GetShader("Reflection"), m_pResourceManager->GetTexture("Sprites"), fw::Color4f::Red(), m_pResourceManager->GetTexture("Yokohama2"));
 
     // Setup Scenes
@@ -139,7 +148,7 @@ void Game::Init()
     m_Scenes["Obj"] = new ObjScene(this);
 	m_Scenes["ThirdPerson"] = new ThirdPersonScene(this);
 	m_Scenes["Assignment1"] = new Assignment1Scene(this);
-    m_Scenes["Physics3D"] = new Physics3DScene(this);
+    m_Scenes["Assignment2"] = new Physics3DScene(this);
 
     SetCurrentScene(c_defaultScene);
 }
@@ -213,17 +222,20 @@ void Game::Draw()
     glViewport(0, 0, m_pOffScreenFBO->GetRequestedWidth(), m_pOffScreenFBO->GetRequestedHeight());
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    //Disable Z-Write
-    glDepthMask(false);
-    glFrontFace(GL_CCW);
-    //Render Cube
-    fw::matrix identity;
-    identity.SetIdentity();
-    m_pResourceManager->GetMesh("Cube")->Draw(nullptr, m_pCurrentScene->GetCamera(), m_pResourceManager->GetMaterial("TestSkybox"), identity, identity, 1, 0, 0);
+    if (m_useCubeMap)
+    {
+        //Disable Z-Write
+        glDepthMask(false);
+        glFrontFace(GL_CCW);
+        //Render Cube
+        fw::matrix identity;
+        identity.SetIdentity();
+        m_pResourceManager->GetMesh("Cube")->Draw(nullptr, m_pCurrentScene->GetCamera(), m_pResourceManager->GetMaterial(m_activeCubeMap), identity, identity, 1, 0, 0);
 
-    //Re-Enable Z-Write
-    glDepthMask(true);
-    glFrontFace(GL_CW);
+        //Re-Enable Z-Write
+        glDepthMask(true);
+        glFrontFace(GL_CW);
+    }
 
     m_pCurrentScene->Draw();
     m_pOffScreenFBO->Unbind();
@@ -380,7 +392,13 @@ void Game::MainMenu()
 					m_FWCore.GetEventManager()->AddEvent(pSceneChange);
 				}
 
-				if (ImGui::MenuItem("Cube", "Ctrl+C"))
+                if (ImGui::MenuItem("Assignment 2", ""))
+                {
+                    SceneChangeEvent* pSceneChange = new SceneChangeEvent("Assignment2");
+                    m_FWCore.GetEventManager()->AddEvent(pSceneChange);
+                }
+
+				if (ImGui::MenuItem("Cube Demo", "Ctrl+C"))
 				{
 					SceneChangeEvent* pSceneChange = new SceneChangeEvent("Cube");
 					m_FWCore.GetEventManager()->AddEvent(pSceneChange);
@@ -392,25 +410,19 @@ void Game::MainMenu()
 					m_FWCore.GetEventManager()->AddEvent(pSceneChange);
 				}
 
-				if (ImGui::MenuItem("Physics", "Ctrl+P"))
-				{
-					SceneChangeEvent* pSceneChange = new SceneChangeEvent("Physics");
-					m_FWCore.GetEventManager()->AddEvent(pSceneChange);
-				}
-
-                if (ImGui::MenuItem("Physics3D", ""))
-                {
-                    SceneChangeEvent* pSceneChange = new SceneChangeEvent("Physics3D");
-                    m_FWCore.GetEventManager()->AddEvent(pSceneChange);
-                }
-
-                if (ImGui::MenuItem("ThirdPerson", ""))
+                if (ImGui::MenuItem("Lighting Demo", ""))
                 {
                     SceneChangeEvent* pSceneChange = new SceneChangeEvent("ThirdPerson");
                     m_FWCore.GetEventManager()->AddEvent(pSceneChange);
                 }
 
-				if (ImGui::MenuItem("Water", "Ctrl+W"))
+				if (ImGui::MenuItem("2D Physics Demo", "Ctrl+P"))
+				{
+					SceneChangeEvent* pSceneChange = new SceneChangeEvent("Physics");
+					m_FWCore.GetEventManager()->AddEvent(pSceneChange);
+				}
+
+				if (ImGui::MenuItem("Water Shader Demo", "Ctrl+W"))
 				{
 					SceneChangeEvent* pSceneChange = new SceneChangeEvent("Water");
 					m_FWCore.GetEventManager()->AddEvent(pSceneChange);

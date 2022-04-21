@@ -13,7 +13,7 @@ PhysicsScene::PhysicsScene(Game* pGame) : fw::Scene(pGame)
 	m_pPhysicsWorld = new fw::PhysicsWorldBox2D(pGame->GetFramework()->GetEventManager());
 	m_pPhysicsWorld->SetGravity(c_gravity);
 
-	m_pCamera = new fw::Camera(this, c_centerOfScreen + c_cameraOffset);
+	m_pCamera = new fw::Camera(this, c_centerOfScreen);
 	m_pCamera->SetPerspective(true);
 
 	m_pPlayerController = new PlayerController(pGame->GetFramework()->GetEventManager());
@@ -51,6 +51,24 @@ PhysicsScene::PhysicsScene(Game* pGame) : fw::Scene(pGame)
 		pBox->SetName(name);
 		m_Objects.push_back(pBox);
 	}
+
+    std::string name = "Jointed Box";
+    fw::GameObject* pBox = new fw::GameObject(this, vec3(11.5f, 5.f, 2.f), vec3());
+    pBox->AddComponent(new fw::MeshComponent(m_pResourceManager->GetMesh("Cube"), m_pResourceManager->GetMaterial("Cube")));
+    pBox->AddComponent(new fw::PhysicsBodyComponent());
+    pBox->GetComponent<fw::PhysicsBodyComponent>()->CreateBody(m_pPhysicsWorld, true, vec3(1.0f, 1.0f, 1.0f), 1.f);
+    m_pPhysicsWorld->CreateJoint(pBox->GetComponent<fw::PhysicsBodyComponent>()->GetPhysicsBody(), vec3(11.5f, 10.0f, 2.f)); //Kept to Demo
+    pBox->SetName(name);
+    m_Objects.push_back(pBox);
+
+    pBox = new fw::GameObject(this, vec3(1.5f, 5.f, 2.f), vec3());
+    pBox->AddComponent(new fw::MeshComponent(m_pResourceManager->GetMesh("Cube"), m_pResourceManager->GetMaterial("Cube")));
+    pBox->AddComponent(new fw::PhysicsBodyComponent());
+    pBox->GetComponent<fw::PhysicsBodyComponent>()->CreateBody(m_pPhysicsWorld, true, vec3(1.0f, 1.0f, 1.0f), 1.f);
+    m_pPhysicsWorld->CreateJoint(pBox->GetComponent<fw::PhysicsBodyComponent>()->GetPhysicsBody(), vec3(1.5f, 10.0f, 2.f)); //Kept to Demo
+    pBox->SetName(name);
+    m_Objects.push_back(pBox);
+
 
 
 	//Platform
@@ -101,7 +119,7 @@ PhysicsScene::PhysicsScene(Game* pGame) : fw::Scene(pGame)
     m_pPlayer->SetName("Player");
 
 	m_pCamera->AttachTo(m_pPlayer);
-	m_pCamera->SetThirdPersonOffset(c_cameraOffset + vec3(0.f, 4.5f, 0.f));
+	m_pCamera->SetThirdPersonOffset(vec3(0.f, 1.5f, -12.f));
 	m_pCamera->SetAspectRatio(c_aspectRatio);
 }
 
@@ -124,6 +142,8 @@ void PhysicsScene::OnEvent(fw::Event* pEvent)
 
 void PhysicsScene::Update(float deltaTime)
 {
+    static_cast<Game*>(m_pGame)->SetUsingCubeMap(false);
+
     m_pPlayer->Update(deltaTime);
 
     Scene::Update(deltaTime);
@@ -275,7 +295,7 @@ void PhysicsScene::ControlsMenu()
 		}
 		if (ImGui::BeginMenu("Settings"))
 		{
-            if (ImGui::MenuItem("Show Ortho Mouse Coords", "", &m_showOrthoMouseCoords)) 
+            /*if (ImGui::MenuItem("Show Ortho Mouse Coords", "", &m_showOrthoMouseCoords))
             { 
                 if (m_showPerspecMouseCoords) 
                 {
@@ -290,7 +310,7 @@ void PhysicsScene::ControlsMenu()
                 }
             };
 
-            ImGui::Separator();
+            ImGui::Separator();*/
 
 			if (ImGui::MenuItem("Enable Debug Draw", "", &m_debugDraw)) {}
 
@@ -305,7 +325,7 @@ void PhysicsScene::ControlsMenu()
 
 			ImGui::EndMenu();
 		}
-		ImGui::MenuItem("Physics Scene", NULL, false, false);
+		ImGui::MenuItem("2D Physics Scene", NULL, false, false);
 
 		ImGui::EndMainMenuBar();
 	}

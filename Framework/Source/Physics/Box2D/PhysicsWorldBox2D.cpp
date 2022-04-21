@@ -163,8 +163,8 @@ void PhysicsWorldBox2D::CreateJoint(PhysicsBody* pBody, vec3 pos)
 
 	jointDef.Initialize(static_cast<PhysicsBodyBox2D*>(pBody)->Getb2Body(), m_pGroundBody, pos);
 	jointDef.enableMotor = true;
-	jointDef.motorSpeed = 10.0f;
-	jointDef.maxMotorTorque = 10.0;
+	jointDef.motorSpeed = 1.0f;
+	jointDef.maxMotorTorque = 100.0;
 
 	b2Joint* pJoint = m_pWorld->CreateJoint(&jointDef);
 }

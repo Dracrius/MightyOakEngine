@@ -30,6 +30,8 @@ void CubeScene::OnEvent(fw::Event* pEvent)
 
 void CubeScene::Update(float deltaTime)
 {
+    static_cast<Game*>(m_pGame)->SetUsingCubeMap(false);
+
     Scene::Update(deltaTime);
 
 	vec3 rot = m_Objects[0]->GetRotation();

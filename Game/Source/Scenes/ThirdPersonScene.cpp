@@ -35,6 +35,30 @@ ThirdPersonScene::ThirdPersonScene(Game* pGame) : fw::Scene(pGame)
 	vec3 pos = c_centerOfScreen + vec3(0.f, heightOffset, 0.f);
 	vec3 rot = vec3(-90.f, 0.f, 0.f);
 
+
+    fw::GameObject* pObj= new fw::GameObject(this, pos, vec3());
+    pObj->AddComponent(new fw::MeshComponent(m_pResourceManager->GetMesh("Obj"), m_pResourceManager->GetMaterial("Lit-Arcade_Cabinet")));
+	pObj->SetName("Loaded Obj");
+    m_Objects.push_back(pObj);
+
+    m_pResourceManager->GetMesh("Obj")->LoadObj(m_lastObj.c_str(), true);
+
+	fw::GameObject* pCube = new fw::GameObject(this, c_centerOfScreen + vec3(-10.f, -3.f, 1.f), vec3());
+	pCube->AddComponent(new fw::MeshComponent(m_pResourceManager->GetMesh("Cube"), m_pResourceManager->GetMaterial("Lit-White")));
+	pCube->SetName("White Cube");
+	m_Objects.push_back(pCube);
+
+	pCube = new fw::GameObject(this, c_centerOfScreen + vec3(4.f, -3.f, 2.f), vec3());
+	pCube->AddComponent(new fw::MeshComponent(m_pResourceManager->GetMesh("Cube"), m_pResourceManager->GetMaterial("Lit-Red")));
+	pCube->SetName("Red Cube");
+	m_Objects.push_back(pCube);
+
+	pCube = new fw::GameObject(this, c_centerOfScreen + vec3(6.f, -3.f, 3.f), vec3());
+	pCube->AddComponent(new fw::MeshComponent(m_pResourceManager->GetMesh("Cube"), m_pResourceManager->GetMaterial("Lit-Cube")));
+	pCube->SetName("Textured Cube");
+	m_Objects.push_back(pCube);
+
+    //Lights
 	fw::GameObject* pLight = new fw::GameObject(this, c_centerOfScreen + vec3(-7.f, 0.f, 7.f), vec3());
 	pLight->AddComponent(new fw::LightComponent(fw::LightType::PointLight, Color4f(1.f, 0.f, 0.f, 1.f), 25.f, 2.f));
 	pLight->SetName("Red Light");
@@ -60,34 +84,12 @@ ThirdPersonScene::ThirdPersonScene(Game* pGame) : fw::Scene(pGame)
 	pLight->SetName("Directional Light");
 	m_Objects.push_back(pLight);
 
-	pLight = new fw::GameObject(this, vec3(7.f, 5.f, -7.f), vec3(0.f,0.f,0.f));
-	pLight->AddComponent(new fw::LightComponent(fw::LightType::SpotLight, Color4f(1.f, 1.f, 1.f, 1.f), 10.f, 2.f, 60.f));
+	pLight = new fw::GameObject(this, vec3(7.f, 14.f, -7.f), vec3(-45.f,0.f,0.f));
+	pLight->AddComponent(new fw::LightComponent(fw::LightType::SpotLight, Color4f(2.f, 2.f, 2.f, 1.f), 20.f, 2.f, 60.f));
 	pLight->SetName("Spot Light");
 	m_Objects.push_back(pLight);
 
-    fw::GameObject* pObj= new fw::GameObject(this, pos, vec3());
-    pObj->AddComponent(new fw::MeshComponent(m_pResourceManager->GetMesh("Obj"), m_pResourceManager->GetMaterial("Lit-White")));
-	pObj->SetName("Loaded Obj");
-    m_Objects.push_back(pObj);
-
-    m_pResourceManager->GetMesh("Obj")->LoadObj(m_lastObj.c_str(), true);
-
-	fw::GameObject* pCube = new fw::GameObject(this, c_centerOfScreen + vec3(-10.f, -3.f, 1.f), vec3());
-	pCube->AddComponent(new fw::MeshComponent(m_pResourceManager->GetMesh("Cube"), m_pResourceManager->GetMaterial("Lit-White")));
-	pCube->SetName("White Cube");
-	m_Objects.push_back(pCube);
-
-	pCube = new fw::GameObject(this, c_centerOfScreen + vec3(4.f, -3.f, 2.f), vec3());
-	pCube->AddComponent(new fw::MeshComponent(m_pResourceManager->GetMesh("Cube"), m_pResourceManager->GetMaterial("Lit-Red")));
-	pCube->SetName("Red Cube");
-	m_Objects.push_back(pCube);
-
-	pCube = new fw::GameObject(this, c_centerOfScreen + vec3(6.f, -3.f, 3.f), vec3());
-	pCube->AddComponent(new fw::MeshComponent(m_pResourceManager->GetMesh("Cube"), m_pResourceManager->GetMaterial("Lit-White")));
-	pCube->SetName("White Cube");
-	m_Objects.push_back(pCube);
-
-    fw::GameObject* pPlayer = new fw::GameObject(this, c_centerOfScreen + vec3(-6.f, 0.5f -3.f), vec3());
+    fw::GameObject* pPlayer = new fw::GameObject(this, vec3(7.5f, 5.f, -7.5f), vec3());
     pPlayer->AddComponent(new fw::MeshComponent(m_pResourceManager->GetMesh("Sphere"), m_pResourceManager->GetMaterial("Lit-White")));
     //pPlayer->SetRotation(vec3(-90.f, -180.f, 0.f));
     //pPlayer->AddComponent(new fw::LightComponent(fw::LightType::SpotLight, Color4f(1.f, 1.f, 1.f, 1.f), 10.f, 2.f, 60.f));
@@ -121,6 +123,8 @@ void ThirdPersonScene::OnEvent(fw::Event* pEvent)
 
 void ThirdPersonScene::Update(float deltaTime)
 {
+    static_cast<Game*>(m_pGame)->SetUsingCubeMap(false);
+
     std::vector<fw::Component*>& list = m_pComponentManager->GetComponentsOfType(SimplePlayerMovementComponent::GetStaticType());
     for (fw::Component* pComponent : list)
     {
@@ -216,7 +220,7 @@ void ThirdPersonScene::SettingsMenu()
 
 			ImGui::EndMenu();
 		}
-		ImGui::MenuItem("Third Person", NULL, false, false);
+		ImGui::MenuItem("Lighting Scene", NULL, false, false);
 		ImGui::EndMainMenuBar();
 	}
 }
@@ -253,13 +257,13 @@ void ThirdPersonScene::OpenObj()
 	{
 		if (m_hasTexture)
 		{
-			pMeshComponent->SetMaterial(m_pResourceManager->GetMaterial("Arcade_Cabinet"));
+			pMeshComponent->SetMaterial(m_pResourceManager->GetMaterial("Lit-Arcade_Cabinet"));
 
-			m_pResourceManager->GetMaterial("Arcade_Cabinet")->GetTexture()->SetTexture(m_textureName);
+			m_pResourceManager->GetMaterial("Lit-Arcade_Cabinet")->GetTexture()->SetTexture(m_textureName);
 		}
 		else
 		{
-			pMeshComponent->SetMaterial(m_pResourceManager->GetMaterial("SolidColor"));
+			pMeshComponent->SetMaterial(m_pResourceManager->GetMaterial("Lit-SolidColor"));
 			m_lastTexture = "";
 		}
 
@@ -293,8 +297,8 @@ void ThirdPersonScene::OpenRecent()
 			m_Objects[0]->SetScale(vec3(1.f, 1.f, 1.f));
 
 			m_pResourceManager->GetMesh("Obj")->LoadObj("Data/Models/Arcade_Cabinet.obj", true);
-			pMeshComponent->SetMaterial(m_pResourceManager->GetMaterial("Arcade_Cabinet"));
-			m_pResourceManager->GetMaterial("Arcade_Cabinet")->GetTexture()->SetTexture("Data/Textures/Arcade_Cabinet.png");
+			pMeshComponent->SetMaterial(m_pResourceManager->GetMaterial("Lit-Arcade_Cabinet"));
+			m_pResourceManager->GetMaterial("Lit-Arcade_Cabinet")->GetTexture()->SetTexture("Data/Textures/Arcade_Cabinet.png");
 		}
 		if (ImGui::MenuItem("Chibi_Facehugger.obj"))
 		{
@@ -303,7 +307,7 @@ void ThirdPersonScene::OpenRecent()
 			m_Objects[0]->SetScale(vec3(0.1f, 0.1f, 0.1f));
 
 			m_pResourceManager->GetMesh("Obj")->LoadObj("Data/Models/Chibi_Facehugger.obj", true);
-			pMeshComponent->SetMaterial(m_pResourceManager->GetMaterial("SolidColor"));
+			pMeshComponent->SetMaterial(m_pResourceManager->GetMaterial("Lit-Green"));
 		}
 		if (ImGui::MenuItem("cube.obj"))
 		{
@@ -312,18 +316,18 @@ void ThirdPersonScene::OpenRecent()
 			m_Objects[0]->SetScale(vec3(1.f, 1.f, 1.f));
 
 			m_pResourceManager->GetMesh("Obj")->LoadObj("Data/Models/cube.obj", true);
-			pMeshComponent->SetMaterial(m_pResourceManager->GetMaterial("SolidColor"));
+			pMeshComponent->SetMaterial(m_pResourceManager->GetMaterial("Lit-SolidColor"));
 		}
 		if (ImGui::MenuItem(m_lastObj.c_str()))
 		{
 			if (m_textureName != nullptr && m_lastTexture != "")
 			{
-				pMeshComponent->SetMaterial(m_pResourceManager->GetMaterial("Arcade_Cabinet"));
-				m_pResourceManager->GetMaterial("Arcade_Cabinet")->GetTexture()->SetTexture(m_lastTexture.c_str());
+				pMeshComponent->SetMaterial(m_pResourceManager->GetMaterial("Lit-Arcade_Cabinet"));
+				m_pResourceManager->GetMaterial("Lit-Arcade_Cabinet")->GetTexture()->SetTexture(m_lastTexture.c_str());
 			}
 			else
 			{
-				pMeshComponent->SetMaterial(m_pResourceManager->GetMaterial("SolidColor"));
+				pMeshComponent->SetMaterial(m_pResourceManager->GetMaterial("Lit-SolidColor"));
 			}
 
 			m_Objects[0]->SetPosition(pos);
