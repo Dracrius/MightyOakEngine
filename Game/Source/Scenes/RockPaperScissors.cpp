@@ -48,7 +48,7 @@ void RockPaperScissors::OnEvent(fw::Event* pEvent)
                 fw::GameObject* pPlayer = m_Objects[1];
                 fw::MeshComponent* pMesh = pPlayer->GetComponent<fw::MeshComponent>();
 
-                if (pInputEvent->GetID() == 'R')
+                if (pInputEvent->GetID() == 'R' && !m_playerChoose)
                 {
                     pMesh->SetUVScale(m_pSpriteSheet->GetSpriteByName("rock")->uvScale);
                     pMesh->SetUVOffset(m_pSpriteSheet->GetSpriteByName("rock")->uvOffset);
@@ -58,7 +58,7 @@ void RockPaperScissors::OnEvent(fw::Event* pEvent)
                     m_playerPick = 1;
                     m_showResults = true;
                 }
-                if (pInputEvent->GetID() == 'P')
+                if (pInputEvent->GetID() == 'P' && !m_playerChoose)
                 {
                     pMesh->SetUVScale(m_pSpriteSheet->GetSpriteByName("paper")->uvScale);
                     pMesh->SetUVOffset(m_pSpriteSheet->GetSpriteByName("paper")->uvOffset);
@@ -68,7 +68,7 @@ void RockPaperScissors::OnEvent(fw::Event* pEvent)
                     m_playerPick = 2;
                     m_showResults = true;
                 }
-                if (pInputEvent->GetID() == 'S')
+                if (pInputEvent->GetID() == 'S' && !m_playerChoose)
                 {
                     pMesh->SetUVScale(m_pSpriteSheet->GetSpriteByName("scissors")->uvScale);
                     pMesh->SetUVOffset(m_pSpriteSheet->GetSpriteByName("scissors")->uvOffset);
