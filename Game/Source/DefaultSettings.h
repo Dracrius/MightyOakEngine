@@ -8,7 +8,7 @@ const ivec2 c_glRenderSize = ivec2(1024, 544);
 //Aspect Ratio of OpenGl Window - Can be calculated here, using the OpenGL Render Size https://toolstud.io/photo/aspect.php?
 const float c_aspectRatio = 1.88f; 
 
-const std::string c_defaultScene = "RockPaperScissors";
+const std::string c_defaultScene = "Assignment2";
 //List of Scenes: ["Physics"], ["Cube"], ["Water"], ["Obj"], ["ThirdPerson"], ["Assignment1"], ["Assignment2"], ["RockPaperScissors"]
 
 const float c_animationLength = 0.12f;
